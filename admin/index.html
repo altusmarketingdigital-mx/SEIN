@@ -243,6 +243,30 @@
 </head>
 <body>
 
+    <!-- MODAL DE LOGIN ADMINISTRATIVO -->
+    <div id="admin-auth-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #1a1e24; display: flex; align-items: center; justify-content: center; z-index: 9999999;">
+        <div style="background: #ffffff; border-radius: 16px; padding: 40px 36px; width: 100%; max-width: 400px; box-shadow: 0 15px 40px rgba(0,0,0,0.3); text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🕯️</div>
+            <h2 style="color: #23272d; margin-bottom: 6px; font-size: 1.4rem;">Acceso Administrativo</h2>
+            <p style="color: #718096; font-size: 0.88rem; margin-bottom: 25px;">Ingresa tus credenciales maestras de SEIN</p>
+
+            <form onsubmit="handleAdminLogin(event)" style="text-align: left;">
+                <div style="margin-bottom: 18px;">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #4a5568;">Usuario / Email</label>
+                    <input type="text" id="admin-user-input" required placeholder="admin@sein.com" style="width: 100%; padding: 12px 14px; border: 1px solid #e3e6eb; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 22px;">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #4a5568;">Contraseña de Seguridad</label>
+                    <input type="password" id="admin-pass-input" required placeholder="••••••••" style="width: 100%; padding: 12px 14px; border: 1px solid #e3e6eb; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box;">
+                </div>
+                <button type="submit" style="width: 100%; padding: 14px; background: #c58d58; color: #ffffff; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: background 0.2s;">Ingresar al Panel</button>
+            </form>
+            <div style="margin-top: 20px; font-size: 0.82rem; color: #a0aec0;">
+                <a href="/" style="color: #c58d58; text-decoration: none;">← Volver a la Tienda</a>
+            </div>
+        </div>
+    </div>
+
     <!-- SIDEBAR -->
     <aside id="sidebar">
         <div class="brand">
@@ -291,6 +315,7 @@
             <div class="header-actions">
                 <a href="/" target="_blank" class="btn-store">🛍️ Ir a la Tienda</a>
                 <a href="/mi-cuenta/" target="_blank" class="btn-store">👤 Portal Cliente</a>
+                <button onclick="handleAdminLogout()" class="btn-store" style="background:#fff0f0; color:#d9534f; border:1px solid #f5c6cb; cursor:pointer;">🔒 Salir</button>
             </div>
         </header>
 
@@ -693,14 +718,41 @@
             });
         }
 
-        function filterCustomers() {
-            const query = document.getElementById('customer-search').value.toLowerCase();
-            document.querySelectorAll('#customers-tbody tr').forEach(row => {
-                row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
-            });
+        function checkAdminAuth() {
+            const isAuth = sessionStorage.getItem('sein_admin_authenticated');
+            const overlay = document.getElementById('admin-auth-overlay');
+            if (isAuth === 'true') {
+                overlay.style.display = 'none';
+            } else {
+                overlay.style.display = 'flex';
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', renderAll);
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('admin-user-input').value.trim();
+            const pass = document.getElementById('admin-pass-input').value;
+
+            // Credenciales oficiales de administración de SEIN
+            if ((user.toLowerCase() === 'admin' || user.toLowerCase() === 'admin@sein.com') && pass === 'Sein2026*') {
+                sessionStorage.setItem('sein_admin_authenticated', 'true');
+                checkAdminAuth();
+                renderAll();
+            } else {
+                alert('Credenciales incorrectas. Por favor verifica tu usuario y contraseña.');
+            }
+        }
+
+        function handleAdminLogout() {
+            sessionStorage.removeItem('sein_admin_authenticated');
+            checkAdminAuth();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAdminAuth();
+            renderAll();
+        });
+        checkAdminAuth();
         renderAll();
     </script>
 </body>
