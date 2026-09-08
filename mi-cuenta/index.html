@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head><meta charset="UTF-8">
 	
@@ -502,39 +502,333 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
 			<h1 class="entry-title">Mi cuenta</h1>		</div>
 	
 	<div class="page-content">
-		<div class="woocommerce"><div class="woocommerce-notices-wrapper"></div>
-
-		<h2>Acceder</h2>
-
-		<form class="woocommerce-form woocommerce-form-login login" method="post">
-
+		<div id="sein-customer-portal" style="max-width: 1000px; margin: 30px auto 70px auto; padding: 0 20px; font-family: 'Roboto', sans-serif;">
 			
-			<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-				<label for="username">Nombre de usuario o correo electrónico <span class="required" aria-hidden="true">*</span><span class="screen-reader-text">Obligatorio</span></label>
-				<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="username" id="username" autocomplete="username" value="" required aria-required="true">			</p>
-			<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
-				<label for="password">Contraseña <span class="required" aria-hidden="true">*</span><span class="screen-reader-text">Obligatorio</span></label>
-				<input class="woocommerce-Input woocommerce-Input--text input-text" type="password" name="password" id="password" autocomplete="current-password" required aria-required="true">
-			</p>
+			<!-- MODULO AUTENTICACIÓN (LOGIN / REGISTRO / RECUPERAR) -->
+			<div id="sein-auth-container" style="max-width: 500px; margin: 0 auto; background: #faf8f5; border: 1px solid #eae5de; border-radius: 16px; padding: 35px 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.04);">
+				
+				<!-- Tabs Login / Registro -->
+				<div style="display: flex; border-bottom: 2px solid #eae5de; margin-bottom: 25px;">
+					<button id="tab-btn-login" onclick="showAuthTab('login')" style="flex: 1; padding: 12px; font-size: 1.05rem; font-weight: bold; background: none; border: none; border-bottom: 3px solid #c58d58; color: #2b2b2b; cursor: pointer;">Iniciar Sesión</button>
+					<button id="tab-btn-register" onclick="showAuthTab('register')" style="flex: 1; padding: 12px; font-size: 1.05rem; font-weight: bold; background: none; border: none; border-bottom: 3px solid transparent; color: #888; cursor: pointer;">Registrarse</button>
+				</div>
 
-			
-			<p class="form-row">
-				<label class="woocommerce-form__label woocommerce-form__label-for-checkbox woocommerce-form-login__rememberme">
-					<input class="woocommerce-form__input woocommerce-form__input-checkbox" name="rememberme" type="checkbox" id="rememberme" value="forever"> <span>Recuérdame</span>
-				</label>
-				<input type="hidden" id="woocommerce-login-nonce" name="woocommerce-login-nonce" value="779e52f3a0"><input type="hidden" name="_wp_http_referer" value="/mi-cuenta/?simply_static_page=4975">				<button type="submit" class="woocommerce-button button woocommerce-form-login__submit" name="login" value="Acceso">Acceso</button>
-			</p>
-			<p class="woocommerce-LostPassword lost_password">
-				<a href="/mi-cuenta/lost-password/">¿Olvidaste la contraseña?</a>
-			</p>
+				<!-- FORMULARIO INICIAR SESIÓN -->
+				<form id="form-login" onsubmit="handleLogin(event)">
+					<div style="margin-bottom: 18px;">
+						<label style="display: block; margin-bottom: 6px; font-weight: 500; color: #444; font-size: 0.92rem;">Correo electrónico *</label>
+						<input type="email" id="login-email" required placeholder="tu@correo.com" style="width: 100%; padding: 12px 14px; border: 1px solid #dcd6cd; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box;">
+					</div>
+					<div style="margin-bottom: 20px;">
+						<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+							<label style="font-weight: 500; color: #444; font-size: 0.92rem;">Contraseña *</label>
+							<a href="javascript:void(0)" onclick="showAuthTab('forgot')" style="color: #c58d58; font-size: 0.85rem; text-decoration: none;">¿Olvidaste tu contraseña?</a>
+						</div>
+						<input type="password" id="login-password" required placeholder="••••••••" style="width: 100%; padding: 12px 14px; border: 1px solid #dcd6cd; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box;">
+					</div>
+					<button type="submit" style="width: 100%; padding: 14px; background: #2b2b2b; color: #fff; border: none; border-radius: 30px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: background 0.3s;">Acceder a Mi Cuenta</button>
+				</form>
 
-			
-		</form>
+				<!-- FORMULARIO REGISTRO -->
+				<form id="form-register" onsubmit="handleRegister(event)" style="display: none;">
+					<div style="margin-bottom: 16px;">
+						<label style="display: block; margin-bottom: 6px; font-weight: 500; color: #444; font-size: 0.92rem;">Nombre completo *</label>
+						<input type="text" id="reg-name" required placeholder="Tu Nombre y Apellido" style="width: 100%; padding: 12px 14px; border: 1px solid #dcd6cd; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box;">
+					</div>
+					<div style="margin-bottom: 16px;">
+						<label style="display: block; margin-bottom: 6px; font-weight: 500; color: #444; font-size: 0.92rem;">Correo electrónico *</label>
+						<input type="email" id="reg-email" required placeholder="tu@correo.com" style="width: 100%; padding: 12px 14px; border: 1px solid #dcd6cd; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box;">
+					</div>
+					<div style="margin-bottom: 16px;">
+						<label style="display: block; margin-bottom: 6px; font-weight: 500; color: #444; font-size: 0.92rem;">Teléfono / WhatsApp *</label>
+						<input type="tel" id="reg-phone" required placeholder="Ej: 33 2944 2880" style="width: 100%; padding: 12px 14px; border: 1px solid #dcd6cd; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box;">
+					</div>
+					<div style="margin-bottom: 22px;">
+						<label style="display: block; margin-bottom: 6px; font-weight: 500; color: #444; font-size: 0.92rem;">Crear contraseña *</label>
+						<input type="password" id="reg-password" required minlength="6" placeholder="Mínimo 6 caracteres" style="width: 100%; padding: 12px 14px; border: 1px solid #dcd6cd; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box;">
+					</div>
+					<button type="submit" style="width: 100%; padding: 14px; background: #c58d58; color: #fff; border: none; border-radius: 30px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: background 0.3s;">Crear Cuenta en SEIN</button>
+				</form>
 
-
-</div>
-		
+				<!-- FORMULARIO RECUPERAR CONTRASEÑA -->
+				<div id="form-forgot" style="display: none;">
+					<h3 style="margin-top: 0; color: #2b2b2b; font-size: 1.2rem;">Restablecer Contraseña</h3>
+					<p style="color: #777; font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px;">Ingresa tu correo electrónico registrado y te enviaremos un enlace seguro para restablecer tu contraseña.</p>
+					<form onsubmit="handleForgotPassword(event)">
+						<div style="margin-bottom: 20px;">
+							<label style="display: block; margin-bottom: 6px; font-weight: 500; color: #444; font-size: 0.92rem;">Correo electrónico *</label>
+							<input type="email" id="forgot-email" required placeholder="tu@correo.com" style="width: 100%; padding: 12px 14px; border: 1px solid #dcd6cd; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box;">
+						</div>
+						<button type="submit" style="width: 100%; padding: 14px; background: #2b2b2b; color: #fff; border: none; border-radius: 30px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-bottom: 12px;">Enviar Enlace de Recuperación</button>
+						<button type="button" onclick="showAuthTab('login')" style="width: 100%; padding: 10px; background: none; border: none; color: #777; cursor: pointer; font-size: 0.9rem;">Volver al inicio de sesión</button>
+					</form>
+				</div>
 			</div>
+
+			<!-- PANEL PRINCIPAL DEL CLIENTE LOGUEADO -->
+			<div id="sein-dashboard-container" style="display: none;">
+				<div style="display: flex; justify-content: space-between; align-items: center; background: #faf8f5; border: 1px solid #eae5de; border-radius: 12px; padding: 20px 24px; margin-bottom: 30px;">
+					<div>
+						<h2 style="margin: 0; font-size: 1.4rem; color: #2b2b2b;">Hola, <span id="user-display-name">Cliente</span> 👋</h2>
+						<p style="margin: 4px 0 0 0; color: #777; font-size: 0.9rem;">Bienvenido a tu panel personal de SEIN</p>
+					</div>
+					<button onclick="handleLogout()" style="background: #ffffff; border: 1px solid #dcd6cd; color: #d9534f; padding: 8px 18px; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 0.9rem;">Cerrar Sesión</button>
+				</div>
+
+				<!-- Navegación por pestañas del panel -->
+				<div style="display: flex; gap: 10px; border-bottom: 2px solid #eae5de; margin-bottom: 30px; overflow-x: auto; padding-bottom: 2px;">
+					<button class="dash-tab-btn" onclick="showDashboardSection('orders')" id="dtab-orders" style="padding: 10px 18px; background: none; border: none; border-bottom: 3px solid #c58d58; font-weight: bold; color: #2b2b2b; cursor: pointer; font-size: 0.95rem; white-space: nowrap;">📦 Mis Compras & Estatus</button>
+					<button class="dash-tab-btn" onclick="showDashboardSection('wishlist')" id="dtab-wishlist" style="padding: 10px 18px; background: none; border: none; border-bottom: 3px solid transparent; font-weight: bold; color: #777; cursor: pointer; font-size: 0.95rem; white-space: nowrap;">❤️ Lista de Deseos</button>
+					<button class="dash-tab-btn" onclick="showDashboardSection('payments')" id="dtab-payments" style="padding: 10px 18px; background: none; border: none; border-bottom: 3px solid transparent; font-weight: bold; color: #777; cursor: pointer; font-size: 0.95rem; white-space: nowrap;">💳 Métodos de Pago</button>
+					<button class="dash-tab-btn" onclick="showDashboardSection('profile')" id="dtab-profile" style="padding: 10px 18px; background: none; border: none; border-bottom: 3px solid transparent; font-weight: bold; color: #777; cursor: pointer; font-size: 0.95rem; white-space: nowrap;">👤 Mi Perfil</button>
+				</div>
+
+				<!-- SECCIÓN 1: MIS COMPRAS & ESTATUS -->
+				<div id="dsec-orders" class="dash-sec">
+					<h3 style="color: #2b2b2b; margin-top: 0; margin-bottom: 20px;">Historial de Pedidos y Estatus de Envío</h3>
+					<div id="orders-list">
+						<!-- Pedido de demostración realista -->
+						<div style="background: #ffffff; border: 1px solid #eae5de; border-radius: 12px; padding: 22px; margin-bottom: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+							<div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0ebe4; padding-bottom: 14px; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+								<div>
+									<span style="font-weight: bold; color: #2b2b2b;">Pedido #SN-84920</span>
+									<span style="color: #888; font-size: 0.85rem; margin-left: 10px;">07 Sep 2026</span>
+								</div>
+								<div>
+									<span style="background: #e1f5fe; color: #0288d1; padding: 4px 12px; border-radius: 20px; font-size: 0.82rem; font-weight: bold;">🚚 En Tránsito / Preparando Envío</span>
+								</div>
+							</div>
+							<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+								<div>
+									<div style="font-weight: 600; color: #333;">2x Vela de Soja Artesanal Lavanda & Vainilla</div>
+									<div style="color: #777; font-size: 0.88rem;">1x Planner Semanal de Organización</div>
+								</div>
+								<div style="text-align: right;">
+									<div style="font-size: 1.15rem; font-weight: bold; color: #a3875e;">$910.00 MXN</div>
+									<a href="https://wa.me/5213329442880?text=Hola,%20quisiera%20consultar%20el%20rastreo%20de%20mi%20pedido%20%23SN-84920" target="_blank" style="color: #25d366; font-size: 0.85rem; font-weight: 600; text-decoration: none;">Rastrear por WhatsApp 💬</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- SECCIÓN 2: LISTA DE DESEOS (WISHLIST) -->
+				<div id="dsec-wishlist" class="dash-sec" style="display: none;">
+					<h3 style="color: #2b2b2b; margin-top: 0; margin-bottom: 20px;">Tus Productos Favoritos</h3>
+					<div id="wishlist-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
+						<div style="background: #faf8f5; border: 1px solid #eae5de; border-radius: 12px; padding: 18px; text-align: center;">
+							<div style="font-size: 2.2rem; margin-bottom: 10px;">🕯️</div>
+							<h4 style="margin: 0 0 6px 0; color: #2b2b2b; font-size: 1rem;">Vela Aromática Soja Natural</h4>
+							<p style="color: #a3875e; font-weight: bold; margin: 0 0 12px 0;">$280.00 MXN</p>
+							<button onclick="window.location.href='/categoria-producto/velas-aromaticas/'" style="background: #2b2b2b; color: #fff; border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; cursor: pointer;">Ver Producto</button>
+						</div>
+						<div style="background: #faf8f5; border: 1px solid #eae5de; border-radius: 12px; padding: 18px; text-align: center;">
+							<div style="font-size: 2.2rem; margin-bottom: 10px;">📖</div>
+							<h4 style="margin: 0 0 6px 0; color: #2b2b2b; font-size: 1rem;">Planner de Metas y Organización</h4>
+							<p style="color: #a3875e; font-weight: bold; margin: 0 0 12px 0;">$350.00 MXN</p>
+							<button onclick="window.location.href='/categoria-producto/planners/'" style="background: #2b2b2b; color: #fff; border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; cursor: pointer;">Ver Producto</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- SECCIÓN 3: MÉTODOS DE PAGO -->
+				<div id="dsec-payments" class="dash-sec" style="display: none;">
+					<h3 style="color: #2b2b2b; margin-top: 0; margin-bottom: 20px;">Opciones de Pago Aceptadas</h3>
+					<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+						<div style="background: #faf8f5; border: 1px solid #eae5de; border-radius: 12px; padding: 24px;">
+							<div style="font-size: 1.8rem; margin-bottom: 10px;">⚡</div>
+							<h4 style="margin: 0 0 8px 0; color: #2b2b2b;">Transferencia SPEI</h4>
+							<p style="color: #777; font-size: 0.88rem; line-height: 1.5; margin: 0;">Sin comisiones adicionales. Los datos bancarios (CLABE / Banco) se envían al confirmar tu orden por WhatsApp.</p>
+						</div>
+						<div style="background: #faf8f5; border: 1px solid #eae5de; border-radius: 12px; padding: 24px;">
+							<div style="font-size: 1.8rem; margin-bottom: 10px;">💳</div>
+							<h4 style="margin: 0 0 8px 0; color: #2b2b2b;">Tarjeta de Débito / Crédito</h4>
+							<p style="color: #777; font-size: 0.88rem; line-height: 1.5; margin: 0;">Aceptamos Visa, Mastercard y American Express mediante enlace protegido de pago con Mercado Pago.</p>
+						</div>
+						<div style="background: #faf8f5; border: 1px solid #eae5de; border-radius: 12px; padding: 24px;">
+							<div style="font-size: 1.8rem; margin-bottom: 10px;">🏪</div>
+							<h4 style="margin: 0 0 8px 0; color: #2b2b2b;">Depósito OXXO Pay</h4>
+							<p style="color: #777; font-size: 0.88rem; line-height: 1.5; margin: 0;">Genera tu código de barras o referencia de 14 dígitos para pagar en efectivo en cualquier sucursal OXXO.</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- SECCIÓN 4: MI PERFIL & DIRECCIÓN -->
+				<div id="dsec-profile" class="dash-sec" style="display: none;">
+					<h3 style="color: #2b2b2b; margin-top: 0; margin-bottom: 20px;">Información de Perfil y Envío</h3>
+					<form onsubmit="handleUpdateProfile(event)" style="background: #faf8f5; border: 1px solid #eae5de; border-radius: 12px; padding: 26px; max-width: 600px;">
+						<div style="margin-bottom: 16px;">
+							<label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; color: #444;">Nombre Completo</label>
+							<input type="text" id="prof-name" style="width: 100%; padding: 10px 14px; border: 1px solid #dcd6cd; border-radius: 8px; box-sizing: border-box;">
+						</div>
+						<div style="margin-bottom: 16px;">
+							<label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; color: #444;">Correo Electrónico</label>
+							<input type="email" id="prof-email" disabled style="width: 100%; padding: 10px 14px; border: 1px solid #dcd6cd; border-radius: 8px; background: #eee; box-sizing: border-box;">
+						</div>
+						<div style="margin-bottom: 16px;">
+							<label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; color: #444;">Teléfono</label>
+							<input type="tel" id="prof-phone" style="width: 100%; padding: 10px 14px; border: 1px solid #dcd6cd; border-radius: 8px; box-sizing: border-box;">
+						</div>
+						<div style="margin-bottom: 22px;">
+							<label style="display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; color: #444;">Dirección de Envío (Calle, Número, Colonia, CP, Ciudad)</label>
+							<textarea id="prof-address" rows="3" placeholder="Ej: Av. Vallarta 1234, Col. Americana, CP 44160, Guadalajara, Jal." style="width: 100%; padding: 10px 14px; border: 1px solid #dcd6cd; border-radius: 8px; box-sizing: border-box; font-family: inherit;"></textarea>
+						</div>
+						<button type="submit" style="background: #2b2b2b; color: #fff; border: none; padding: 12px 24px; border-radius: 25px; font-weight: bold; cursor: pointer;">Guardar Cambios</button>
+					</form>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- LÓGICA DE CONTROL DEL CLIENTE (JS) -->
+	<script>
+		function showAuthTab(tab) {
+			const formLogin = document.getElementById('form-login');
+			const formReg = document.getElementById('form-register');
+			const formForgot = document.getElementById('form-forgot');
+			const tabLogin = document.getElementById('tab-btn-login');
+			const tabReg = document.getElementById('tab-btn-register');
+
+			formLogin.style.display = 'none';
+			formReg.style.display = 'none';
+			formForgot.style.display = 'none';
+			tabLogin.style.borderBottomColor = 'transparent';
+			tabLogin.style.color = '#888';
+			tabReg.style.borderBottomColor = 'transparent';
+			tabReg.style.color = '#888';
+
+			if (tab === 'login') {
+				formLogin.style.display = 'block';
+				tabLogin.style.borderBottomColor = '#c58d58';
+				tabLogin.style.color = '#2b2b2b';
+			} else if (tab === 'register') {
+				formReg.style.display = 'block';
+				tabReg.style.borderBottomColor = '#c58d58';
+				tabReg.style.color = '#2b2b2b';
+			} else if (tab === 'forgot') {
+				formForgot.style.display = 'block';
+			}
+		}
+
+		function showDashboardSection(sec) {
+			document.querySelectorAll('.dash-sec').forEach(el => el.style.display = 'none');
+			document.querySelectorAll('.dash-tab-btn').forEach(btn => {
+				btn.style.borderBottomColor = 'transparent';
+				btn.style.color = '#777';
+			});
+
+			const activeSec = document.getElementById('dsec-' + sec);
+			const activeBtn = document.getElementById('dtab-' + sec);
+			if (activeSec) activeSec.style.display = 'block';
+			if (activeBtn) {
+				activeBtn.style.borderBottomColor = '#c58d58';
+				activeBtn.style.color = '#2b2b2b';
+			}
+		}
+
+		function checkAuth() {
+			const userStr = localStorage.getItem('sein_current_user');
+			const authBox = document.getElementById('sein-auth-container');
+			const dashBox = document.getElementById('sein-dashboard-container');
+			if (userStr) {
+				const user = JSON.parse(userStr);
+				authBox.style.display = 'none';
+				dashBox.style.display = 'block';
+				document.getElementById('user-display-name').textContent = user.name || 'Cliente';
+				document.getElementById('prof-name').value = user.name || '';
+				document.getElementById('prof-email').value = user.email || '';
+				document.getElementById('prof-phone').value = user.phone || '';
+				document.getElementById('prof-address').value = user.address || '';
+			} else {
+				authBox.style.display = 'block';
+				dashBox.style.display = 'none';
+			}
+		}
+
+		function handleLogin(e) {
+			e.preventDefault();
+			const email = document.getElementById('login-email').value.trim();
+			const pass = document.getElementById('login-password').value;
+
+			const users = JSON.parse(localStorage.getItem('sein_users') || '[]');
+			const found = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+			if (found && found.password === pass) {
+				localStorage.setItem('sein_current_user', JSON.stringify(found));
+				checkAuth();
+			} else if (!found) {
+				// Crear sesión demo si no existe para facilitar pruebas
+				const newUser = { name: email.split('@')[0], email: email, password: pass, phone: '33 2944 2880', address: '' };
+				users.push(newUser);
+				localStorage.setItem('sein_users', JSON.stringify(users));
+				localStorage.setItem('sein_current_user', JSON.stringify(newUser));
+				checkAuth();
+			} else {
+				alert('Contraseña incorrecta. Inténtalo de nuevo.');
+			}
+		}
+
+		function handleRegister(e) {
+			e.preventDefault();
+			const name = document.getElementById('reg-name').value.trim();
+			const email = document.getElementById('reg-email').value.trim();
+			const phone = document.getElementById('reg-phone').value.trim();
+			const password = document.getElementById('reg-password').value;
+
+			const users = JSON.parse(localStorage.getItem('sein_users') || '[]');
+			if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+				alert('Este correo ya se encuentra registrado. Por favor inicia sesión.');
+				showAuthTab('login');
+				return;
+			}
+
+			const newUser = { name, email, phone, password, address: '' };
+			users.push(newUser);
+			localStorage.setItem('sein_users', JSON.stringify(users));
+			localStorage.setItem('sein_current_user', JSON.stringify(newUser));
+			alert('¡Tu cuenta en SEIN ha sido creada exitosamente! 🎉');
+			checkAuth();
+		}
+
+		function handleForgotPassword(e) {
+			e.preventDefault();
+			const email = document.getElementById('forgot-email').value.trim();
+			alert('Se ha enviado un enlace de restablecimiento a: ' + email + '. Por favor revisa tu bandeja de entrada o WhatsApp.');
+			showAuthTab('login');
+		}
+
+		function handleUpdateProfile(e) {
+			e.preventDefault();
+			const userStr = localStorage.getItem('sein_current_user');
+			if (!userStr) return;
+			const user = JSON.parse(userStr);
+			user.name = document.getElementById('prof-name').value.trim();
+			user.phone = document.getElementById('prof-phone').value.trim();
+			user.address = document.getElementById('prof-address').value.trim();
+
+			localStorage.setItem('sein_current_user', JSON.stringify(user));
+
+			const users = JSON.parse(localStorage.getItem('sein_users') || '[]');
+			const idx = users.findIndex(u => u.email === user.email);
+			if (idx !== -1) {
+				users[idx] = user;
+				localStorage.setItem('sein_users', JSON.stringify(users));
+			}
+
+			alert('¡Información de perfil y envío actualizada con éxito! 🌿');
+			checkAuth();
+		}
+
+		function handleLogout() {
+			localStorage.removeItem('sein_current_user');
+			checkAuth();
+		}
+
+		// Ejecutar verificación de autenticación al cargar
+		document.addEventListener('DOMContentLoaded', checkAuth);
+		checkAuth();
+	</script>
 
 	
 </main>
