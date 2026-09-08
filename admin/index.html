@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración | SEIN</title>
+    <link rel="icon" href="/wp-content/uploads/2024/10/favicon-1-100x100.png" sizes="32x32">
+    <style>
+        :root {
+            --primary: #c58d58;
+            --primary-dark: #a37243;
+            --dark: #23272d;
+            --sidebar: #1e2227;
+            --light: #f7f8fa;
+            --border: #e3e6eb;
+            --text: #333d47;
+            --success: #28a745;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --danger: #dc3545;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--light); color: var(--text); display: flex; min-height: 100vh; }
+        
+        /* Sidebar */
+        #sidebar {
+            width: 260px;
+            background: var(--sidebar);
+            color: #cfd6df;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        .brand {
+            padding: 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand img { height: 32px; filter: brightness(0) invert(1); }
+        .brand-title { font-size: 1.15rem; font-weight: bold; color: #ffffff; }
+        .brand-badge { font-size: 0.7rem; background: var(--primary); color: #fff; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; font-weight: bold; }
+        
+        .nav-menu { list-style: none; padding: 20px 0; flex: 1; }
+        .nav-item { margin-bottom: 4px; }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            color: #a0aec0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,255,255,0.06);
+            color: #ffffff;
+            border-left-color: var(--primary);
+        }
+        .nav-link .icon { font-size: 1.2rem; }
+
+        /* Main Content */
+        #main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        header {
+            background: #ffffff;
+            padding: 16px 32px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-title h1 { font-size: 1.4rem; color: var(--dark); font-weight: 700; }
+        .header-title p { font-size: 0.85rem; color: #718096; margin-top: 2px; }
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+        .btn-store {
+            background: #f0ebe4;
+            color: var(--dark);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-store:hover { background: #e2dacd; }
+
+        .content-body { padding: 32px; }
+
+        /* Cards & Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .metric-card {
+            background: #ffffff;
+            padding: 22px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .metric-info h4 { font-size: 0.85rem; color: #718096; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+        .metric-info .val { font-size: 1.6rem; font-weight: bold; color: var(--dark); }
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: rgba(197, 141, 88, 0.12);
+            color: var(--primary);
+        }
+
+        /* Tables & Panels */
+        .panel {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .panel-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .panel-header h3 { font-size: 1.1rem; color: var(--dark); font-weight: 700; }
+        .panel-body { padding: 24px; }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background: #fafbfc; padding: 12px 16px; font-size: 0.82rem; color: #718096; text-transform: uppercase; font-weight: 600; border-bottom: 1px solid var(--border); }
+        td { padding: 14px 16px; font-size: 0.92rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        tr:hover td { background: #fdfdfd; }
+
+        /* Badges */
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .status-pending { background: #fff8e1; color: #f57f17; }
+        .status-shipping { background: #e1f5fe; color: #0288d1; }
+        .status-completed { background: #e8f5e9; color: #2e7d32; }
+        .status-cancelled { background: #ffebee; color: #c62828; }
+
+        /* Buttons & Forms */
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: #fff; }
+        .btn-sm:hover { background: #f0f0f0; }
+
+        .search-input {
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.88rem;
+            width: 250px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #4a5568; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.9rem; }
+
+        .tab-section { display: none; }
+        .tab-section.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+        <div class="brand">
+            <span style="font-size: 1.5rem;">🕯️</span>
+            <div>
+                <div class="brand-title">SEIN Admin</div>
+                <span class="brand-badge">Gestor Global</span>
+            </div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a class="nav-link active" onclick="switchSection('dashboard', this)">
+                    <span class="icon">📊</span> Resumen General
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="switchSection('orders', this)">
+                    <span class="icon">📦</span> Historial & Seguimiento
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="switchSection('products', this)">
+                    <span class="icon">🕯️</span> Catálogo de Productos
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="switchSection('customers', this)">
+                    <span class="icon">👥</span> Clientes Registrados
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="switchSection('reports', this)">
+                    <span class="icon">📈</span> Reporte de Ventas
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content">
+        <header>
+            <div class="header-title">
+                <h1 id="page-title">Resumen Ejecutivo</h1>
+                <p>Panel de Control Comercial & Operativo de SEIN</p>
+            </div>
+            <div class="header-actions">
+                <a href="/" target="_blank" class="btn-store">🛍️ Ir a la Tienda</a>
+                <a href="/mi-cuenta/" target="_blank" class="btn-store">👤 Portal Cliente</a>
+            </div>
+        </header>
+
+        <div class="content-body">
+            
+            <!-- 1. DASHBOARD OVERVIEW -->
+            <section id="sec-dashboard" class="tab-section active">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-info">
+                            <h4>Ventas Totales</h4>
+                            <div class="val" id="metric-sales">$18,450 MXN</div>
+                        </div>
+                        <div class="metric-icon">💵</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-info">
+                            <h4>Pedidos Activos</h4>
+                            <div class="val" id="metric-orders">14</div>
+                        </div>
+                        <div class="metric-icon">📦</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-info">
+                            <h4>Total Clientes</h4>
+                            <div class="val" id="metric-customers">48</div>
+                        </div>
+                        <div class="metric-icon">👥</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-info">
+                            <h4>Productos en Stock</h4>
+                            <div class="val" id="metric-products">26</div>
+                        </div>
+                        <div class="metric-icon">🕯️</div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Pedidos Recientes con Seguimiento</h3>
+                        <button class="btn-primary" onclick="switchSection('orders', document.querySelectorAll('.nav-link')[1])">Ver Todos los Pedidos</button>
+                    </div>
+                    <div class="panel-body" style="padding: 0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No. Pedido</th>
+                                    <th>Cliente</th>
+                                    <th>Productos</th>
+                                    <th>Total</th>
+                                    <th>Estatus</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-orders-tbody">
+                                <!-- Llenado dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. GESTIÓN & SEGUIMIENTO DE PEDIDOS -->
+            <section id="sec-orders" class="tab-section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Historial y Control de Seguimiento de Pedidos</h3>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" class="search-input" id="order-search" placeholder="Buscar por cliente o #pedido..." oninput="filterOrders()">
+                            <button class="btn-primary" onclick="openNewOrderModal()">+ Nuevo Pedido Manual</button>
+                        </div>
+                    </div>
+                    <div class="panel-body" style="padding: 0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th># Orden</th>
+                                    <th>Fecha</th>
+                                    <th>Cliente & WhatsApp</th>
+                                    <th>Detalle de Compra</th>
+                                    <th>Monto</th>
+                                    <th>Estatus de Seguimiento</th>
+                                    <th>Modificar Estatus</th>
+                                </tr>
+                            </thead>
+                            <tbody id="all-orders-tbody">
+                                <!-- Llenado dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. CATÁLOGO DE PRODUCTOS -->
+            <section id="sec-products" class="tab-section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Inventario y Catálogo de Productos</h3>
+                        <button class="btn-primary" onclick="addProductPrompt()">+ Añadir Producto</button>
+                    </div>
+                    <div class="panel-body" style="padding: 0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Categoría</th>
+                                    <th>Precio</th>
+                                    <th>Inventario</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-tbody">
+                                <!-- Llenado dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. CLIENTES REGISTRADOS -->
+            <section id="sec-customers" class="tab-section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Directorio de Clientes & Contactos</h3>
+                        <input type="text" class="search-input" id="customer-search" placeholder="Buscar cliente..." oninput="filterCustomers()">
+                    </div>
+                    <div class="panel-body" style="padding: 0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Correo Electrónico</th>
+                                    <th>WhatsApp / Teléfono</th>
+                                    <th>Dirección Registrada</th>
+                                    <th>Acción Directa</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customers-tbody">
+                                <!-- Llenado dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. REPORTE DE VENTAS -->
+            <section id="sec-reports" class="tab-section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Reporte Financiero y Rendimiento de Ventas</h3>
+                        <button class="btn-sm" onclick="alert('Generando exportación de reporte contable en formato CSV/PDF...')">📥 Exportar Reporte</button>
+                    </div>
+                    <div class="panel-body">
+                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+                            <div>
+                                <h4 style="margin-bottom: 15px; color: var(--dark);">Desglose por Categoría de Producto</h4>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem;">
+                                        <span>🕯️ Velas de Soja y Aromaterapia</span>
+                                        <strong>62% ($11,439 MXN)</strong>
+                                    </div>
+                                    <div style="background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden;">
+                                        <div style="background: var(--primary); width: 62%; height: 100%;"></div>
+                                    </div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem;">
+                                        <span>📖 Planners, Agendas & Libretas</span>
+                                        <strong>25% ($4,612 MXN)</strong>
+                                    </div>
+                                    <div style="background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden;">
+                                        <div style="background: #4a5568; width: 25%; height: 100%;"></div>
+                                    </div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem;">
+                                        <span>🎁 Kits y Personalizados para Eventos</span>
+                                        <strong>13% ($2,399 MXN)</strong>
+                                    </div>
+                                    <div style="background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden;">
+                                        <div style="background: #38a169; width: 13%; height: 100%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="background: #faf8f5; border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+                                <h4 style="margin-bottom: 12px; color: var(--dark);">Resumen del Periodo</h4>
+                                <p style="font-size: 0.88rem; color: #718096; margin-bottom: 8px;">Ticket Promedio: <strong>$615.00 MXN</strong></p>
+                                <p style="font-size: 0.88rem; color: #718096; margin-bottom: 8px;">Tasa de Conversión: <strong>4.8%</strong></p>
+                                <p style="font-size: 0.88rem; color: #718096; margin-bottom: 8px;">Canal Principal: <strong>WhatsApp Checkout (88%)</strong></p>
+                                <p style="font-size: 0.88rem; color: #718096; margin-bottom: 0;">Método Preferido: <strong>SPEI & Mercado Pago</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- LOGICA DEL PANEL ADMINISTRATIVO -->
+    <script>
+        // Datos iniciales demostrativos persistentes
+        let orders = JSON.parse(localStorage.getItem('sein_admin_orders') || 'null') || [
+            { id: "SN-84920", date: "2026-09-07", customer: "Miriam Castro", phone: "3329442880", items: "2x Vela Soja Lavanda, 1x Planner Semanal", total: 910.00, status: "En Tránsito" },
+            { id: "SN-84919", date: "2026-09-06", customer: "Carlos Mendoza", phone: "3312345678", items: "1x Vela Vainilla Canela", total: 280.00, status: "Entregado" },
+            { id: "SN-84918", date: "2026-09-06", customer: "Sofía Navarro", phone: "3398765432", items: "3x Vela Eucalipto Menta, 2x Organizador Gastos", total: 1540.00, status: "Preparando Envío" },
+            { id: "SN-84917", date: "2026-09-05", customer: "Alejandro Ruiz", phone: "3345678901", items: "1x Kit Eventos Personalizados (15 piezas)", total: 3450.00, status: "Entregado" },
+            { id: "SN-84916", date: "2026-09-04", customer: "Valeria Gómez", phone: "3376543210", items: "1x Planner Diario Organización", total: 350.00, status: "Entregado" }
+        ];
+
+        let products = JSON.parse(localStorage.getItem('sein_admin_products') || 'null') || [
+            { name: "Vela de Soja Artesanal Lavanda & Manzanilla", cat: "Velas de Soya", price: 280.00, stock: 45, status: "Disponible" },
+            { name: "Vela de Soja Vainilla & Canela Especiada", cat: "Velas de Soya", price: 280.00, stock: 38, status: "Disponible" },
+            { name: "Vela de Soja Eucalipto & Menta", cat: "Velas de Soya", price: 280.00, stock: 22, status: "Disponible" },
+            { name: "Planner Semanal de Metas & Organización", cat: "Planners & Agendas", price: 350.00, stock: 60, status: "Disponible" },
+            { name: "Organizador de Gastos y Presupuestos", cat: "Planners & Agendas", price: 290.00, stock: 30, status: "Disponible" },
+            { name: "Kit de Velas Personalizadas para Eventos", cat: "Eventos", price: 1250.00, stock: 15, status: "Disponible" }
+        ];
+
+        function saveAll() {
+            localStorage.setItem('sein_admin_orders', JSON.stringify(orders));
+            localStorage.setItem('sein_admin_products', JSON.stringify(products));
+            renderAll();
+        }
+
+        function switchSection(secId, elem) {
+            document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            
+            const target = document.getElementById('sec-' + secId);
+            if (target) target.classList.add('active');
+            if (elem) elem.classList.add('active');
+
+            const titles = {
+                dashboard: "Resumen Ejecutivo",
+                orders: "Historial y Seguimiento de Pedidos",
+                products: "Inventario y Catálogo de Productos",
+                customers: "Directorio de Clientes",
+                reports: "Reportes Financieros de Ventas"
+            };
+            document.getElementById('page-title').textContent = titles[secId] || "Panel de Administración";
+        }
+
+        function getStatusBadge(status) {
+            if (status === "Entregado") return '<span class="status-badge status-completed">✅ Entregado</span>';
+            if (status === "En Tránsito") return '<span class="status-badge status-shipping">🚚 En Tránsito</span>';
+            if (status === "Preparando Envío") return '<span class="status-badge status-pending">📦 Preparando Envío</span>';
+            return '<span class="status-badge status-cancelled">❌ Cancelado</span>';
+        }
+
+        function renderAll() {
+            // Render Pedidos Recientes
+            const recentTbody = document.getElementById('recent-orders-tbody');
+            recentTbody.innerHTML = '';
+            orders.slice(0, 4).forEach(o => {
+                recentTbody.innerHTML += `
+                    <tr>
+                        <td><strong>${o.id}</strong></td>
+                        <td>${o.customer}</td>
+                        <td>${o.items}</td>
+                        <td><strong>$${o.total.toFixed(2)} MXN</strong></td>
+                        <td>${getStatusBadge(o.status)}</td>
+                        <td><a href="https://wa.me/521${o.phone}?text=Hola%20${encodeURIComponent(o.customer)},%20te%20escribimos%20de%20SEIN%20respecto%20a%20tu%20orden%20${o.id}" target="_blank" class="btn-sm">💬 WhatsApp</a></td>
+                    </tr>
+                `;
+            });
+
+            // Render Todos los Pedidos
+            const allTbody = document.getElementById('all-orders-tbody');
+            allTbody.innerHTML = '';
+            orders.forEach((o, index) => {
+                allTbody.innerHTML += `
+                    <tr>
+                        <td><strong>${o.id}</strong></td>
+                        <td>${o.date}</td>
+                        <td>${o.customer}<br><small style="color:#718096;">+52 ${o.phone}</small></td>
+                        <td>${o.items}</td>
+                        <td><strong>$${o.total.toFixed(2)} MXN</strong></td>
+                        <td>${getStatusBadge(o.status)}</td>
+                        <td>
+                            <select onchange="updateOrderStatus(${index}, this.value)" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); font-size: 0.82rem;">
+                                <option value="Preparando Envío" ${o.status === 'Preparando Envío' ? 'selected' : ''}>Preparando Envío</option>
+                                <option value="En Tránsito" ${o.status === 'En Tránsito' ? 'selected' : ''}>En Tránsito</option>
+                                <option value="Entregado" ${o.status === 'Entregado' ? 'selected' : ''}>Entregado</option>
+                                <option value="Cancelado" ${o.status === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Render Productos
+            const prodTbody = document.getElementById('products-tbody');
+            prodTbody.innerHTML = '';
+            products.forEach((p, idx) => {
+                prodTbody.innerHTML += `
+                    <tr>
+                        <td><strong>${p.name}</strong></td>
+                        <td>${p.cat}</td>
+                        <td>$${p.price.toFixed(2)} MXN</td>
+                        <td>${p.stock} unidades</td>
+                        <td><span class="status-badge status-completed">${p.status}</span></td>
+                        <td>
+                            <button class="btn-sm" onclick="editStock(${idx})">Ajustar Stock</button>
+                            <button class="btn-sm" style="color:red;" onclick="deleteProduct(${idx})">&times;</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Render Clientes
+            const users = JSON.parse(localStorage.getItem('sein_users') || '[]');
+            const custTbody = document.getElementById('customers-tbody');
+            custTbody.innerHTML = '';
+            
+            // Combinar clientes demostrativos y registrados
+            const allCust = [
+                { name: "Miriam Castro", email: "miriam@ejemplo.com", phone: "33 2944 2880", address: "Av. Vallarta 1234, Guadalajara, Jal." },
+                { name: "Carlos Mendoza", email: "carlos@ejemplo.com", phone: "33 1234 5678", address: "Col. Americana, Guadalajara, Jal." },
+                { name: "Sofía Navarro", email: "sofia@ejemplo.com", phone: "33 9876 5432", address: "Zapopan, Jal." },
+                ...users
+            ];
+
+            allCust.forEach(c => {
+                custTbody.innerHTML += `
+                    <tr>
+                        <td><strong>${c.name}</strong></td>
+                        <td>${c.email}</td>
+                        <td>${c.phone || 'N/A'}</td>
+                        <td>${c.address || 'Pendiente de registrar'}</td>
+                        <td><a href="https://wa.me/521${(c.phone||'').replace(/[^0-9]/g,'')}?text=Hola%20${encodeURIComponent(c.name)},%20te%20saludamos%20de%20SEIN%20🕯️" target="_blank" class="btn-sm">Contactar</a></td>
+                    </tr>
+                `;
+            });
+
+            // Actualizar Métricas
+            const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+            document.getElementById('metric-sales').textContent = '$' + totalRevenue.toLocaleString('es-MX', {minimumFractionDigits: 2}) + ' MXN';
+            document.getElementById('metric-orders').textContent = orders.length;
+            document.getElementById('metric-customers').textContent = allCust.length;
+            document.getElementById('metric-products').textContent = products.length;
+        }
+
+        function updateOrderStatus(idx, newStatus) {
+            orders[idx].status = newStatus;
+            saveAll();
+            alert('Estatus del pedido #' + orders[idx].id + ' actualizado a: ' + newStatus);
+        }
+
+        function openNewOrderModal() {
+            const client = prompt("Nombre del Cliente:");
+            if (!client) return;
+            const items = prompt("Productos y detalles del pedido:");
+            const total = parseFloat(prompt("Total en MXN:", "500")) || 0;
+            const newOrd = {
+                id: "SN-" + Math.floor(10000 + Math.random() * 90000),
+                date: new Date().toISOString().split('T')[0],
+                customer: client,
+                phone: "3329442880",
+                items: items || "Velas de Soja Artesanales",
+                total: total,
+                status: "Preparando Envío"
+            };
+            orders.unshift(newOrd);
+            saveAll();
+            alert("Pedido " + newOrd.id + " creado exitosamente.");
+        }
+
+        function addProductPrompt() {
+            const name = prompt("Nombre del Producto:");
+            if (!name) return;
+            const price = parseFloat(prompt("Precio en MXN:", "280")) || 280;
+            const cat = prompt("Categoría (Velas de Soya / Planners / Eventos):", "Velas de Soya");
+            const stock = parseInt(prompt("Cantidad en inventario:", "30")) || 30;
+            products.push({ name, cat, price, stock, status: "Disponible" });
+            saveAll();
+        }
+
+        function editStock(idx) {
+            const newStock = prompt("Nuevo inventario para " + products[idx].name + ":", products[idx].stock);
+            if (newStock !== null) {
+                products[idx].stock = parseInt(newStock) || 0;
+                saveAll();
+            }
+        }
+
+        function deleteProduct(idx) {
+            if (confirm("¿Seguro que deseas eliminar " + products[idx].name + "?")) {
+                products.splice(idx, 1);
+                saveAll();
+            }
+        }
+
+        function filterOrders() {
+            const query = document.getElementById('order-search').value.toLowerCase();
+            document.querySelectorAll('#all-orders-tbody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+            });
+        }
+
+        function filterCustomers() {
+            const query = document.getElementById('customer-search').value.toLowerCase();
+            document.querySelectorAll('#customers-tbody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', renderAll);
+        renderAll();
+    </script>
+</body>
+</html>
