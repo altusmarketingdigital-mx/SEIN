@@ -203,6 +203,37 @@
 
         .tab-section { display: none; }
         .tab-section.active { display: block; }
+
+        /* Switch Toggle */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 28px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        input:checked + .slider { background-color: #28a745; }
+        input:checked + .slider:before { transform: translateX(24px); }
     </style>
 
 <style id="sein-menu-single-line-fix">
@@ -348,6 +379,11 @@
             <li class="nav-item">
                 <a class="nav-link" onclick="switchSection('customers', this)">
                     <span class="icon">👥</span> Clientes Registrados
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" onclick="switchSection('payments', this)">
+                    <span class="icon">💳</span> Métodos de Pago
                 </a>
             </li>
             <li class="nav-item">
@@ -516,7 +552,85 @@
                 </div>
             </section>
 
-            <!-- 5. REPORTE DE VENTAS -->
+            <!-- 5. GESTIÓN Y ACTIVACIÓN DE MÉTODOS DE PAGO -->
+            <section id="sec-payments" class="tab-section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h3>Pasarelas y Métodos de Pago Disponibles</h3>
+                            <p style="font-size: 0.85rem; color: #718096; margin-top: 3px;">Activa o desactiva en tiempo real las formas de pago que ven los clientes en el Checkout y Portal</p>
+                        </div>
+                        <button class="btn-primary" onclick="savePaymentSettings()">💾 Guardar Configuración</button>
+                    </div>
+                    <div class="panel-body">
+                        <div style="display: grid; gap: 20px;">
+                            
+                            <!-- WhatsApp Checkout -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: #faf8f5; border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px;">
+                                <div style="display: flex; align-items: center; gap: 18px;">
+                                    <div style="font-size: 2.2rem;">💬</div>
+                                    <div>
+                                        <h4 style="color: var(--dark); font-size: 1.05rem; margin-bottom: 4px;">WhatsApp Checkout Asistido</h4>
+                                        <p style="color: #718096; font-size: 0.88rem;">Envío consolidado del pedido a WhatsApp (+52 33 2944 2880) para asesoría y atención directa.</p>
+                                    </div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="pay-toggle-whatsapp" checked onchange="togglePaymentMethod('whatsapp', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <!-- Transferencia SPEI -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: #faf8f5; border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px;">
+                                <div style="display: flex; align-items: center; gap: 18px;">
+                                    <div style="font-size: 2.2rem;">⚡</div>
+                                    <div>
+                                        <h4 style="color: var(--dark); font-size: 1.05rem; margin-bottom: 4px;">Transferencia Bancaria Directa (SPEI)</h4>
+                                        <p style="color: #718096; font-size: 0.88rem;">Cobro interbancario sin comisiones mediante CLABE y comprobante.</p>
+                                    </div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="pay-toggle-spei" checked onchange="togglePaymentMethod('spei', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <!-- Tarjetas de Crédito / Débito (Mercado Pago) -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: #faf8f5; border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px;">
+                                <div style="display: flex; align-items: center; gap: 18px;">
+                                    <div style="font-size: 2.2rem;">💳</div>
+                                    <div>
+                                        <h4 style="color: var(--dark); font-size: 1.05rem; margin-bottom: 4px;">Tarjeta de Crédito y Débito (Mercado Pago Checkout Pro)</h4>
+                                        <p style="color: #718096; font-size: 0.88rem;">Visa, Mastercard, AMEX y Meses Sin Intereses con enlace seguro.</p>
+                                    </div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="pay-toggle-card" checked onchange="togglePaymentMethod('card', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <!-- OXXO Pay -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: #faf8f5; border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px;">
+                                <div style="display: flex; align-items: center; gap: 18px;">
+                                    <div style="font-size: 2.2rem;">🏪</div>
+                                    <div>
+                                        <h4 style="color: var(--dark); font-size: 1.05rem; margin-bottom: 4px;">Depósito en Efectivo (OXXO Pay)</h4>
+                                        <p style="color: #718096; font-size: 0.88rem;">Generación de referencia de pago en efectivo en sucursales OXXO.</p>
+                                    </div>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="pay-toggle-oxxo" checked onchange="togglePaymentMethod('oxxo', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. REPORTE DE VENTAS -->
             <section id="sec-reports" class="tab-section">
                 <div class="panel">
                     <div class="panel-header">
@@ -796,6 +910,31 @@
             }
         }
 
+        // Control de Métodos de Pago
+        let paymentMethods = JSON.parse(localStorage.getItem('sein_payment_settings') || 'null') || {
+            whatsapp: true,
+            spei: true,
+            card: true,
+            oxxo: true
+        };
+
+        function renderPaymentSettings() {
+            document.getElementById('pay-toggle-whatsapp').checked = paymentMethods.whatsapp !== false;
+            document.getElementById('pay-toggle-spei').checked = paymentMethods.spei !== false;
+            document.getElementById('pay-toggle-card').checked = paymentMethods.card !== false;
+            document.getElementById('pay-toggle-oxxo').checked = paymentMethods.oxxo !== false;
+        }
+
+        function togglePaymentMethod(methodKey, isEnabled) {
+            paymentMethods[methodKey] = isEnabled;
+            localStorage.setItem('sein_payment_settings', JSON.stringify(paymentMethods));
+        }
+
+        function savePaymentSettings() {
+            localStorage.setItem('sein_payment_settings', JSON.stringify(paymentMethods));
+            alert('¡Configuración de pasarelas y métodos de pago guardada exitosamente! 💳');
+        }
+
         function handleAdminLogout() {
             sessionStorage.removeItem('sein_admin_authenticated');
             checkAdminAuth();
@@ -803,9 +942,11 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             checkAdminAuth();
+            renderPaymentSettings();
             renderAll();
         });
         checkAdminAuth();
+        renderPaymentSettings();
         renderAll();
     </script>
 </body>
