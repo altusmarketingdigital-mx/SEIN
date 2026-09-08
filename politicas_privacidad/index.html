@@ -283,38 +283,91 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
 		<link rel="stylesheet" href="https://use.typekit.net/yys8gin.css">
 
 <style id="sein-menu-single-line-fix">
-  /* Forzar Header y Menu en una sola linea */
+  /* HEADER & MENU PERFECTAMENTE BALANCEADO EN UNA SOLA FILA */
+  header.elementor-590 {
+    width: 100% !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #f0ebe4 !important;
+    position: relative !important;
+    z-index: 9999 !important;
+  }
   .elementor-590 .elementor-element.elementor-element-2b538268 {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    max-width: 1280px !important;
+    margin: 0 auto !important;
+    padding: 10px 24px !important;
+    min-height: 80px !important;
+  }
+  /* LOGO SEIN: Tamaño controlado para no romper el header */
+  .elementor-590 .elementor-element.elementor-element-25d1dba9,
+  .elementor-590 .elementor-element.elementor-element-7ab1baa {
+    width: auto !important;
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  .elementor-590 .elementor-element.elementor-element-25d1dba9 img,
+  .elementor-590 .elementor-element.elementor-element-7ab1baa img,
+  .elementor-590 .elementor-widget-image img {
+    max-width: 170px !important;
+    height: auto !important;
+    max-height: 50px !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+  /* MENU DE NAVEGACIÓN CENTRADO */
+  .elementor-590 .elementor-element.elementor-element-64d35e14,
+  .elementor-590 .elementor-element.elementor-element-b8432bb {
+    width: auto !important;
+    flex: 1 1 auto !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  .elementor-590 .elementor-nav-menu--main {
+    display: flex !important;
     flex-wrap: nowrap !important;
     align-items: center !important;
   }
-  .elementor-590 .elementor-element.elementor-element-25d1dba9 {
-    width: auto !important;
-    flex-shrink: 0 !important;
-  }
-  .elementor-590 .elementor-element.elementor-element-64d35e14 {
-    width: auto !important;
-    flex-grow: 1 !important;
-    justify-content: center !important;
-  }
-  .elementor-590 .elementor-element.elementor-element-407d4c6b {
-    width: auto !important;
-    flex-shrink: 0 !important;
-  }
-  .elementor-nav-menu--main {
-    white-space: nowrap !important;
+  .elementor-590 .elementor-nav-menu--main .elementor-nav-menu {
     display: flex !important;
+    flex-direction: row !important;
     flex-wrap: nowrap !important;
+    gap: 16px !important;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    align-items: center !important;
   }
-  .elementor-nav-menu--main .elementor-nav-menu {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    gap: 12px !important;
-  }
-  .elementor-nav-menu--main .elementor-item {
-    padding: 8px 10px !important;
-    font-size: 0.92rem !important;
+  .elementor-590 .elementor-nav-menu--main .elementor-item {
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    color: #4a4a4a !important;
+    text-decoration: none !important;
     white-space: nowrap !important;
+    padding: 6px 4px !important;
+  }
+  .elementor-590 .elementor-nav-menu--main .elementor-item:hover,
+  .elementor-590 .elementor-nav-menu--main .elementor-item.elementor-item-active {
+    color: #c58d58 !important;
+  }
+  /* ACCIONES Y CARRITO */
+  .elementor-590 .elementor-element.elementor-element-407d4c6b,
+  .elementor-590 .elementor-element.elementor-element-fa94a79 {
+    width: auto !important;
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  /* OCULTAR HEADER SECUNDARIO DUPLICADO EN DESKTOP */
+  @media (min-width: 768px) {
+    .elementor-590 .elementor-element.elementor-element-bdfa93e {
+      display: none !important;
+    }
   }
 </style>
 </head>
