@@ -1,0 +1,66 @@
+﻿# ==============================================================================
+# SEGURIDAD Y RENDIMIENTO WEB - SEINCO (.htaccess)
+# ==============================================================================
+
+# 1. Desactivar exploracion de directorios (Directory Browsing)
+Options -Indexes
+
+# 2. Bloquear acceso a archivos sensibles, configuraciones y respaldos
+<FilesMatch "(^\.|\.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist|env|git|zip|tar|gz|json|lock|md))$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# 3. Cabeceras de Seguridad HTTP (Security Headers)
+<IfModule mod_headers.c>
+    # Prevenir Clickjacking (no embeber en iframes externos)
+    Header set X-Frame-Options "SAMEORIGIN"
+    
+    # Prevenir sniffing de tipo MIME
+    Header set X-Content-Type-Options "nosniff"
+    
+    # Proteccion contra ataques XSS
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Politica de Referrer segura
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Politica de Permisos (Desactiva acceso a camara, microfono, geolocalizacion innecesaria)
+    Header set Permissions-Policy "geolocation=(), midi=(), camera=(), microphone=(), payment=()"
+    
+    # HSTS (Fuerza HTTPS por 1 año e incluye subdominios)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
+</IfModule>
+
+# 4. Redireccion obligatoria a HTTPS y URLs amigables
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Forzar HTTPS
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# 5. Compresion GZIP / Deflate para optimizar velocidad de carga
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json application/xml
+</IfModule>
+
+# 6. Cache de recursos estaticos en el navegador (Browser Caching)
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+</IfModule>

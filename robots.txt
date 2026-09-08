@@ -1,0 +1,13 @@
+﻿User-agent: *
+Allow: /
+
+# Bloquear indexacion de carpetas de recursos internos y respaldos
+Disallow: /_respaldos_seguridad/
+Disallow: /wp-includes/
+Disallow: /politicas_privacidad/
+Disallow: /mi-cuenta/
+Disallow: /finalizar-compra/
+Disallow: /carrito/
+
+# Ruta recomendada del Sitemap XML
+# Sitemap: https://tudominio.com/sitemap.xml

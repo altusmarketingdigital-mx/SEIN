@@ -1,0 +1,11 @@
+﻿# Ignorar respaldos pesados y zip
+_respaldos_seguridad/
+*.zip
+*.tar.gz
+*.rar
+
+# Ignorar archivos del sistema y logs
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
