@@ -1,0 +1,82 @@
+@font-face {
+	font-family: 'yith-wcbm-icons';
+	src: url('/wp-content/plugins/yith-woocommerce-badges-management/assets/fonts/yith-wcbm-icons.eot?qckuye');
+	src: url('/wp-content/plugins/yith-woocommerce-badges-management/assets/fonts/yith-wcbm-icons.eot?qckuye#iefix') format('embedded-opentype'),
+	url('/wp-content/plugins/yith-woocommerce-badges-management/assets/fonts/yith-wcbm-icons.ttf?qckuye') format('truetype'),
+	url('/wp-content/plugins/yith-woocommerce-badges-management/assets/fonts/yith-wcbm-icons.woff?qckuye') format('woff'),
+	url('/wp-content/plugins/yith-woocommerce-badges-management/assets/fonts/yith-wcbm-icons.svg?qckuye#yith-wcbm-icons') format('svg');
+	font-weight: normal;
+	font-style: normal;
+	font-display: block;
+}
+
+[class^="yith-wcbm-icon-"], [class*=" yith-wcbm-icon-"] {
+	/* use !important to prevent issues with browser extensions that change fonts */
+	font-family: 'yith-wcbm-icons' !important;
+	speak: never;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.yith-wcbm-icon-advanced-badge:before {
+	content: "\e900";
+}
+.yith-wcbm-icon-category-badge .path1:before {
+	content: "\e901";
+	color: rgb(125, 125, 125);
+}
+.yith-wcbm-icon-category-badge .path2:before {
+	content: "\e902";
+	margin-left: -1.0693359375em;
+	color: rgb(139, 139, 139);
+}
+.yith-wcbm-icon-category-badge .path3:before {
+	content: "\e903";
+	margin-left: -1.0693359375em;
+	color: rgb(125, 125, 125);
+}
+.yith-wcbm-icon-category-badge .path4:before {
+	content: "\e904";
+	margin-left: -1.0693359375em;
+	color: rgb(255, 255, 255);
+}
+.yith-wcbm-icon-category-badge .path5:before {
+	content: "\e905";
+	margin-left: -1.0693359375em;
+	color: rgb(125, 125, 125);
+}
+.yith-wcbm-icon-category-badge .path6:before {
+	content: "\e906";
+	margin-left: -1.0693359375em;
+	color: rgb(255, 255, 255);
+}
+.yith-wcbm-icon-dynamic-pricing-badge:before {
+	content: "\e907";
+}
+.yith-wcbm-icon-image-badge:before {
+	content: "\e908";
+}
+.yith-wcbm-icon-product-badge:before {
+	content: "\e909";
+	color: #8a8a8a;
+}
+.yith-wcbm-icon-shipping-badge:before {
+	content: "\e90a";
+	color: #7d7d7d;
+}
+.yith-wcbm-icon-svg-badge:before {
+	content: "\e90b";
+}
+.yith-wcbm-icon-tag-badge:before {
+	content: "\e90c";
+}
+.yith-wcbm-icon-text-badge:before {
+	content: "\e90d";
+}
