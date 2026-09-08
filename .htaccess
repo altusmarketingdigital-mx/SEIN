@@ -1,4 +1,4 @@
-﻿# ==============================================================================
+# ==============================================================================
 # SEGURIDAD Y RENDIMIENTO WEB - SEINCO (.htaccess)
 # ==============================================================================
 
@@ -37,13 +37,23 @@ Options -Indexes
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
 </IfModule>
 
-# 4. Redireccion obligatoria a HTTPS y URLs amigables
+# 4. Redireccion obligatoria a HTTPS y URLs amigables + Entrega automatica WebP
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
     # Forzar HTTPS
     RewriteCond %{HTTPS} off
     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Entrega transparente de imagenes WebP si el navegador lo soporta
+    RewriteCond %{HTTP_ACCEPT} image/webp
+    RewriteCond %{REQUEST_FILENAME} (.*)\.(jpe?g|png)$
+    RewriteCond %1.webp -f
+    RewriteRule (.+)\.(jpe?g|png)$ $1.webp [T=image/webp,E=accept:1,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header append Vary Accept env=REDIRECT_accept
 </IfModule>
 
 # 5. Compresion GZIP / Deflate para optimizar velocidad de carga
@@ -54,13 +64,17 @@ Options -Indexes
 # 6. Cache de recursos estaticos en el navegador (Browser Caching)
 <IfModule mod_expires.c>
     ExpiresActive On
+    ExpiresByType image/webp "access plus 1 year"
     ExpiresByType image/jpg "access plus 1 year"
     ExpiresByType image/jpeg "access plus 1 year"
     ExpiresByType image/gif "access plus 1 year"
     ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/webp "access plus 1 year"
     ExpiresByType image/svg+xml "access plus 1 year"
     ExpiresByType text/css "access plus 1 month"
     ExpiresByType application/javascript "access plus 1 month"
-    ExpiresByType text/javascript "access plus 1 month"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
 </IfModule>
+
+# 7. Pagina personalizada de error 404
+ErrorDocument 404 /404.html
