@@ -391,6 +391,11 @@
                     <span class="icon">📈</span> Reporte de Ventas
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="showSection('sec-users')">
+                    <span class="icon">👤</span> Usuarios Admin
+                </a>
+            </li>
         </ul>
     </aside>
 
@@ -525,6 +530,34 @@
                     </div>
                 </div>
             </section>
+
+
+            <!-- SECCION USUARIOS ADMIN -->
+            <section id="sec-users" class="tab-section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Gestión de Usuarios del Panel</h3>
+                        <button class="btn-primary" onclick="openUserModal()">+ Nuevo Usuario</button>
+                    </div>
+                    <div class="panel-body" style="padding: 0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Usuario</th>
+                                    <th>Rol</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-admin-tbody">
+                                <tr><td colspan="5" style="text-align:center; padding:20px; color:#888;">Cargando usuarios...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            <!-- FIN SECCION USUARIOS ADMIN -->
 
             <!-- 4. CLIENTES REGISTRADOS -->
             <section id="sec-customers" class="tab-section">
@@ -881,14 +914,21 @@
             }
         }
 
-        function handleAdminLogin(e) {
+        async function handleAdminLogin(e) {
             e.preventDefault();
             const user = document.getElementById('admin-user-input').value.trim();
             const pass = document.getElementById('admin-pass-input').value;
+            const btn = e.submitter || document.querySelector('#login-form button[type=submit]') || document.querySelector('.login-btn');
+            if (btn) { btn.textContent = 'Verificando...'; btn.disabled = true; }
 
-            // Credenciales oficiales de administración de SEIN
-            if ((user.toLowerCase() === 'admin' || user.toLowerCase() === 'admin@sein.com') && pass === 'Sein2026*') {
+            // Verificar contra Supabase primero
+            const dbUser = await loginConSupabase(user, pass);
+
+            if (btn) { btn.textContent = 'Ingresar'; btn.disabled = false; }
+
+            if (dbUser) {
                 sessionStorage.setItem('sein_admin_authenticated', 'true');
+                sessionStorage.setItem('sein_admin_user', JSON.stringify(dbUser));
                 checkAdminAuth();
                 renderAll();
             } else {
@@ -1155,5 +1195,212 @@
 </script>
 <!-- FIN SECCION SUPABASE ADMIN -->
 
+
+<!-- Modal Usuario Admin -->
+<div id="editUserModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="user-modal-title">Nuevo Usuario</h3>
+        <input type="hidden" id="user-edit-id">
+        <div class="form-group">
+            <label>Nombre Completo</label>
+            <input type="text" id="user-nombre" placeholder="Ej. María González">
+        </div>
+        <div class="form-group">
+            <label>Nombre de Usuario (para login)</label>
+            <input type="text" id="user-usuario" placeholder="Ej. maria.gonzalez">
+        </div>
+        <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" id="user-password" placeholder="Mínimo 8 caracteres">
+        </div>
+        <div class="form-group">
+            <label>Rol</label>
+            <select id="user-rol">
+                <option value="superadmin">Super Admin (acceso total)</option>
+                <option value="editor" selected>Editor (gestión de productos)</option>
+                <option value="viewer">Visor (solo lectura)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Estado</label>
+            <select id="user-activo">
+                <option value="true">Activo</option>
+                <option value="false">Inactivo</option>
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-sm" style="background:#ccc; color:#333;" onclick="closeUserModal()">Cancelar</button>
+            <button class="btn-primary" id="user-save-btn" onclick="saveUserChanges()">Guardar Usuario</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ─── MÓDULO USUARIOS ADMIN ────────────────────────────────────────────────────
+let allAdminUsers = [];
+
+async function fetchAdminUsers() {
+    const res = await fetch(SUPABASE_URL + "/rest/v1/usuarios_admin?order=created_at", {
+        headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": "Bearer " + SUPABASE_KEY
+        }
+    });
+    allAdminUsers = await res.json();
+    renderAdminUsers(allAdminUsers);
+}
+
+function renderAdminUsers(users) {
+    const tbody = document.getElementById('users-admin-tbody');
+    if (!tbody) return;
+    if (!users || users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No hay usuarios registrados.</td></tr>';
+        return;
+    }
+    const rolLabels = { superadmin: '🔑 Super Admin', editor: '✏️ Editor', viewer: '👁️ Visor' };
+    tbody.innerHTML = users.map(u => `
+        <tr>
+            <td><strong>${u.nombre}</strong></td>
+            <td><code>${u.usuario}</code></td>
+            <td>${rolLabels[u.rol] || u.rol}</td>
+            <td><span class="status-badge ${u.activo ? 'status-completed' : 'status-cancelled'}">${u.activo ? 'Activo' : 'Inactivo'}</span></td>
+            <td>
+                <button class="btn-sm" onclick="openUserModal(${u.id})">✏️ Editar</button>
+                <button class="btn-sm" style="background:#dc3545; color:white; margin-left:5px;" onclick="deleteAdminUser(${u.id}, '${u.nombre.replace("'", "\'")}')">🗑️ Eliminar</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+window.openUserModal = function(id) {
+    document.getElementById('user-edit-id').value = '';
+    document.getElementById('user-nombre').value = '';
+    document.getElementById('user-usuario').value = '';
+    document.getElementById('user-password').value = '';
+    document.getElementById('user-rol').value = 'editor';
+    document.getElementById('user-activo').value = 'true';
+    document.getElementById('user-modal-title').textContent = 'Nuevo Usuario';
+    document.getElementById('user-password').required = true;
+
+    if (id) {
+        const u = allAdminUsers.find(x => x.id === id);
+        if (!u) return;
+        document.getElementById('user-edit-id').value = u.id;
+        document.getElementById('user-nombre').value = u.nombre;
+        document.getElementById('user-usuario').value = u.usuario;
+        document.getElementById('user-password').placeholder = 'Dejar vacío para mantener la actual';
+        document.getElementById('user-password').required = false;
+        document.getElementById('user-rol').value = u.rol;
+        document.getElementById('user-activo').value = u.activo ? 'true' : 'false';
+        document.getElementById('user-modal-title').textContent = 'Editar Usuario';
+    }
+
+    document.getElementById('editUserModal').style.display = 'flex';
+}
+
+window.closeUserModal = function() {
+    document.getElementById('editUserModal').style.display = 'none';
+}
+
+window.saveUserChanges = async function() {
+    const id = document.getElementById('user-edit-id').value;
+    const nombre = document.getElementById('user-nombre').value.trim();
+    const usuario = document.getElementById('user-usuario').value.trim();
+    const password = document.getElementById('user-password').value;
+    const rol = document.getElementById('user-rol').value;
+    const activo = document.getElementById('user-activo').value === 'true';
+
+    if (!nombre || !usuario) { alert('El nombre y el usuario son obligatorios.'); return; }
+    if (!id && !password) { alert('La contraseña es obligatoria para usuarios nuevos.'); return; }
+
+    const btn = document.getElementById('user-save-btn');
+    btn.textContent = 'Guardando...';
+    btn.disabled = true;
+
+    try {
+        const body = { nombre, usuario, rol, activo };
+        if (password) body.password = password;
+
+        if (id) {
+            // Actualizar
+            await fetch(SUPABASE_URL + "/rest/v1/usuarios_admin?id=eq." + id, {
+                method: 'PATCH',
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": "Bearer " + SUPABASE_KEY,
+                    "Content-Type": "application/json",
+                    "Prefer": "return=minimal"
+                },
+                body: JSON.stringify(body)
+            });
+            alert('Usuario actualizado con exito.');
+        } else {
+            // Crear nuevo
+            await fetch(SUPABASE_URL + "/rest/v1/usuarios_admin", {
+                method: 'POST',
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": "Bearer " + SUPABASE_KEY,
+                    "Content-Type": "application/json",
+                    "Prefer": "return=minimal"
+                },
+                body: JSON.stringify(body)
+            });
+            alert('Usuario creado con exito.');
+        }
+        closeUserModal();
+        fetchAdminUsers();
+    } catch (e) {
+        alert('Error: ' + e.message);
+    } finally {
+        btn.textContent = 'Guardar Usuario';
+        btn.disabled = false;
+    }
+}
+
+window.deleteAdminUser = async function(id, nombre) {
+    if (!confirm('¿Eliminar al usuario "' + nombre + '"? Esta accion no se puede deshacer.')) return;
+    try {
+        await fetch(SUPABASE_URL + "/rest/v1/usuarios_admin?id=eq." + id, {
+            method: 'DELETE',
+            headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization": "Bearer " + SUPABASE_KEY
+            }
+        });
+        alert('Usuario eliminado.');
+        fetchAdminUsers();
+    } catch(e) {
+        alert('Error al eliminar: ' + e.message);
+    }
+}
+
+// Cargar usuarios cuando se muestre la sección
+const origShowSection = window.showSection;
+window.showSection = function(id) {
+    if (typeof origShowSection === 'function') origShowSection(id);
+    if (id === 'sec-users') fetchAdminUsers();
+}
+
+// ─── LOGIN CONTRA SUPABASE ────────────────────────────────────────────────────
+async function loginConSupabase(usuario, password) {
+    try {
+        const url = SUPABASE_URL + "/rest/v1/usuarios_admin?usuario=eq." + encodeURIComponent(usuario) + "&activo=eq.true&select=id,nombre,usuario,rol,password";
+        const res = await fetch(url, {
+            headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization": "Bearer " + SUPABASE_KEY
+            }
+        });
+        const users = await res.json();
+        if (users && users.length > 0 && users[0].password === password) {
+            return users[0];
+        }
+        return null;
+    } catch(e) {
+        return null;
+    }
+}
+</script>
 </body>
 </html>
