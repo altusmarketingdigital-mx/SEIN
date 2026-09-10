@@ -203,6 +203,17 @@
 
         .tab-section { display: none; }
         .tab-section.active { display: block; }
+        .acciones-grupo {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 4px;
+            align-items: center;
+        }
+        .acciones-grupo .btn-sm {
+            white-space: nowrap;
+            padding: 5px 8px;
+            font-size: 12px;
+        }
 
         /* Switch Toggle */
         .switch {
@@ -1107,9 +1118,11 @@
                     <td>--</td>
                     <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                     <td>
-                        <button class="btn-sm" onclick="openEditModal(${p.id})">✏️ Editar</button>
-                        <button class="btn-sm" style="background:${p.activo ? '#ffc107' : '#28a745'}; color:${p.activo ? '#333' : 'white'}; margin-left:5px;" onclick="toggleProductoActivo(${p.id}, ${p.activo})">${p.activo ? '⏸ Desactivar' : '▶ Activar'}</button>
-                        <button class="btn-sm" style="background:#dc3545; color:white; margin-left:5px;" onclick="deleteSupabaseProduct(${p.id}, '${p.nombre.replace("'", "\'")}')">🗑️ Eliminar</button>
+                        <div class="acciones-grupo">
+                            <button class="btn-sm" onclick="openEditModal(${p.id})">✏️ Editar</button>
+                            <button class="btn-sm" style="background:${p.activo ? '#ffc107' : '#28a745'}; color:${p.activo ? '#333' : 'white'};" onclick="toggleProductoActivo(${p.id}, ${p.activo})">${p.activo ? '⏸ Desactivar' : '▶ Activar'}</button>
+                            <button class="btn-sm" style="background:#dc3545; color:white;" onclick="deleteSupabaseProduct(${p.id}, '${p.nombre.replace("'", "\\'")}')">🗑️ Eliminar</button>
+                        </div>
                     </td>
                 </tr>
             `;
