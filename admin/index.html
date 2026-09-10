@@ -779,21 +779,7 @@
             // Render Productos
             const prodTbody = document.getElementById('products-tbody');
             prodTbody.innerHTML = '';
-            products.forEach((p, idx) => {
-                prodTbody.innerHTML += `
-                    <tr>
-                        <td><strong>${p.name}</strong></td>
-                        <td>${p.cat}</td>
-                        <td>$${p.price.toFixed(2)} MXN</td>
-                        <td>${p.stock} unidades</td>
-                        <td><span class="status-badge status-completed">${p.status}</span></td>
-                        <td>
-                            <button class="btn-sm" onclick="editStock(${idx})">Ajustar Stock</button>
-                            <button class="btn-sm" style="color:red;" onclick="deleteProduct(${idx})">&times;</button>
-                        </td>
-                    </tr>
-                `;
-            });
+            // products rendered via Supabase now
 
             // Render Clientes
             const users = JSON.parse(localStorage.getItem('sein_users') || '[]');
@@ -949,5 +935,199 @@
         renderPaymentSettings();
         renderAll();
     </script>
+
+<!-- SECCION SUPABASE ADMIN -->
+<style>
+.admin-filter-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+.admin-filter-bar select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+.modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5); display: none;
+    align-items: center; justify-content: center; z-index: 1000;
+}
+.modal-content {
+    background: #fff; padding: 20px; border-radius: 8px; width: 400px;
+    max-width: 90%;
+}
+.modal-content h3 { margin-top: 0; margin-bottom: 15px; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+.form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+</style>
+
+<div id="editProductModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Editar Producto</h3>
+        <input type="hidden" id="edit-id">
+        <div class="form-group">
+            <label>Nombre</label>
+            <input type="text" id="edit-nombre">
+        </div>
+        <div class="form-group">
+            <label>Precio (ej. $149.00)</label>
+            <input type="text" id="edit-precio">
+        </div>
+        <div class="form-group">
+            <label>Categoría</label>
+            <input type="text" id="edit-categoria">
+        </div>
+        <div class="form-group">
+            <label>Estado</label>
+            <select id="edit-activo">
+                <option value="true">Activo (Visible)</option>
+                <option value="false">Inactivo (Oculto)</option>
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-sm" style="background:#ccc; color:#333;" onclick="closeEditModal()">Cancelar</button>
+            <button class="btn-primary" onclick="saveProductChanges()">Guardar Cambios</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SUPABASE_URL = "https://hyibazrenjtnswtebybb.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo";
+    let allSupabaseProducts = [];
+
+    async function fetchAdminProducts() {
+        const res = await fetch(SUPABASE_URL + "/rest/v1/productos?order=categoria,nombre", {
+            headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization": "Bearer " + SUPABASE_KEY
+            }
+        });
+        allSupabaseProducts = await res.json();
+        renderAdminProducts(allSupabaseProducts);
+        updateCategoryFilter();
+    }
+
+    function updateCategoryFilter() {
+        const cats = [...new Set(allSupabaseProducts.map(p => p.categoria).filter(Boolean))];
+        let select = document.getElementById('admin-cat-filter');
+        if(!select) {
+            const filterHTML = `
+                <div class="admin-filter-bar">
+                    <label>Filtrar por Categoría:</label>
+                    <select id="admin-cat-filter" onchange="filterAdminProducts()">
+                        <option value="todos">Todas las categorías</option>
+                        ${cats.map(c => `<option value="${c}">${c}</option>`).join('')}
+                    </select>
+                </div>
+            `;
+            const header = document.querySelector('#sec-products .panel-header');
+            header.insertAdjacentHTML('afterend', filterHTML);
+        }
+    }
+
+    window.filterAdminProducts = function() {
+        const cat = document.getElementById('admin-cat-filter').value;
+        if(cat === 'todos') renderAdminProducts(allSupabaseProducts);
+        else renderAdminProducts(allSupabaseProducts.filter(p => p.categoria === cat));
+    }
+
+    function renderAdminProducts(productsToRender) {
+        const tbody = document.getElementById('products-tbody');
+        if(!tbody) return;
+        tbody.innerHTML = '';
+        document.getElementById('metric-products').textContent = allSupabaseProducts.length;
+
+        // Group by category to display nicer
+        let currentCat = '';
+
+        productsToRender.forEach(p => {
+            if(p.categoria !== currentCat && document.getElementById('admin-cat-filter')?.value === 'todos') {
+                currentCat = p.categoria;
+                tbody.innerHTML += `
+                    <tr style="background-color: #f1f3f5;">
+                        <td colspan="6" style="font-weight: bold; color: #a37243; text-transform: uppercase;">📦 Categoría: ${currentCat}</td>
+                    </tr>
+                `;
+            }
+
+            const statusClass = p.activo ? 'status-completed' : 'status-cancelled';
+            const statusText = p.activo ? 'Activo' : 'Inactivo';
+            
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${p.nombre}</strong></td>
+                    <td>${p.categoria}</td>
+                    <td>${p.precio}</td>
+                    <td>--</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <button class="btn-sm" onclick="openEditModal(${p.id})">✏️ Editar</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    window.openEditModal = function(id) {
+        const p = allSupabaseProducts.find(x => x.id === id);
+        if(!p) return;
+        document.getElementById('edit-id').value = p.id;
+        document.getElementById('edit-nombre').value = p.nombre;
+        document.getElementById('edit-precio').value = p.precio;
+        document.getElementById('edit-categoria').value = p.categoria;
+        document.getElementById('edit-activo').value = p.activo ? 'true' : 'false';
+        document.getElementById('editProductModal').style.display = 'flex';
+    }
+
+    window.closeEditModal = function() {
+        document.getElementById('editProductModal').style.display = 'none';
+    }
+
+    window.saveProductChanges = async function() {
+        const id = document.getElementById('edit-id').value;
+        const nombre = document.getElementById('edit-nombre').value;
+        const precio = document.getElementById('edit-precio').value;
+        const categoria = document.getElementById('edit-categoria').value;
+        const activo = document.getElementById('edit-activo').value === 'true';
+
+        const btn = document.querySelector('.modal-actions .btn-primary');
+        btn.textContent = 'Guardando...';
+        btn.disabled = true;
+
+        try {
+            await fetch(SUPABASE_URL + "/rest/v1/productos?id=eq." + id, {
+                method: 'PATCH',
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": "Bearer " + SUPABASE_KEY,
+                    "Content-Type": "application/json",
+                    "Prefer": "return=minimal"
+                },
+                body: JSON.stringify({ nombre, precio, categoria, activo })
+            });
+            
+            alert('Producto actualizado con éxito!');
+            closeEditModal();
+            fetchAdminProducts(); // recargar
+        } catch (e) {
+            alert('Error al guardar: ' + e.message);
+        } finally {
+            btn.textContent = 'Guardar Cambios';
+            btn.disabled = false;
+        }
+    }
+
+    // Hook into existing init
+    document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(fetchAdminProducts, 500); // load after existing demo data
+    });
+</script>
+<!-- FIN SECCION SUPABASE ADMIN -->
+
 </body>
 </html>
