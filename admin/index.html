@@ -1108,6 +1108,7 @@
                     <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                     <td>
                         <button class="btn-sm" onclick="openEditModal(${p.id})">✏️ Editar</button>
+                        <button class="btn-sm" style="background:${p.activo ? '#ffc107' : '#28a745'}; color:${p.activo ? '#333' : 'white'}; margin-left:5px;" onclick="toggleProductoActivo(${p.id}, ${p.activo})">${p.activo ? '⏸ Desactivar' : '▶ Activar'}</button>
                         <button class="btn-sm" style="background:#dc3545; color:white; margin-left:5px;" onclick="deleteSupabaseProduct(${p.id}, '${p.nombre.replace("'", "\'")}')">🗑️ Eliminar</button>
                     </td>
                 </tr>
@@ -1164,6 +1165,28 @@
         }
     }
 
+
+    window.toggleProductoActivo = async function(id, estadoActual) {
+        const nuevoEstado = !estadoActual;
+        const accion = nuevoEstado ? 'activar' : 'desactivar';
+        if (!confirm(`¿Deseas ${accion} este producto? ${nuevoEstado ? 'Será visible en la tienda.' : 'Quedará oculto en la tienda.'}`)) return;
+
+        try {
+            await fetch(SUPABASE_URL + "/rest/v1/productos?id=eq." + id, {
+                method: 'PATCH',
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": "Bearer " + SUPABASE_KEY,
+                    "Content-Type": "application/json",
+                    "Prefer": "return=minimal"
+                },
+                body: JSON.stringify({ activo: nuevoEstado })
+            });
+            fetchAdminProducts(); // recargar tabla
+        } catch(e) {
+            alert('Error: ' + e.message);
+        }
+    }
 
     window.deleteSupabaseProduct = async function(id, nombre) {
         if(!confirm(`¿Estás seguro de que deseas eliminar permanentemente el producto "${nombre}"?`)) {
