@@ -1067,6 +1067,7 @@
                     <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                     <td>
                         <button class="btn-sm" onclick="openEditModal(${p.id})">✏️ Editar</button>
+                        <button class="btn-sm" style="background:#dc3545; color:white; margin-left:5px;" onclick="deleteSupabaseProduct(${p.id}, '${p.nombre.replace("'", "\'")}')">🗑️ Eliminar</button>
                     </td>
                 </tr>
             `;
@@ -1122,7 +1123,32 @@
         }
     }
 
+
+    window.deleteSupabaseProduct = async function(id, nombre) {
+        if(!confirm(`¿Estás seguro de que deseas eliminar permanentemente el producto "${nombre}"?`)) {
+            return;
+        }
+
+        try {
+            const res = await fetch(SUPABASE_URL + "/rest/v1/productos?id=eq." + id, {
+                method: 'DELETE',
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": "Bearer " + SUPABASE_KEY
+                }
+            });
+            
+            if(!res.ok) throw new Error("Error HTTP " + res.status);
+            
+            alert('Producto eliminado exitosamente.');
+            fetchAdminProducts(); // recargar
+        } catch (e) {
+            alert('Error al eliminar: ' + e.message);
+        }
+    }
+
     // Hook into existing init
+
     document.addEventListener("DOMContentLoaded", () => {
         setTimeout(fetchAdminProducts, 500); // load after existing demo data
     });
