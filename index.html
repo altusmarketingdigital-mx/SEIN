@@ -592,55 +592,6 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
 				</header>
 				<div data-elementor-type="wp-post" data-elementor-id="7" class="elementor elementor-7" data-elementor-post-type="page">
 				
-<!-- SECCION PORTADA NAVIDENA -->
-<style>
-.portada-navidena {
-    position: relative;
-    width: 100%;
-    max-height: 80vh;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.portada-navidena img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-}
-.portada-navidena-cta {
-    position: absolute;
-    bottom: 10%;
-    background-color: #920000;
-    color: white;
-    padding: 15px 40px;
-    font-size: 24px;
-    font-weight: bold;
-    text-transform: uppercase;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-}
-.portada-navidena-cta:hover {
-    background-color: #630000;
-    color: white;
-    transform: scale(1.05);
-}
-@media (max-width: 768px) {
-    .portada-navidena-cta {
-        font-size: 18px;
-        padding: 10px 25px;
-        bottom: 5%;
-    }
-}
-</style>
-<div class="portada-navidena">
-    <img src="/assets/images/banner_navidad.jpg" alt="Catálogo Navideño - SEIN">
-    <a href="/categoria-producto/kits-para-ocasiones-especiales/index.html" class="portada-navidena-cta">Ver Kits de Ocasiones Especiales</a>
-</div>
-<!-- FIN SECCION PORTADA NAVIDENA -->
 
 <div data-particle_enable="false" data-particle-mobile-disabled="false" class="elementor-element elementor-element-9f7da6d e-con-full elementor-hidden-mobile e-flex e-con e-parent" data-id="9f7da6d" data-element_type="container" data-e-type="container">
 				<div class="elementor-element elementor-element-cae4cee elementor--h-position-left elementor--v-position-top elementor-arrows-position-inside elementor-pagination-position-inside elementor-widget elementor-widget-slides" data-id="cae4cee" data-element_type="widget" data-e-type="widget" data-settings="{&quot;transition&quot;:&quot;fade&quot;,&quot;navigation&quot;:&quot;both&quot;,&quot;autoplay&quot;:&quot;yes&quot;,&quot;pause_on_hover&quot;:&quot;yes&quot;,&quot;pause_on_interaction&quot;:&quot;yes&quot;,&quot;autoplay_speed&quot;:5000,&quot;infinite&quot;:&quot;yes&quot;,&quot;transition_speed&quot;:500}" data-widget_type="slides.default">
@@ -1804,6 +1755,133 @@ const a=JSON.parse(document.getElementById("wp-emoji-settings").textContent),o=(
 </script>
 
 <script src='/sein-security-checkout.js' defer></script>
+
+<!-- POPUP NAVIDENO -->
+<style>
+#navidad-popup-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+#navidad-popup-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+#navidad-popup-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90vh;
+    background: transparent;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+#navidad-popup-overlay.show #navidad-popup-content {
+    transform: scale(1);
+}
+#navidad-popup-content img {
+    display: block;
+    max-width: 100%;
+    max-height: 85vh;
+    object-fit: contain;
+}
+#navidad-popup-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 35px;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    cursor: pointer;
+    z-index: 10;
+    line-height: 1;
+    background: rgba(0,0,0,0.3);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.3s ease;
+}
+#navidad-popup-close:hover {
+    background: rgba(0,0,0,0.8);
+}
+.navidad-popup-cta {
+    position: absolute;
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #920000;
+    color: white;
+    padding: 12px 30px;
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+    white-space: nowrap;
+}
+.navidad-popup-cta:hover {
+    background-color: #630000;
+    color: white;
+    transform: translateX(-50%) scale(1.05);
+}
+@media (max-width: 768px) {
+    .navidad-popup-cta {
+        font-size: 16px;
+        padding: 10px 20px;
+        bottom: 5%;
+    }
+}
+</style>
+<div id="navidad-popup-overlay">
+    <div id="navidad-popup-content">
+        <span id="navidad-popup-close">&times;</span>
+        <img src="/assets/images/banner_navidad.jpg" alt="Catálogo Navideño - SEIN">
+        <a href="/categoria-producto/kits-para-ocasiones-especiales/index.html" class="navidad-popup-cta">Ver Kits de Ocasiones Especiales</a>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Evitar multiples listeners si el script se carga dos veces
+    if(window.navidadPopupInit) return;
+    window.navidadPopupInit = true;
+
+    // Mostrar el popup despues de 1 segundo si no ha sido cerrado en esta sesion
+    if (!sessionStorage.getItem('navidadPopupClosed')) {
+        setTimeout(function() {
+            document.getElementById('navidad-popup-overlay').classList.add('show');
+        }, 1000); 
+    }
+    
+    // Cerrar al clickear la X
+    document.getElementById('navidad-popup-close').addEventListener('click', function() {
+        document.getElementById('navidad-popup-overlay').classList.remove('show');
+        sessionStorage.setItem('navidadPopupClosed', 'true');
+    });
+    
+    // Cerrar al clickear el fondo oscuro
+    document.getElementById('navidad-popup-overlay').addEventListener('click', function(e) {
+        if(e.target === this) {
+            this.classList.remove('show');
+            sessionStorage.setItem('navidadPopupClosed', 'true');
+        }
+    });
+});
+</script>
+<!-- FIN POPUP NAVIDENO -->
 </body>
 </html>
 
