@@ -1,6 +1,6 @@
 (function() {
     // Número oficial de WhatsApp de SEIN
-    const whatsappPhone = "5213329442880";
+    const whatsappPhone = "5213334636538";
 
     // 1. Proteger enlaces externos
     document.querySelectorAll('a[target="_blank"]').forEach(link => {
