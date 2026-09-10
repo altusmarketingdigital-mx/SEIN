@@ -1393,7 +1393,221 @@ const a=JSON.parse(document.getElementById("wp-emoji-settings").textContent),o=(
 </script>
 
 <script src='/sein-security-checkout.js' defer></script>
+
+<!-- SECCION DINAMICA SUPABASE -->
+<style>
+#sein-supabase-store {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: inherit;
+}
+#sein-supabase-store h2 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #2b2b2b;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.sein-category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+.sein-filter-btn {
+  padding: 8px 20px;
+  border: 2px solid #2b2b2b;
+  background: transparent;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  color: #2b2b2b;
+}
+.sein-filter-btn:hover, .sein-filter-btn.active {
+  background: #2b2b2b;
+  color: #fff;
+}
+.sein-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+}
+.sein-product-card {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.sein-product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+}
+.sein-product-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+.sein-product-card .sein-card-body {
+  padding: 16px;
+}
+.sein-product-card .sein-card-nombre {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2b2b2b;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.sein-product-card .sein-card-categoria {
+  font-size: 12px;
+  color: #a3875e;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.sein-product-card .sein-card-precio {
+  font-size: 18px;
+  font-weight: 800;
+  color: #2b2b2b;
+}
+.sein-btn-comprar {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 0;
+  background: #2b2b2b;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.sein-btn-comprar:hover {
+  background: #a3875e;
+}
+.sein-loading {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 18px;
+  color: #888;
+}
+@media (max-width: 600px) {
+  .sein-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .sein-product-card img {
+    height: 160px;
+  }
+}
+</style>
+
+<div id="sein-supabase-store">
+  <h2>Todos los Productos</h2>
+  <div class="sein-category-filter" id="sein-filtros">
+    <button class="sein-filter-btn active" data-cat="todos">Todos</button>
+  </div>
+  <div class="sein-products-grid" id="sein-products-grid">
+    <div class="sein-loading">Cargando productos...</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const SUPABASE_URL = "https://hyibazrenjtnswtebybb.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo";
+
+  async function fetchProducts(categoria) {
+    let url = SUPABASE_URL + "/rest/v1/productos?activo=eq.true&order=categoria,nombre";
+    if (categoria && categoria !== "todos") {
+      url += "&categoria=eq." + encodeURIComponent(categoria);
+    }
+    const res = await fetch(url, {
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY,
+        "Content-Type": "application/json"
+      }
+    });
+    return await res.json();
+  }
+
+  function renderProducts(products) {
+    const grid = document.getElementById("sein-products-grid");
+    if (!products || products.length === 0) {
+      grid.innerHTML = '<div class="sein-loading">No hay productos disponibles.</div>';
+      return;
+    }
+    grid.innerHTML = products.map(p => {
+      const imgSrc = p.imagen_url || "/wp-content/uploads/2024/09/Sin-titulo-1_Mesa-de-trabajo-1-2048x354-1.png";
+      const precio = p.precio || "";
+      return `
+        <a class="sein-product-card" href="/producto/${p.slug}/" onclick="window.seinAddToCart && seinAddToCart(${JSON.stringify(p)})">
+          <img src="${imgSrc}" alt="${p.nombre}" loading="lazy" onerror="this.src='/wp-content/uploads/2024/09/Sin-titulo-1_Mesa-de-trabajo-1-2048x354-1.png'">
+          <div class="sein-card-body">
+            <div class="sein-card-categoria">${p.categoria}</div>
+            <div class="sein-card-nombre">${p.nombre}</div>
+            <div class="sein-card-precio">${precio}</div>
+            <button class="sein-btn-comprar" onclick="event.preventDefault(); event.stopPropagation(); if(typeof seinAddItem==='function') seinAddItem('${p.nombre}','${precio}','${imgSrc}'); else alert('Agregado al carrito: ' + '${p.nombre}')">
+              Agregar al Carrito
+            </button>
+          </div>
+        </a>
+      `;
+    }).join("");
+  }
+
+  function renderFilters(products) {
+    const categorias = ["todos", ...new Set(products.map(p => p.categoria).filter(Boolean))];
+    const filtrosDiv = document.getElementById("sein-filtros");
+    filtrosDiv.innerHTML = categorias.map(cat => 
+      `<button class="sein-filter-btn ${cat === "todos" ? "active" : ""}" data-cat="${cat}">${cat === "todos" ? "Todos" : cat}</button>`
+    ).join("");
+
+    filtrosDiv.querySelectorAll(".sein-filter-btn").forEach(btn => {
+      btn.addEventListener("click", async function() {
+        filtrosDiv.querySelectorAll(".sein-filter-btn").forEach(b => b.classList.remove("active"));
+        this.classList.add("active");
+        const cat = this.dataset.cat;
+        document.getElementById("sein-products-grid").innerHTML = '<div class="sein-loading">Cargando...</div>';
+        const productos = await fetchProducts(cat);
+        renderProducts(productos);
+      });
+    });
+  }
+
+  async function init() {
+    try {
+      const products = await fetchProducts();
+      renderFilters(products);
+      renderProducts(products);
+    } catch(e) {
+      document.getElementById("sein-products-grid").innerHTML = '<div class="sein-loading">Error al cargar productos. Intenta de nuevo.</div>';
+      console.error("Error Supabase:", e);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();
+</script>
+<!-- FIN SECCION DINAMICA SUPABASE -->
 </body>
+
 </html>
 
 
