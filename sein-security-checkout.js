@@ -43,7 +43,7 @@
         /* Boton Flotante del Carrito */
         #sein-cart-btn {
             position: fixed;
-            bottom: 30px;
+            bottom: 110px;
             right: 30px;
             background: #2b2b2b;
             color: #ffffff;
