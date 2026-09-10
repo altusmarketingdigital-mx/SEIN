@@ -1038,6 +1038,16 @@
                 <option value="Kits para Ocasiones Especiales">Kits para Ocasiones Especiales</option>
             </select>
         </div>
+        <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+                <label>Dimensiones</label>
+                <input type="text" id="edit-dimensiones" placeholder="Ej. 10x15x5 cm">
+            </div>
+            <div>
+                <label>Peso</label>
+                <input type="text" id="edit-peso" placeholder="Ej. 500 gr">
+            </div>
+        </div>
         <div class="form-group">
             <label>Descripción</label>
             <textarea id="edit-descripcion" rows="4" placeholder="Descripción del producto..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
@@ -1210,6 +1220,8 @@
         document.getElementById('edit-id').value = p.id;
         document.getElementById('edit-nombre').value = p.nombre;
         document.getElementById('edit-precio').value = p.precio;
+        document.getElementById('edit-dimensiones').value = p.dimensiones || '';
+        document.getElementById('edit-peso').value = p.peso || '';
         document.getElementById('edit-categoria').value = p.categoria;
         document.getElementById('edit-descripcion').value = p.descripcion || '';
         document.getElementById('edit-contenido').value = p.contenido || '';
@@ -1243,6 +1255,8 @@
         const id = document.getElementById('edit-id').value;
         const nombre = document.getElementById('edit-nombre').value;
         const precio = document.getElementById('edit-precio').value;
+        const dimensiones = document.getElementById('edit-dimensiones').value.trim();
+        const peso = document.getElementById('edit-peso').value.trim();
         const categoria = document.getElementById('edit-categoria').value;
         const descripcion = document.getElementById('edit-descripcion').value.trim();
         const contenido = document.getElementById('edit-contenido').value.trim();
@@ -1254,7 +1268,7 @@
         btn.disabled = true;
 
         try {
-            const updatePayload = { nombre, precio, categoria, descripcion, contenido, activo };
+            const updatePayload = { nombre, precio, dimensiones, peso, categoria, descripcion, contenido, activo };
             if (imagen_url) updatePayload.imagen_url = imagen_url;
 
             await fetch(SUPABASE_URL + "/rest/v1/productos?id=eq." + id, {
@@ -1569,6 +1583,16 @@ async function loginConSupabase(usuario, password) {
       </div>
     </div>
 
+    <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div>
+        <label>Dimensiones</label>
+        <input type="text" id="np-dimensiones" placeholder="Ej. 10x15x5 cm" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <label>Peso</label>
+        <input type="text" id="np-peso" placeholder="Ej. 500 gr" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+    </div>
     <div class="form-group">
       <label>Descripción</label>
       <textarea id="np-descripcion" rows="4" placeholder="Descripción del producto..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
@@ -1635,7 +1659,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 window.openNewProductModal = function() {
   // Limpiar campos
-  ['np-nombre','np-precio','np-descripcion','np-contenido','np-imagen','np-slug'].forEach(id => {
+  ['np-nombre','np-precio','np-dimensiones','np-peso','np-descripcion','np-contenido','np-imagen','np-slug'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.value = ''; if (el.dataset) delete el.dataset.manual; }
   });
@@ -1659,6 +1683,8 @@ window.closeNewProductModal = function() {
 window.saveNewProduct = async function() {
   const nombre    = document.getElementById('np-nombre').value.trim();
   const precio    = document.getElementById('np-precio').value.trim();
+  const dimensiones = document.getElementById('np-dimensiones').value.trim();
+  const peso      = document.getElementById('np-peso').value.trim();
   const categoria = document.getElementById('np-categoria').value;
   const descripcion = document.getElementById('np-descripcion').value.trim();
   const contenido   = document.getElementById('np-contenido').value.trim();
@@ -1693,7 +1719,7 @@ window.saveNewProduct = async function() {
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
       },
-      body: JSON.stringify({ nombre, precio, categoria, descripcion, contenido, imagen_url, slug, activo })
+      body: JSON.stringify({ nombre, precio, dimensiones, peso, categoria, descripcion, contenido, imagen_url, slug, activo })
     });
 
     if (res.status === 409) {
