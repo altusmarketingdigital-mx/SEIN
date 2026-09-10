@@ -1039,8 +1039,12 @@
             </select>
         </div>
         <div class="form-group">
-            <label>Contenido / Descripción del Producto</label>
-            <textarea id="edit-descripcion" rows="4" placeholder="Especificaciones, aromas, medidas, contenido del kit o producto..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
+            <label>Descripción Corta</label>
+            <textarea id="edit-descripcion" rows="2" placeholder="Breve resumen del producto (1-2 líneas)..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Contenido del Producto</label>
+            <textarea id="edit-contenido" rows="4" placeholder="Detalla las especificaciones, aromas, medidas, qué incluye el kit, materiales..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
         </div>
         <div class="form-group">
             <label>Imagen del Producto</label>
@@ -1208,6 +1212,7 @@
         document.getElementById('edit-precio').value = p.precio;
         document.getElementById('edit-categoria').value = p.categoria;
         document.getElementById('edit-descripcion').value = p.descripcion || '';
+        document.getElementById('edit-contenido').value = p.contenido || '';
         document.getElementById('edit-activo').value = p.activo ? 'true' : 'false';
         
         // Imagen
@@ -1240,6 +1245,7 @@
         const precio = document.getElementById('edit-precio').value;
         const categoria = document.getElementById('edit-categoria').value;
         const descripcion = document.getElementById('edit-descripcion').value.trim();
+        const contenido = document.getElementById('edit-contenido').value.trim();
         const activo = document.getElementById('edit-activo').value === 'true';
         const imagen_url = document.getElementById('edit-imagen-url').value;
 
@@ -1248,7 +1254,7 @@
         btn.disabled = true;
 
         try {
-            const updatePayload = { nombre, precio, categoria, descripcion, activo };
+            const updatePayload = { nombre, precio, categoria, descripcion, contenido, activo };
             if (imagen_url) updatePayload.imagen_url = imagen_url;
 
             await fetch(SUPABASE_URL + "/rest/v1/productos?id=eq." + id, {
@@ -1564,8 +1570,12 @@ async function loginConSupabase(usuario, password) {
     </div>
 
     <div class="form-group">
-      <label>Contenido / Descripción del Producto</label>
-      <textarea id="np-descripcion" rows="4" placeholder="Especificaciones, aromas, medidas, contenido del kit o producto..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
+      <label>Descripción Corta</label>
+      <textarea id="np-descripcion" rows="2" placeholder="Breve resumen del producto (1-2 líneas)..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Contenido del Producto</label>
+      <textarea id="np-contenido" rows="4" placeholder="Detalla las especificaciones, aromas, medidas, qué incluye el kit, materiales..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
     </div>
 
     <div class="form-group">
@@ -1625,7 +1635,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 window.openNewProductModal = function() {
   // Limpiar campos
-  ['np-nombre','np-precio','np-descripcion','np-imagen','np-slug'].forEach(id => {
+  ['np-nombre','np-precio','np-descripcion','np-contenido','np-imagen','np-slug'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.value = ''; if (el.dataset) delete el.dataset.manual; }
   });
@@ -1651,6 +1661,7 @@ window.saveNewProduct = async function() {
   const precio    = document.getElementById('np-precio').value.trim();
   const categoria = document.getElementById('np-categoria').value;
   const descripcion = document.getElementById('np-descripcion').value.trim();
+  const contenido   = document.getElementById('np-contenido').value.trim();
   const imagen_url  = document.getElementById('np-imagen').value.trim();
   const slug      = document.getElementById('np-slug').value.trim();
   const activo    = document.getElementById('np-activo').value === 'true';
@@ -1682,7 +1693,7 @@ window.saveNewProduct = async function() {
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
       },
-      body: JSON.stringify({ nombre, precio, categoria, descripcion, imagen_url, slug, activo })
+      body: JSON.stringify({ nombre, precio, categoria, descripcion, contenido, imagen_url, slug, activo })
     });
 
     if (res.status === 409) {
