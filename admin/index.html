@@ -885,13 +885,12 @@
         }
 
         function addProductPrompt() {
-            const name = prompt("Nombre del Producto:");
-            if (!name) return;
-            const price = parseFloat(prompt("Precio en MXN:", "280")) || 280;
-            const cat = prompt("Categoría (Velas de Soya / Planners / Eventos):", "Velas de Soya");
-            const stock = parseInt(prompt("Cantidad en inventario:", "30")) || 30;
-            products.push({ name, cat, price, stock, status: "Disponible" });
-            saveAll();
+            // Abrir el modal de nuevo producto (definido en la seccion Supabase)
+            if (typeof openNewProductModal === 'function') {
+                openNewProductModal();
+            } else {
+                alert('Cargando... intenta de nuevo en un momento.');
+            }
         }
 
         function editStock(idx) {
@@ -1439,5 +1438,170 @@ async function loginConSupabase(usuario, password) {
     }
 }
 </script>
+
+<!-- Modal Nuevo Producto -->
+<div id="newProductModal" class="modal-overlay" style="display:none;">
+  <div class="modal-content" style="width:520px; max-width:95%; max-height:90vh; overflow-y:auto;">
+    <h3 style="margin-bottom:18px; font-size:1.2rem;">➕ Registrar Nuevo Producto</h3>
+
+    <div class="form-group">
+      <label>Nombre del Producto <span style="color:red">*</span></label>
+      <input type="text" id="np-nombre" placeholder="Ej. Vela Alta | Lavanda" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+    </div>
+
+    <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div>
+        <label>Precio <span style="color:red">*</span></label>
+        <input type="text" id="np-precio" placeholder="Ej. $249.00" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <label>Categoría <span style="color:red">*</span></label>
+        <select id="np-categoria" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+          <option value="">-- Selecciona --</option>
+          <option value="Velas de Soja">Velas de Soja</option>
+          <option value="Libretas">Libretas</option>
+          <option value="Planners">Planners</option>
+          <option value="Organizadores">Organizadores</option>
+          <option value="Kits para Ocasiones Especiales">Kits para Ocasiones Especiales</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Descripción corta</label>
+      <textarea id="np-descripcion" rows="3" placeholder="Breve descripción del producto..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>URL de la Imagen</label>
+      <input type="text" id="np-imagen" placeholder="Ej. /wp-content/uploads/2024/mi-imagen.jpg" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      <small style="color:#888; font-size:12px;">Pega la ruta de la imagen del servidor o una URL externa.</small>
+    </div>
+
+    <div class="form-group">
+      <label>Slug (URL del producto) <span style="color:red">*</span></label>
+      <input type="text" id="np-slug" placeholder="Ej. vela-alta-lavanda" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      <small style="color:#888; font-size:12px;">Solo letras minúsculas, números y guiones. Sin espacios ni acentos.</small>
+    </div>
+
+    <div class="form-group">
+      <label>Estado</label>
+      <select id="np-activo" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        <option value="true">Activo (Visible en tienda)</option>
+        <option value="false">Inactivo (Oculto)</option>
+      </select>
+    </div>
+
+    <div id="np-error" style="color:red; font-size:13px; margin-bottom:10px; display:none;"></div>
+
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn-sm" style="background:#ccc; color:#333;" onclick="closeNewProductModal()">Cancelar</button>
+      <button class="btn-primary" id="np-save-btn" onclick="saveNewProduct()">✅ Guardar Producto</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── AUTO SLUG desde el nombre ────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  const nombreInput = document.getElementById('np-nombre');
+  const slugInput   = document.getElementById('np-slug');
+  if (nombreInput && slugInput) {
+    nombreInput.addEventListener('input', function() {
+      if (!slugInput.dataset.manual) {
+        slugInput.value = nombreInput.value
+          .toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9\s-]/g, '')
+          .trim()
+          .replace(/\s+/g, '-');
+      }
+    });
+    slugInput.addEventListener('input', function() {
+      slugInput.dataset.manual = 'true';
+    });
+  }
+});
+
+window.openNewProductModal = function() {
+  // Limpiar campos
+  ['np-nombre','np-precio','np-descripcion','np-imagen','np-slug'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = ''; if (el.dataset) delete el.dataset.manual; }
+  });
+  document.getElementById('np-categoria').value = '';
+  document.getElementById('np-activo').value = 'true';
+  document.getElementById('np-error').style.display = 'none';
+  document.getElementById('newProductModal').style.display = 'flex';
+}
+
+window.closeNewProductModal = function() {
+  document.getElementById('newProductModal').style.display = 'none';
+}
+
+window.saveNewProduct = async function() {
+  const nombre    = document.getElementById('np-nombre').value.trim();
+  const precio    = document.getElementById('np-precio').value.trim();
+  const categoria = document.getElementById('np-categoria').value;
+  const descripcion = document.getElementById('np-descripcion').value.trim();
+  const imagen_url  = document.getElementById('np-imagen').value.trim();
+  const slug      = document.getElementById('np-slug').value.trim();
+  const activo    = document.getElementById('np-activo').value === 'true';
+  const errDiv    = document.getElementById('np-error');
+
+  // Validar campos obligatorios
+  if (!nombre || !precio || !categoria || !slug) {
+    errDiv.textContent = 'Los campos Nombre, Precio, Categoría y Slug son obligatorios.';
+    errDiv.style.display = 'block';
+    return;
+  }
+  if (!/^[a-z0-9-]+$/.test(slug)) {
+    errDiv.textContent = 'El slug solo puede contener letras minúsculas, números y guiones.';
+    errDiv.style.display = 'block';
+    return;
+  }
+
+  errDiv.style.display = 'none';
+  const btn = document.getElementById('np-save-btn');
+  btn.textContent = 'Guardando...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/productos', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ nombre, precio, categoria, descripcion, imagen_url, slug, activo })
+    });
+
+    if (res.status === 409) {
+      errDiv.textContent = 'Ya existe un producto con ese slug. Usa uno diferente.';
+      errDiv.style.display = 'block';
+      return;
+    }
+    if (!res.ok) {
+      const errBody = await res.text();
+      errDiv.textContent = 'Error al guardar: ' + errBody;
+      errDiv.style.display = 'block';
+      return;
+    }
+
+    alert('✅ Producto registrado exitosamente en Supabase.');
+    closeNewProductModal();
+    fetchAdminProducts(); // Recargar la tabla
+  } catch(e) {
+    errDiv.textContent = 'Error de conexión: ' + e.message;
+    errDiv.style.display = 'block';
+  } finally {
+    btn.textContent = '✅ Guardar Producto';
+    btn.disabled = false;
+  }
+}
+</script>
+<!-- FIN Modal Nuevo Producto -->
 </body>
 </html>
