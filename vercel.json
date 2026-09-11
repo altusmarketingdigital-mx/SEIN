@@ -4,6 +4,10 @@
   "trailingSlash": true,
   "routes": [
     {
+      "src": "/producto/(.*)",
+      "dest": "/producto_template.html"
+    },
+    {
       "handle": "filesystem"
     },
     {
