@@ -746,6 +746,8 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
   gap: 24px;
 }
 .sein-product-card {
+  display: flex;
+  flex-direction: column;
   background: #fff;
   border-radius: 8px;
   overflow: hidden;
@@ -768,6 +770,9 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
 }
 .sein-product-card .sein-card-body {
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 .sein-product-card .sein-card-nombre {
   font-size: 15px;
@@ -791,7 +796,8 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
 .sein-btn-comprar {
   display: block;
   width: 100%;
-  margin-top: 12px;
+  margin-top: auto;
+
   padding: 10px 0;
   background: #2b2b2b;
   color: #fff;
