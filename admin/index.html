@@ -596,7 +596,7 @@
                                 </tr>
                             </thead>
                             <tbody id="carousel-tbody">
-                                <tr><td colspan="6" style="text-align:center; padding:30px;">Cargando diapositivas...</td></tr>
+                                <tr><td colspan="6" style="text-align:center; padding:30px;">Haz clic en 'Nueva Diapositiva' para comenzar.</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -761,49 +761,6 @@
     </main>
 
     <!-- LOGICA DEL PANEL ADMINISTRATIVO -->
-    
-    <!-- Modal Carrusel -->
-    <div id="slideModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-header">
-                <h3 id="slideModalTitle">Nueva Diapositiva</h3>
-                <span class="modal-close" onclick="closeSlideModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="slideId">
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Título (opcional)</label>
-                    <input type="text" id="slideTitulo" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="Ej. Velas de Soja">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Subtítulo (opcional)</label>
-                    <input type="text" id="slideSubtitulo" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="Ej. 100% Artesanales">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Imagen *</label>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" id="slideImageUrl" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="URL de la imagen" readonly>
-                        <button class="btn-secondary" type="button" onclick="document.getElementById('slideImageUpload').click()">Subir</button>
-                    </div>
-                    <input type="file" id="slideImageUpload" style="display:none" accept="image/*">
-                    <img id="slideImagePreview" style="max-width:100%; height:auto; display:none; border-radius:4px; margin-top:10px;" />
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Enlace (Ej. /tienda/)</label>
-                    <input type="text" id="slideEnlace" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="/tienda/">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Orden</label>
-                    <input type="number" id="slideOrden" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" value="0">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeSlideModal()">Cancelar</button>
-                <button class="btn-primary" onclick="saveSlide()" id="saveSlideBtn">Guardar</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         // Datos iniciales demostrativos persistentes
         let orders = JSON.parse(localStorage.getItem('sein_admin_orders') || 'null') || [
@@ -1154,50 +1111,7 @@
     </div>
 </div>
 
-
-    <!-- Modal Carrusel -->
-    <div id="slideModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-header">
-                <h3 id="slideModalTitle">Nueva Diapositiva</h3>
-                <span class="modal-close" onclick="closeSlideModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="slideId">
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Título (opcional)</label>
-                    <input type="text" id="slideTitulo" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="Ej. Velas de Soja">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Subtítulo (opcional)</label>
-                    <input type="text" id="slideSubtitulo" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="Ej. 100% Artesanales">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Imagen *</label>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" id="slideImageUrl" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="URL de la imagen" readonly>
-                        <button class="btn-secondary" type="button" onclick="document.getElementById('slideImageUpload').click()">Subir</button>
-                    </div>
-                    <input type="file" id="slideImageUpload" style="display:none" accept="image/*">
-                    <img id="slideImagePreview" style="max-width:100%; height:auto; display:none; border-radius:4px; margin-top:10px;" />
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Enlace (Ej. /tienda/)</label>
-                    <input type="text" id="slideEnlace" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="/tienda/">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Orden</label>
-                    <input type="number" id="slideOrden" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" value="0">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeSlideModal()">Cancelar</button>
-                <button class="btn-primary" onclick="saveSlide()" id="saveSlideBtn">Guardar</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
+<script>
     const SUPABASE_URL = "https://hyibazrenjtnswtebybb.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo";
 
@@ -1505,50 +1419,7 @@
     </div>
 </div>
 
-
-    <!-- Modal Carrusel -->
-    <div id="slideModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-header">
-                <h3 id="slideModalTitle">Nueva Diapositiva</h3>
-                <span class="modal-close" onclick="closeSlideModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="slideId">
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Título (opcional)</label>
-                    <input type="text" id="slideTitulo" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="Ej. Velas de Soja">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Subtítulo (opcional)</label>
-                    <input type="text" id="slideSubtitulo" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="Ej. 100% Artesanales">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Imagen *</label>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" id="slideImageUrl" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="URL de la imagen" readonly>
-                        <button class="btn-secondary" type="button" onclick="document.getElementById('slideImageUpload').click()">Subir</button>
-                    </div>
-                    <input type="file" id="slideImageUpload" style="display:none" accept="image/*">
-                    <img id="slideImagePreview" style="max-width:100%; height:auto; display:none; border-radius:4px; margin-top:10px;" />
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Enlace (Ej. /tienda/)</label>
-                    <input type="text" id="slideEnlace" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="/tienda/">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Orden</label>
-                    <input type="number" id="slideOrden" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" value="0">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeSlideModal()">Cancelar</button>
-                <button class="btn-primary" onclick="saveSlide()" id="saveSlideBtn">Guardar</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
+<script>
 // ─── MÓDULO USUARIOS ADMIN ────────────────────────────────────────────────────
 let allAdminUsers = [];
 
@@ -1796,50 +1667,7 @@ async function loginConSupabase(usuario, password) {
   </div>
 </div>
 
-
-    <!-- Modal Carrusel -->
-    <div id="slideModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-header">
-                <h3 id="slideModalTitle">Nueva Diapositiva</h3>
-                <span class="modal-close" onclick="closeSlideModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="slideId">
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Título (opcional)</label>
-                    <input type="text" id="slideTitulo" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="Ej. Velas de Soja">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Subtítulo (opcional)</label>
-                    <input type="text" id="slideSubtitulo" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="Ej. 100% Artesanales">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Imagen *</label>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" id="slideImageUrl" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="URL de la imagen" readonly>
-                        <button class="btn-secondary" type="button" onclick="document.getElementById('slideImageUpload').click()">Subir</button>
-                    </div>
-                    <input type="file" id="slideImageUpload" style="display:none" accept="image/*">
-                    <img id="slideImagePreview" style="max-width:100%; height:auto; display:none; border-radius:4px; margin-top:10px;" />
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Enlace (Ej. /tienda/)</label>
-                    <input type="text" id="slideEnlace" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="/tienda/">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Orden</label>
-                    <input type="number" id="slideOrden" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" value="0">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeSlideModal()">Cancelar</button>
-                <button class="btn-primary" onclick="saveSlide()" id="saveSlideBtn">Guardar</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
+<script>
 // ─── AUTO SLUG desde el nombre ────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
   const nombreInput = document.getElementById('np-nombre');
@@ -1951,5 +1779,206 @@ window.saveNewProduct = async function() {
 }
 </script>
 <!-- FIN Modal Nuevo Producto -->
+
+    <!-- Modal Carrusel -->
+    <div id="slideModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 id="slideModalTitle">Nueva Diapositiva</h3>
+                <span class="modal-close" onclick="closeSlideModal()" style="cursor:pointer; font-size:20px;">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="slideId">
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px;">Título (opcional)</label>
+                    <input type="text" id="slideTitulo" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="Ej. Velas de Soja">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px;">Subtítulo (opcional)</label>
+                    <input type="text" id="slideSubtitulo" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="Ej. 100% Artesanales">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px;">Imagen *</label>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="slideImageUrl" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="URL de la imagen (Puedes pegar la URL aquí)" required>
+                    </div>
+                    <img id="slideImagePreview" style="max-width:100%; height:auto; display:none; border-radius:4px; margin-top:10px;" />
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px;">Enlace (Ej. /tienda/)</label>
+                    <input type="text" id="slideEnlace" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="/tienda/">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; margin-bottom:5px;">Orden</label>
+                    <input type="number" id="slideOrden" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" value="0">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeSlideModal()">Cancelar</button>
+                <button class="btn-primary" onclick="saveSlide()" id="saveSlideBtn">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGICA DE CARRUSEL ---
+        let slideList = [];
+        
+        async function fetchCarousel() {
+            const tbody = document.getElementById('carousel-tbody');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px;">Cargando...</td></tr>';
+            
+            try {
+                const res = await fetch(SUPABASE_URL + '/rest/v1/carrusel?select=*&order=orden.asc', {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                });
+                const data = await res.json();
+                
+                if (data.error) throw new Error(data.error.message);
+                
+                slideList = data;
+                
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:#666;">No hay diapositivas configuradas. Haz clic en Nueva Diapositiva.</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = data.map(slide => `
+                    <tr>
+                        <td><img src="${slide.imagen_url}" style="width:50px; height:50px; object-fit:cover; border-radius:4px; border:1px solid #ddd;"></td>
+                        <td style="font-weight:600;">${slide.titulo || '-'}</td>
+                        <td>${slide.subtitulo || '-'}</td>
+                        <td>${slide.enlace || '-'}</td>
+                        <td>${slide.orden}</td>
+                        <td style="text-align:center;">
+                            <button class="btn-secondary" onclick="editSlide('${slide.id}')" style="padding:4px 8px;">✏️</button>
+                            <button class="btn-danger" onclick="deleteSlide('${slide.id}')" style="padding:4px 8px; background:#dc3545; color:white; border:none; border-radius:4px;">🗑️</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch(e) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:red;">Error: ${e.message}</td></tr>`;
+            }
+        }
+
+        function openNewSlideModal() {
+            document.getElementById('slideModalTitle').innerText = 'Nueva Diapositiva';
+            document.getElementById('slideId').value = '';
+            document.getElementById('slideTitulo').value = '';
+            document.getElementById('slideSubtitulo').value = '';
+            document.getElementById('slideImageUrl').value = '';
+            document.getElementById('slideEnlace').value = '/tienda/';
+            document.getElementById('slideOrden').value = '0';
+            
+            document.getElementById('slideImagePreview').style.display = 'none';
+            document.getElementById('slideImagePreview').src = '';
+            
+            document.getElementById('slideModal').style.display = 'flex';
+        }
+
+        function closeSlideModal() {
+            document.getElementById('slideModal').style.display = 'none';
+        }
+
+        function editSlide(id) {
+            const slide = slideList.find(s => s.id === id);
+            if(!slide) return;
+            
+            document.getElementById('slideModalTitle').innerText = 'Editar Diapositiva';
+            document.getElementById('slideId').value = slide.id;
+            document.getElementById('slideTitulo').value = slide.titulo || '';
+            document.getElementById('slideSubtitulo').value = slide.subtitulo || '';
+            document.getElementById('slideImageUrl').value = slide.imagen_url || '';
+            document.getElementById('slideEnlace').value = slide.enlace || '';
+            document.getElementById('slideOrden').value = slide.orden || '0';
+            
+            if(slide.imagen_url) {
+                document.getElementById('slideImagePreview').src = slide.imagen_url;
+                document.getElementById('slideImagePreview').style.display = 'block';
+            } else {
+                document.getElementById('slideImagePreview').style.display = 'none';
+            }
+            
+            document.getElementById('slideModal').style.display = 'flex';
+        }
+
+        // Preview image URL on input blur
+        document.getElementById('slideImageUrl').addEventListener('blur', function() {
+            if(this.value) {
+                document.getElementById('slideImagePreview').src = this.value;
+                document.getElementById('slideImagePreview').style.display = 'block';
+            } else {
+                document.getElementById('slideImagePreview').style.display = 'none';
+            }
+        });
+
+        async function saveSlide() {
+            const id = document.getElementById('slideId').value;
+            const titulo = document.getElementById('slideTitulo').value.trim();
+            const subtitulo = document.getElementById('slideSubtitulo').value.trim();
+            const imagen_url = document.getElementById('slideImageUrl').value.trim();
+            const enlace = document.getElementById('slideEnlace').value.trim();
+            const orden = parseInt(document.getElementById('slideOrden').value.trim()) || 0;
+            
+            if(!imagen_url) {
+                alert('La imagen es obligatoria');
+                return;
+            }
+            
+            const btn = document.getElementById('saveSlideBtn');
+            btn.innerText = 'Guardando...';
+            btn.disabled = true;
+            
+            const payload = { titulo, subtitulo, imagen_url, enlace, orden };
+            
+            try {
+                let url = SUPABASE_URL + '/rest/v1/carrusel';
+                let method = 'POST';
+                if(id) {
+                    url += '?id=eq.' + id;
+                    method = 'PATCH';
+                }
+                
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if(!res.ok) {
+                    const errBody = await res.text();
+                    throw new Error(errBody);
+                }
+                
+                closeSlideModal();
+                fetchCarousel();
+            } catch(e) {
+                alert('Error al guardar: ' + e.message);
+            } finally {
+                btn.innerText = 'Guardar';
+                btn.disabled = false;
+            }
+        }
+
+        async function deleteSlide(id) {
+            if(!confirm('¿Estás seguro de que deseas eliminar esta diapositiva?')) return;
+            try {
+                const res = await fetch(SUPABASE_URL + '/rest/v1/carrusel?id=eq.' + id, {
+                    method: 'DELETE',
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                });
+                if(!res.ok) throw new Error('No se pudo eliminar');
+                fetchCarousel();
+            } catch(e) {
+                alert('Error al eliminar: ' + e.message);
+            }
+        }
+    </script>
+
 </body>
 </html>
