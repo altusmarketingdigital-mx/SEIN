@@ -1908,7 +1908,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 
                 data.forEach(slide => {
                     const tituloHtml = slide.titulo ? `<div class="elementor-slide-heading">${slide.titulo} <br>${slide.subtitulo || ''}</div>` : '';
-                    const btnHtml = slide.enlace ? `<div class="elementor-button elementor-slide-button elementor-size-sm">Ver Más</div>` : '';
+                    const textoBoton = slide.boton_texto || 'Ver Más';
+                    const btnHtml = slide.enlace ? `<div class=\"elementor-button elementor-slide-button elementor-size-sm\">${textoBoton}</div>` : '';
                     const enlace = slide.enlace || '#';
 
                     // Using style="background-image:url(...)" to replace the CSS background class
