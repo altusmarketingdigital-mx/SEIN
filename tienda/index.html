@@ -765,7 +765,7 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
 .sein-product-card img {
   width: 100%;
   height: 220px;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 .sein-product-card .sein-card-body {
@@ -776,7 +776,7 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
 }
 .sein-product-card .sein-card-nombre {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: normal;
   color: #2b2b2b;
   margin-bottom: 6px;
   line-height: 1.3;
@@ -790,7 +790,7 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
 }
 .sein-product-card .sein-card-precio {
   font-size: 18px;
-  font-weight: 800;
+  font-weight: normal;
   color: #2b2b2b;
 }
 .sein-btn-comprar {
@@ -799,7 +799,7 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
   margin-top: auto;
 
   padding: 10px 0;
-  background: #2b2b2b;
+  background: #f4a261;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -812,7 +812,7 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
   letter-spacing: 1px;
 }
 .sein-btn-comprar:hover {
-  background: #a3875e;
+  background: #e78f4b;
 }
 .sein-loading {
   text-align: center;
@@ -876,7 +876,7 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
           <div class="sein-card-body">
             <div class="sein-card-categoria">${p.categoria}</div>
             <div class="sein-card-nombre">${p.nombre}</div>
-            <div class="sein-card-precio">${precio}</div>
+            <div class="sein-card-precio">$${precio}</div>
             <button class="sein-btn-comprar" onclick="event.preventDefault(); event.stopPropagation(); if(typeof seinAddItem==='function') seinAddItem('${p.nombre}','${precio}','${imgSrc}'); else alert('Agregado al carrito: ' + '${p.nombre}')">
               Agregar al Carrito
             </button>
