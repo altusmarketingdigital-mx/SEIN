@@ -1886,6 +1886,66 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <!-- FIN POPUP NAVIDENO -->
+
+<!-- DYNAMIC CAROUSEL SUPABASE LOGIC -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const SUPABASE_URL = 'https://hyibazrenjtnswtebybb.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    try {
+        const { data, error } = await supabase.from('carrusel').select('*').order('orden', { ascending: true });
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+            // Find all swiper wrappers for slides
+            const wrappers = document.querySelectorAll('.elementor-widget-slides .swiper-wrapper');
+            
+            wrappers.forEach(wrapper => {
+                let slidesHTML = '';
+                
+                data.forEach(slide => {
+                    const tituloHtml = slide.titulo ? `<div class="elementor-slide-heading">${slide.titulo} <br>${slide.subtitulo || ''}</div>` : '';
+                    const btnHtml = slide.enlace ? `<div class="elementor-button elementor-slide-button elementor-size-sm">Ver Más</div>` : '';
+                    const enlace = slide.enlace || '#';
+
+                    // Using style="background-image:url(...)" to replace the CSS background class
+                    slidesHTML += `
+                        <div class="swiper-slide" role="group" aria-roledescription="slide">
+                            <div class="swiper-slide-bg elementor-ken-burns elementor-ken-burns--in" role="img" style="background-image: url('${slide.imagen_url}'); background-position: center center; background-size: cover;"></div>
+                            <div class="elementor-background-overlay" style="background-color: rgba(0,0,0,0.3);"></div>
+                            <a class="swiper-slide-inner" href="${enlace}">
+                                <div class="swiper-slide-contents">
+                                    ${tituloHtml}
+                                    ${btnHtml}
+                                </div>
+                            </a>
+                        </div>
+                    `;
+                });
+
+                wrapper.innerHTML = slidesHTML;
+            });
+            
+            // Re-init or update Swiper if possible (Elementor Swiper usually has observer: true, so DOM change triggers update)
+            setTimeout(() => {
+                if (window.jQuery) {
+                    window.jQuery('.elementor-widget-slides .swiper').each(function(){
+                        if(this.swiper) {
+                            this.swiper.update();
+                        }
+                    });
+                }
+            }, 500);
+        }
+    } catch (err) {
+        console.error("Error loading dynamic carousel:", err);
+    }
+});
+</script>
+
 </body>
 </html>
 
