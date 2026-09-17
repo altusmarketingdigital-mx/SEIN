@@ -1782,43 +1782,37 @@ window.saveNewProduct = async function() {
 
     <!-- Modal Carrusel -->
     <div id="slideModal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-header">
-                <h3 id="slideModalTitle">Nueva Diapositiva</h3>
-                <span class="modal-close" onclick="closeSlideModal()" style="cursor:pointer; font-size:20px;">&times;</span>
+        <div class="modal-content" style="max-height:90vh; overflow-y:auto; max-width: 500px;">
+            <h3 id="slideModalTitle">Nueva Diapositiva</h3>
+            <input type="hidden" id="slideId">
+            <div class="form-group">
+                <label>Título (opcional)</label>
+                <input type="text" id="slideTitulo" placeholder="Ej. Velas de Soja">
             </div>
-            <div class="modal-body">
-                <input type="hidden" id="slideId">
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Título (opcional)</label>
-                    <input type="text" id="slideTitulo" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="Ej. Velas de Soja">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Subtítulo (opcional)</label>
-                    <input type="text" id="slideSubtitulo" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="Ej. 100% Artesanales">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Imagen *</label>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" id="slideImageUrl" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="URL de la imagen" required>
-                        <button class="btn-secondary" type="button" onclick="document.getElementById('slideImageUpload').click()">Subir Foto</button>
-                    </div>
-                    <input type="file" id="slideImageUpload" style="display:none" accept="image/*">
-                    </div>
-                    <img id="slideImagePreview" style="max-width:100%; height:auto; display:none; border-radius:4px; margin-top:10px;" />
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Enlace (Ej. /tienda/)</label>
-                    <input type="text" id="slideEnlace" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="/tienda/">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display:block; margin-bottom:5px;">Orden</label>
-                    <input type="number" id="slideOrden" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" value="0">
-                </div>
+            <div class="form-group">
+                <label>Subtítulo (opcional)</label>
+                <input type="text" id="slideSubtitulo" placeholder="Ej. 100% Artesanales">
             </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeSlideModal()">Cancelar</button>
-                <button class="btn-primary" onclick="saveSlide()" id="saveSlideBtn">Guardar</button>
+            <div class="form-group">
+                <label>Imagen *</label>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <input type="text" id="slideImageUrl" placeholder="URL de la imagen" required style="flex:1;">
+                    <button class="btn-sm" style="background:#17a2b8; color:#fff;" type="button" onclick="document.getElementById('slideImageUpload').click()">Subir Foto</button>
+                </div>
+                <input type="file" id="slideImageUpload" style="display:none" accept="image/*">
+                <img id="slideImagePreview" style="max-width:100%; height:auto; display:none; border-radius:4px; margin-top:10px;" />
+            </div>
+            <div class="form-group">
+                <label>Enlace (Ej. /tienda/)</label>
+                <input type="text" id="slideEnlace" placeholder="/tienda/">
+            </div>
+            <div class="form-group">
+                <label>Orden</label>
+                <input type="number" id="slideOrden" value="0">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-sm" style="background:#ccc; color:#333; padding:8px 16px; border:none; border-radius:4px; cursor:pointer;" onclick="closeSlideModal()">Cancelar</button>
+                <button class="btn-primary" id="saveSlideBtn" onclick="saveSlide()" style="padding:8px 16px; border:none; border-radius:4px; cursor:pointer;">Guardar</button>
             </div>
         </div>
     </div>
