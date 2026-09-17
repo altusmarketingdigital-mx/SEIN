@@ -1146,6 +1146,10 @@
         const file = input.files[0];
         const preview = document.getElementById(previewId);
         const statusSpan = input.parentElement.querySelector('span');
+        
+        // Disable save buttons while uploading
+        const saveBtns = document.querySelectorAll('.btn-primary');
+        saveBtns.forEach(btn => btn.disabled = true);
 
         // Mostrar vista previa local instantánea
         const reader = new FileReader();
