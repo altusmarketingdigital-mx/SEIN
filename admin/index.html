@@ -1800,7 +1800,10 @@ window.saveNewProduct = async function() {
                 <div style="margin-bottom: 15px;">
                     <label style="display:block; margin-bottom:5px;">Imagen *</label>
                     <div style="display:flex; gap:10px;">
-                        <input type="text" id="slideImageUrl" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="URL de la imagen (Puedes pegar la URL aquí)" required>
+                        <input type="text" id="slideImageUrl" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;" placeholder="URL de la imagen" required>
+                        <button class="btn-secondary" type="button" onclick="document.getElementById('slideImageUpload').click()">Subir Foto</button>
+                    </div>
+                    <input type="file" id="slideImageUpload" style="display:none" accept="image/*">
                     </div>
                     <img id="slideImagePreview" style="max-width:100%; height:auto; display:none; border-radius:4px; margin-top:10px;" />
                 </div>
