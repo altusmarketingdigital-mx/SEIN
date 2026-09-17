@@ -374,6 +374,37 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
     }
   }
 </style>
+
+<style>
+/* Ajustes personalizados para el carrusel */
+.elementor-widget-slides .swiper-slide {
+    height: 450px !important;
+    background-color: transparent !important;
+}
+.elementor-widget-slides .swiper-slide-bg {
+    background-size: cover !important;
+    background-position: center center !important;
+    width: 100% !important;
+    height: 100% !important;
+    position: absolute !important;
+    top: 0; left: 0;
+}
+.elementor-widget-slides .swiper-container {
+    background-color: transparent !important;
+}
+@media(max-width: 767px) {
+    .elementor-widget-slides .swiper-slide {
+        height: 350px !important;
+    }
+}
+/* Eliminar posibles márgenes amarillos alrededor del carrusel */
+.elementor-element-65e532e, .elementor-element-65e532e > .elementor-widget-container {
+    background-color: transparent !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+</style>
+
 </head>
 <body class="home wp-singular page-template page-template-elementor_header_footer page page-id-7 wp-theme-hello-elementor theme-hello-elementor woocommerce-no-js yith-wcbm-theme-hello-elementor elementor-default elementor-template-full-width elementor-kit-6 elementor-page elementor-page-7">
 
