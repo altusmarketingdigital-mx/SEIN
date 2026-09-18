@@ -1168,6 +1168,9 @@
         } catch (err) {
             alert(err.message);
             if (statusSpan) statusSpan.textContent = '❌ Error al subir imagen';
+        } finally {
+            const saveBtns = document.querySelectorAll('.btn-primary');
+            saveBtns.forEach(btn => btn.disabled = false);
         }
     };
 
