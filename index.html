@@ -1972,6 +1972,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     window.jQuery('.elementor-widget-slides .swiper').each(function(){
                         if(this.swiper) {
                             this.swiper.update();
+                            if(this.swiper.pagination) {
+                                this.swiper.pagination.render();
+                                this.swiper.pagination.update();
+                            }
                         }
                     });
                 }
