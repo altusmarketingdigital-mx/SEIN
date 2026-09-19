@@ -40,45 +40,46 @@
     const style = document.createElement('style');
     style.id = 'sein-floating-cart-styles';
     style.textContent = `
-        /* Boton Flotante del Carrito */
+        /* SEIN Elegant Floating Cart */
         #sein-cart-btn {
             position: fixed;
-            bottom: 110px;
-            right: 30px;
-            background: #2b2b2b;
+            bottom: 40px;
+            right: 40px;
+            background: #d36440;
             color: #ffffff;
-            width: 60px;
-            height: 60px;
+            width: 65px;
+            height: 65px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            box-shadow: 0 10px 30px rgba(211, 100, 64, 0.4);
             cursor: pointer;
             z-index: 999998;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border: 2px solid #ffffff;
+            border: none;
         }
         #sein-cart-btn:hover {
-            transform: scale(1.08);
-            background: #a3875e;
+            transform: scale(1.05) translateY(-5px);
+            background: #b55030;
+            box-shadow: 0 15px 35px rgba(211, 100, 64, 0.5);
         }
         #sein-cart-badge {
             position: absolute;
-            top: -4px;
-            right: -4px;
-            background: #c58d58;
+            top: 0;
+            right: 0;
+            background: #2b2b2b;
             color: #fff;
-            font-size: 12px;
-            font-weight: bold;
+            font-size: 13px;
+            font-weight: 700;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
             border: 2px solid #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             transition: transform 0.3s ease;
         }
 
@@ -89,12 +90,12 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(2px);
+            background: rgba(43, 43, 43, 0.6);
+            backdrop-filter: blur(4px);
             z-index: 999999;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
         }
         #sein-cart-overlay.active {
             opacity: 1;
@@ -105,17 +106,17 @@
         #sein-cart-drawer {
             position: fixed;
             top: 0;
-            right: -420px;
+            right: -450px;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             height: 100vh;
-            background: #ffffff;
+            background: #fff;
             z-index: 1000000;
-            box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+            box-shadow: -10px 0 40px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
-            transition: right 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
-            font-family: inherit;
+            transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            font-family: 'Inter', sans-serif;
         }
         #sein-cart-drawer.active {
             right: 0;
@@ -123,7 +124,7 @@
 
         /* Drawer Header */
         .sein-drawer-header {
-            padding: 20px 24px;
+            padding: 25px 30px;
             background: #faf8f5;
             border-bottom: 1px solid #eae5de;
             display: flex;
@@ -132,176 +133,222 @@
         }
         .sein-drawer-header h3 {
             margin: 0;
-            font-size: 1.15rem;
+            font-size: 1.3rem;
             color: #2b2b2b;
-            font-weight: 600;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .sein-drawer-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #888;
+            background: #fff;
+            border: 1px solid #eae5de;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 20px;
+            color: #2b2b2b;
             cursor: pointer;
-            line-height: 1;
-            padding: 4px 8px;
-            border-radius: 4px;
-            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
         .sein-drawer-close:hover {
-            color: #111;
+            background: #2b2b2b;
+            color: #fff;
+            border-color: #2b2b2b;
+            transform: rotate(90deg);
         }
 
         /* Drawer Content (Items) */
         .sein-drawer-body {
             flex: 1;
             overflow-y: auto;
-            padding: 20px 24px;
+            padding: 30px;
+            background: #ffffff;
+        }
+        .sein-drawer-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sein-drawer-body::-webkit-scrollbar-thumb {
+            background: #dcd7ce;
+            border-radius: 10px;
         }
         .sein-cart-empty {
             text-align: center;
-            padding: 40px 10px;
-            color: #777;
+            padding: 60px 20px;
+            color: #888;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
         }
         .sein-cart-item {
             display: flex;
-            gap: 14px;
-            padding-bottom: 16px;
-            margin-bottom: 16px;
-            border-bottom: 1px solid #f0ebe4;
+            gap: 18px;
+            padding-bottom: 25px;
+            margin-bottom: 25px;
+            border-bottom: 1px dashed #eae5de;
             align-items: center;
+            position: relative;
         }
         .sein-cart-item-img {
-            width: 65px;
-            height: 65px;
-            border-radius: 8px;
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
             object-fit: cover;
-            background: #f9f9f9;
-            border: 1px solid #eaeaea;
+            background: #faf8f5;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
         }
         .sein-cart-item-info {
             flex: 1;
+            padding-right: 20px;
         }
         .sein-cart-item-title {
-            font-size: 0.92rem;
+            font-size: 1rem;
             font-weight: 600;
             color: #2b2b2b;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             line-height: 1.3;
         }
         .sein-cart-item-price {
-            font-size: 0.88rem;
-            color: #a3875e;
-            font-weight: bold;
+            font-size: 1rem;
+            color: #d36440;
+            font-weight: 700;
         }
         .sein-qty-control {
             display: flex;
             align-items: center;
-            gap: 6px;
-            margin-top: 8px;
+            background: #faf8f5;
+            border-radius: 20px;
+            border: 1px solid #eae5de;
+            width: fit-content;
+            margin-top: 12px;
+            padding: 2px;
         }
         .sein-qty-btn {
-            width: 24px;
-            height: 24px;
-            border: 1px solid #ccc;
-            background: #fff;
-            border-radius: 4px;
+            width: 28px;
+            height: 28px;
+            background: transparent;
+            border: none;
+            border-radius: 50%;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #444;
+            color: #555;
             transition: all 0.2s;
         }
         .sein-qty-btn:hover {
-            background: #2b2b2b;
-            color: #fff;
-            border-color: #2b2b2b;
+            background: #e6e0d8;
+            color: #2b2b2b;
         }
         .sein-qty-val {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
-            min-width: 20px;
+            min-width: 26px;
             text-align: center;
+            color: #2b2b2b;
         }
         .sein-remove-btn {
-            background: none;
-            border: none;
-            color: #bbb;
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #fff;
+            border: 1px solid #eae5de;
+            color: #999;
             cursor: pointer;
-            padding: 4px;
-            font-size: 16px;
-            transition: color 0.2s;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .sein-remove-btn:hover {
-            color: #e04f5f;
+            color: #fff;
+            background: #e04f5f;
+            border-color: #e04f5f;
         }
 
         /* Drawer Footer */
         .sein-drawer-footer {
-            padding: 20px 24px;
-            background: #faf8f5;
+            padding: 30px;
+            background: #fff;
             border-top: 1px solid #eae5de;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
         }
         .sein-subtotal-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: #2b2b2b;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #777;
         }
         .sein-subtotal-amount {
-            color: #a3875e;
-            font-size: 1.15rem;
+            color: #2b2b2b;
+            font-size: 1.35rem;
+            font-weight: 700;
         }
         .sein-checkout-btn {
             width: 100%;
             background: #25d366;
             color: #ffffff;
             border: none;
-            padding: 14px 20px;
-            border-radius: 30px;
-            font-size: 1rem;
-            font-weight: bold;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+            gap: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 6px 15px rgba(37, 211, 102, 0.3);
             transition: all 0.3s ease;
         }
         .sein-checkout-btn:hover {
-            background: #1eb956;
-            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
-            transform: translateY(-2px);
+            background: #1fbd59;
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.45);
+            transform: translateY(-3px);
         }
         .sein-checkout-btn:disabled {
-            background: #ccc;
+            background: #e0e0e0;
+            color: #999;
             cursor: not-allowed;
             box-shadow: none;
             transform: none;
         }
+        
         .sein-toast {
             position: fixed;
-            bottom: 100px;
-            right: 30px;
+            bottom: 120px;
+            right: 40px;
             background: #2b2b2b;
             color: #fff;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 0.9rem;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 1rem;
             z-index: 1000001;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
+            transform: translateY(15px);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             pointer-events: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            border-left: 4px solid #d36440;
         }
         .sein-toast.show {
             opacity: 1;
@@ -394,8 +441,13 @@
         if (cart.length === 0) {
             itemsContainer.innerHTML = `
                 <div class="sein-cart-empty">
-                    <p style="font-size: 1.1rem; margin-bottom: 8px;">Tu carrito está vacío</p>
-                    <p style="font-size: 0.85rem; color: #999;">Explora nuestras velas y planners artesanales para añadir tus favoritos.</p>
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#dcd7ce" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:10px;">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    <p style="font-size: 1.2rem; font-weight:600; color:#2b2b2b; margin:0;">Tu carrito está vacío</p>
+                    <p style="font-size: 0.95rem; color: #777; line-height:1.5;">Explora nuestras velas y detalles artesanales para inspirar tus días.</p>
                 </div>
             `;
             totalAmountElem.textContent = '$0.00 MXN';
