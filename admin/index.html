@@ -1800,18 +1800,18 @@ window.saveNewProduct = async function() {
                 <label>Subtítulo (opcional)</label>
                 <input type="text" id="slideSubtitulo" placeholder="Ej. 100% Artesanales">
             </div>
+            <div class="form-group">
+                <label>Texto del Botón</label>
+                <input type="text" id="slideBotonTexto" placeholder="Ej. Comprar Ahora" value="Ver Más">
+            </div>
             <div class="form-group" style="display: flex; gap: 15px;">
-                <div style="flex: 2;">
-                    <label>Texto del Botón</label>
-                    <input type="text" id="slideBotonTexto" placeholder="Ej. Comprar Ahora" value="Ver Más">
+                <div style="flex: 1;">
+                    <label>Color Fondo del Botón</label>
+                    <input type="color" id="slideBotonColor" value="#c58d58" style="height: 44px; width: 100%; padding: 2px; border: 1px solid #e3e6eb; border-radius: 8px; cursor: pointer; box-sizing: border-box;">
                 </div>
                 <div style="flex: 1;">
-                    <label>Fondo Botón</label>
-                    <input type="color" id="slideBotonColor" value="#c58d58" style="height: 40px; width: 100%; padding: 2px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;">
-                </div>
-                <div style="flex: 1;">
-                    <label>Color Textos</label>
-                    <input type="color" id="slideTextColor" value="#ffffff" style="height: 40px; width: 100%; padding: 2px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;">
+                    <label>Color de los Textos</label>
+                    <input type="color" id="slideTextColor" value="#ffffff" style="height: 44px; width: 100%; padding: 2px; border: 1px solid #e3e6eb; border-radius: 8px; cursor: pointer; box-sizing: border-box;">
                 </div>
             </div>
             <div class="form-group">
