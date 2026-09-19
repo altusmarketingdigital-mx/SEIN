@@ -1800,9 +1800,15 @@ window.saveNewProduct = async function() {
                 <label>Subtítulo (opcional)</label>
                 <input type="text" id="slideSubtitulo" placeholder="Ej. 100% Artesanales">
             </div>
-            <div class="form-group">
-                <label>Texto del Botón</label>
-                <input type="text" id="slideBotonTexto" placeholder="Ej. Comprar Ahora" value="Ver Más">
+            <div class="form-group" style="display: flex; gap: 15px;">
+                <div style="flex: 1;">
+                    <label>Texto del Botón</label>
+                    <input type="text" id="slideBotonTexto" placeholder="Ej. Comprar Ahora" value="Ver Más">
+                </div>
+                <div>
+                    <label>Color</label>
+                    <input type="color" id="slideBotonColor" value="#c58d58" style="height: 40px; width: 60px; padding: 2px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer;">
+                </div>
             </div>
             <div class="form-group">
                 <label>Enlace del Botón (Ej. /tienda/)</label>
@@ -1880,6 +1886,7 @@ window.saveNewProduct = async function() {
             document.getElementById('slideImageUrl').value = '';
             document.getElementById('slideEnlace').value = '/tienda/';
             document.getElementById('slideBotonTexto').value = 'Ver Más';
+            document.getElementById('slideBotonColor').value = '#c58d58';
             document.getElementById('slideOrden').value = '0';
             
             document.getElementById('slideImagePreview').style.display = 'none';
@@ -1902,7 +1909,15 @@ window.saveNewProduct = async function() {
             document.getElementById('slideSubtitulo').value = slide.subtitulo || '';
             document.getElementById('slideImageUrl').value = slide.imagen_url || '';
             document.getElementById('slideEnlace').value = slide.enlace || '';
-            document.getElementById('slideBotonTexto').value = slide.boton_texto || 'Ver Más';
+            let bText = slide.boton_texto || 'Ver Más';
+            let bColor = '#c58d58';
+            if(bText.includes('||')) {
+                const parts = bText.split('||');
+                bText = parts[0];
+                bColor = parts[1];
+            }
+            document.getElementById('slideBotonTexto').value = bText;
+            document.getElementById('slideBotonColor').value = bColor;
             document.getElementById('slideOrden').value = slide.orden || '0';
             
             if(slide.imagen_url) {
@@ -1931,7 +1946,9 @@ window.saveNewProduct = async function() {
             const subtitulo = document.getElementById('slideSubtitulo').value.trim();
             const imagen_url = document.getElementById('slideImageUrl').value.trim();
             const enlace = document.getElementById('slideEnlace').value.trim();
-            const boton_texto = document.getElementById('slideBotonTexto').value.trim() || 'Ver Más';
+            const boton_texto_raw = document.getElementById('slideBotonTexto').value.trim() || 'Ver Más';
+            const boton_color = document.getElementById('slideBotonColor').value;
+            const boton_texto = boton_texto_raw + '||' + boton_color;
             const orden = parseInt(document.getElementById('slideOrden').value.trim()) || 0;
             
             if(!imagen_url) {
