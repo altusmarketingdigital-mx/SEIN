@@ -879,17 +879,16 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
       const imgSrc = p.imagen_url || "/wp-content/uploads/2024/09/Sin-titulo-1_Mesa-de-trabajo-1-2048x354-1.png";
       const precio = p.precio || "";
       return `
-        <a class="sein-product-card" href="/producto/${p.slug}/" onclick="window.seinAddToCart && seinAddToCart(${JSON.stringify(p)})">
-          <img src="${imgSrc}" alt="${p.nombre}" loading="lazy" onerror="this.src='/wp-content/uploads/2024/09/Sin-titulo-1_Mesa-de-trabajo-1-2048x354-1.png'">
-          <div class="sein-card-body">
-            <div class="sein-card-categoria">${p.categoria}</div>
-            <div class="sein-card-nombre">${p.nombre}</div>
-            <div class="sein-card-precio">$${precio}</div>
-            <button class="sein-btn-comprar" onclick="event.preventDefault(); event.stopPropagation(); if(typeof seinAddItem==='function') seinAddItem('${p.nombre}','${precio}','${imgSrc}'); else alert('Agregado al carrito: ' + '${p.nombre}')">
-              Agregar al Carrito
-            </button>
-          </div>
-        </a>
+        <div class="product type-product" style="display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: space-between; height: 100%;">
+            <a href="/producto/${p.slug}/" class="woocommerce-LoopProduct-link woocommerce-loop-product__link" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; width: 100%;" onclick="window.seinAddToCart && seinAddToCart(${JSON.stringify(p)})">
+                <img src="${imgSrc}" alt="${p.nombre}" loading="lazy" onerror="this.src='/wp-content/uploads/2024/09/Sin-titulo-1_Mesa-de-trabajo-1-2048x354-1.png'" style="width: 100%; height: 220px; object-fit: contain; display: block; margin-bottom: 15px;">
+                <h2 class="woocommerce-loop-product__title" style="font-size: 14px; font-weight: normal; color: #555; margin: 0 0 10px 0; line-height: 1.3;">${p.nombre}</h2>
+                <span class="price" style="color: #d36440; font-size: 14px;"><span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">$</span>${precio}</bdi></span></span>
+            </a>
+            <div class="woocommerce-loop-product__buttons" style="margin-top: 15px;">
+                <button class="button product_type_simple add_to_cart_button ajax_add_to_cart" style="background-color: #d36440 !important; color: #fff !important; font-size: 11px !important; padding: 6px 15px !important; border: none !important; border-radius: 0px !important; text-transform: none !important; display: inline-block; cursor: pointer;" onclick="event.preventDefault(); event.stopPropagation(); if(typeof seinAddItem==='function') seinAddItem('${p.nombre}','${precio}','${imgSrc}'); else alert('Agregado al carrito: ' + '${p.nombre}')">Añadir al carrito</button>
+            </div>
+        </div>
       `;
     }).join("");
   }
