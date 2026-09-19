@@ -1577,31 +1577,45 @@ document.addEventListener('DOMContentLoaded', async () => {
             if(fallbackPrice) fallbackPrice.innerText = data.precio;
         }
 
+        // Formatear texto con saltos de línea
+        const formatText = (text) => text ? text.replace(/\n/g, '<br>') : '';
+
         // Reemplazar descripción corta
         const descEl = document.querySelector('.woocommerce-product-details__short-description');
-        if (descEl) descEl.innerHTML = `<p>${data.descripcion || ''}</p>`;
+        if (descEl) descEl.innerHTML = `<p>${formatText(data.descripcion)}</p>`;
 
         // Reemplazar contenido/especificaciones (si hay tab de descripción)
         const tabDescEl = document.querySelector('#tab-description');
         if (tabDescEl) {
-            let htmlContent = `<h2>Descripción</h2><p>${data.contenido || data.descripcion || ''}</p>`;
+            let htmlContent = `<h2>Descripción</h2><p>${formatText(data.contenido || data.descripcion)}</p>`;
             if (data.dimensiones) htmlContent += `<p><strong>Dimensiones:</strong> ${data.dimensiones}</p>`;
             if (data.peso) htmlContent += `<p><strong>Peso:</strong> ${data.peso}</p>`;
             tabDescEl.innerHTML = htmlContent;
         }
 
         // Reemplazar imagen principal
-        const imgGalleryWrap = document.querySelector('.woocommerce-product-gallery__wrapper');
-        if (imgGalleryWrap && data.imagen_url) {
-            imgGalleryWrap.innerHTML = `
-                <div class="woocommerce-product-gallery__image">
-                    <img src="${data.imagen_url}" alt="${data.nombre}" style="width:100%; border-radius:8px;">
+        const imgGallery = document.querySelector('.woocommerce-product-gallery');
+        if (imgGallery && data.imagen_url) {
+            // Remove woocommerce classes to prevent JS hijack
+            imgGallery.className = "sein-product-image";
+            imgGallery.style.opacity = '1';
+            imgGallery.innerHTML = `
+                <div style="border-radius:12px; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                    <img src="${data.imagen_url}" alt="${data.nombre}" style="width:100%; display:block; object-fit:cover;">
                 </div>
             `;
-        } else {
-             // Fallback: intentar encontrar cualquier img dentro del primer div grande
-             const mainImg = document.querySelector('.woocommerce-product-gallery img');
-             if(mainImg && data.imagen_url) mainImg.src = data.imagen_url;
+        }
+
+        // Reemplazar Breadcrumb
+        const breadcrumb = document.querySelector('.woocommerce-breadcrumb');
+        if (breadcrumb) {
+            breadcrumb.innerHTML = `<a href="/">Inicio</a> &nbsp;/&nbsp; <a href="/tienda/">Tienda</a> &nbsp;/&nbsp; ${data.nombre}`;
+        }
+
+        // Reemplazar Categoría
+        const catLabel = document.querySelector('.posted_in');
+        if (catLabel && data.categoria) {
+            catLabel.innerHTML = `Categoría: <span rel="tag" style="color:#c58d58;">${data.categoria}</span>`;
         }
 
         // Actualizar botón de WhatsApp si existe
