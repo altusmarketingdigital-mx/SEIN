@@ -1948,8 +1948,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 
                 data.forEach(slide => {
                     const tituloHtml = slide.titulo ? `<div class="elementor-slide-heading">${slide.titulo} <br>${slide.subtitulo || ''}</div>` : '';
-                    const textoBoton = slide.boton_texto || 'Ver Más';
-                    const btnHtml = slide.enlace ? `<div class=\"elementor-button elementor-slide-button elementor-size-sm\">${textoBoton}</div>` : '';
+                    let textoBoton = slide.boton_texto || 'Ver Más';
+                    let colorBoton = '';
+                    if(textoBoton.includes('||')) {
+                        const parts = textoBoton.split('||');
+                        textoBoton = parts[0];
+                        colorBoton = parts[1];
+                    }
+                    const styleColor = colorBoton ? `background-color: ${colorBoton} !important; border-color: ${colorBoton} !important;` : '';
+                    const btnHtml = slide.enlace ? `<div class=\"elementor-button elementor-slide-button elementor-size-sm\" style=\"${styleColor}\">${textoBoton}</div>` : '';
                     const enlace = slide.enlace || '#';
 
                     // Using style="background-image:url(...)" to replace the CSS background class
