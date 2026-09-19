@@ -1947,15 +1947,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let slidesHTML = '';
                 
                 data.forEach(slide => {
-                    const tituloHtml = slide.titulo ? `<div class="elementor-slide-heading">${slide.titulo} <br>${slide.subtitulo || ''}</div>` : '';
                     let textoBoton = slide.boton_texto || 'Ver Más';
                     let colorBoton = '';
+                    let colorTexto = '';
                     if(textoBoton.includes('||')) {
                         const parts = textoBoton.split('||');
                         textoBoton = parts[0];
                         colorBoton = parts[1];
+                        if(parts.length > 2) colorTexto = parts[2];
                     }
-                    const styleColor = colorBoton ? `background-color: ${colorBoton} !important; border-color: ${colorBoton} !important;` : '';
+                    const titleStyle = colorTexto ? `color: ${colorTexto} !important;` : '';
+                    const tituloHtml = slide.titulo ? `<div class="elementor-slide-heading" style="${titleStyle}">${slide.titulo} <br>${slide.subtitulo || ''}</div>` : '';
+                    
+                    const styleColor = `background-color: ${colorBoton || '#c58d58'} !important; border-color: ${colorBoton || '#c58d58'} !important; color: ${colorTexto || '#ffffff'} !important;`;
                     const btnHtml = slide.enlace ? `<div class=\"elementor-button elementor-slide-button elementor-size-sm\" style=\"${styleColor}\">${textoBoton}</div>` : '';
                     const enlace = slide.enlace || '#';
 
