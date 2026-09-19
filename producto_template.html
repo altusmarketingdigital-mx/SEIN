@@ -1597,7 +1597,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const imgGallery = document.querySelector('.woocommerce-product-gallery');
         if (imgGallery && data.imagen_url) {
             // Remove woocommerce classes to prevent JS hijack
-            imgGallery.className = "sein-product-image";
+            imgGallery.className = "images sein-product-image";
             imgGallery.style.opacity = '1';
             imgGallery.innerHTML = `
                 <div style="border-radius:12px; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
