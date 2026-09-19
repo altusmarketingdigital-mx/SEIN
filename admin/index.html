@@ -1193,12 +1193,18 @@
         let select = document.getElementById('admin-cat-filter');
         if(!select) {
             const filterHTML = `
-                <div class="admin-filter-bar">
-                    <label>Filtrar por Categoría:</label>
-                    <select id="admin-cat-filter" onchange="filterAdminProducts()">
-                        <option value="todos">Todas las categorías</option>
-                        ${cats.map(c => `<option value="${c}">${c}</option>`).join('')}
-                    </select>
+                <div class="admin-filter-bar" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <label style="margin:0;">Filtrar por Categoría:</label>
+                        <select id="admin-cat-filter" onchange="filterAdminProducts()">
+                            <option value="todos">Todas las categorías</option>
+                            ${cats.map(c => `<option value="${c}">${c}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px; flex: 1;">
+                        <label style="margin:0;">Buscar Producto:</label>
+                        <input type="text" id="admin-search-filter" onkeyup="filterAdminProducts()" placeholder="Escribe el nombre del producto..." style="padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc; flex: 1; max-width: 400px;">
+                    </div>
                 </div>
             `;
             const header = document.querySelector('#sec-products .panel-header');
@@ -1208,8 +1214,20 @@
 
     window.filterAdminProducts = function() {
         const cat = document.getElementById('admin-cat-filter').value;
-        if(cat === 'todos') renderAdminProducts(allSupabaseProducts);
-        else renderAdminProducts(allSupabaseProducts.filter(p => p.categoria === cat));
+        const searchInput = document.getElementById('admin-search-filter');
+        const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        
+        let filtered = allSupabaseProducts;
+        
+        if(cat !== 'todos') {
+            filtered = filtered.filter(p => p.categoria === cat);
+        }
+        
+        if(searchTerm !== '') {
+            filtered = filtered.filter(p => (p.nombre || '').toLowerCase().includes(searchTerm));
+        }
+        
+        renderAdminProducts(filtered);
     }
 
     function renderAdminProducts(productsToRender) {
