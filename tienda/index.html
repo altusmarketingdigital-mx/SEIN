@@ -593,8 +593,66 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
 		<div id="primary" class="content-area"><main id="main" class="site-main" role="main"><nav class="woocommerce-breadcrumb" aria-label="Breadcrumb"><a href="/">Inicio</a> / Tienda</nav><header class="woocommerce-products-header">
 			<h1 class="woocommerce-products-header__title page-title">Tienda</h1>
 	
-	</header>
-<div class="woocommerce-notices-wrapper"></div><p class="woocommerce-result-count">
+	
+    </header> <!-- Re-closing the woo header -->
+    
+    <!-- BANNER ESPECIALISTAS -->
+    <style>
+        .sein-especialistas-banner {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: #faf8f5;
+            margin-bottom: 40px;
+            border-top: 1px solid #eae5de;
+            border-bottom: 1px solid #eae5de;
+        }
+        .sein-especialistas-top {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            color: #8c764f;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .sein-especialistas-title {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 42px;
+            color: #1a1a1a;
+            text-transform: uppercase;
+            font-weight: 500;
+            line-height: 1.2;
+            margin: 0 auto 20px auto;
+            max-width: 900px;
+            letter-spacing: 0.5px;
+        }
+        .sein-especialistas-bottom {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            color: #666666;
+            font-weight: 400;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 768px) {
+            .sein-especialistas-title {
+                font-size: 28px;
+            }
+            .sein-especialistas-banner {
+                padding: 40px 15px;
+            }
+        }
+    </style>
+    <div class="sein-especialistas-banner">
+        <span class="sein-especialistas-top">EN SEIN SOMOS</span>
+        <h2 class="sein-especialistas-title">ESPECIALISTAS EN PRODUCTOS CON DENOMINACIÓN DE ORIGEN</h2>
+        <p class="sein-especialistas-bottom">Experiencia y conocimiento en la industria para brindar la máxima calidad, cuidado artesanal y respaldo a cada uno de nuestros clientes.</p>
+    </div>
+    <div class="woocommerce-notices-wrapper">
+</div><p class="woocommerce-result-count">
 	Mostrando 1–16 de 49 resultados</p>
 <form class="woocommerce-ordering" method="get">
 	<select name="orderby" class="orderby" aria-label="Pedido de la tienda">
