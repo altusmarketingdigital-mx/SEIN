@@ -1868,7 +1868,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const tituloHtml = slide.titulo ? `<div class="elementor-slide-heading" style="${titleStyle}">${slide.titulo} <br>${slide.subtitulo || ''}</div>` : '';
                 
                 const styleColor = `background-color: ${colorBoton || '#c58d58'} !important; border-color: ${colorBoton || '#c58d58'} !important; color: ${colorTexto || '#ffffff'} !important;`;
-                const btnHtml = slide.enlace ? `<div class="elementor-button elementor-slide-button elementor-size-sm" style="${styleColor}">${textoBoton}</div>` : '';
+                const btnHtml = `<div class="elementor-button elementor-slide-button elementor-size-sm" style="${styleColor}">${textoBoton}</div>`;
                 const enlace = slide.enlace || '#';
 
                 slidesArray.push(`
