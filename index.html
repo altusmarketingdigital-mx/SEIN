@@ -1853,92 +1853,150 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (error) throw error;
 
         if (data && data.length > 0) {
-            let slidesArray = [];
-            data.forEach(slide => {
-                let textoBoton = slide.boton_texto || 'Ver Más';
-                let colorBoton = '';
-                let colorTexto = '';
-                if(textoBoton.includes('||')) {
-                    const parts = textoBoton.split('||');
-                    textoBoton = parts[0];
-                    colorBoton = parts[1];
-                    if(parts.length > 2) colorTexto = parts[2];
-                }
-                const titleStyle = colorTexto ? `color: ${colorTexto} !important;` : '';
-                const tituloHtml = slide.titulo ? `<div class="elementor-slide-heading" style="${titleStyle}">${slide.titulo} <br>${slide.subtitulo || ''}</div>` : '';
-                
-                const styleColor = `background-color: ${colorBoton || '#c58d58'} !important; border-color: ${colorBoton || '#c58d58'} !important; color: ${colorTexto || '#ffffff'} !important; min-width: 140px; display: inline-block !important; padding: 12px 24px !important; z-index: 999; position: relative; font-weight: bold;`;
-                const btnHtml = `<div class="elementor-button elementor-slide-button elementor-size-sm" style="${styleColor}">${textoBoton}</div>`;
-                const enlace = slide.enlace || '#';
+            
+            // Inyectamos CSS global para nuestro carrusel puro y limpio
+            if(!document.getElementById('sein-pure-swiper-css')) {
+                const style = document.createElement('style');
+                style.id = 'sein-pure-swiper-css';
+                style.innerHTML = `
+                    @keyframes seinKenBurns {
+                        0% { transform: scale(1); }
+                        100% { transform: scale(1.15); }
+                    }
+                    .sein-pure-swiper {
+                        width: 100%;
+                        height: 100%;
+                        min-height: 400px;
+                        --swiper-navigation-color: rgba(255,255,255,0.8);
+                        --swiper-pagination-color: #fff;
+                    }
+                    .sein-pure-slide-bg {
+                        position: absolute;
+                        top: 0; left: 0; width: 100%; height: 100%;
+                        background-position: center;
+                        background-size: cover;
+                        animation: seinKenBurns 12s ease-out infinite alternate;
+                    }
+                    .sein-pure-overlay {
+                        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                        background: rgba(0,0,0,0.15);
+                    }
+                    .sein-pure-content {
+                        position: absolute;
+                        bottom: 10%;
+                        left: 0;
+                        width: 100%;
+                        text-align: center;
+                        z-index: 10;
+                        padding: 0 20px;
+                    }
+                    .sein-pure-title {
+                        font-family: "Birthstone", "Times New Roman", serif;
+                        font-size: 55px;
+                        font-weight: 300;
+                        line-height: 1.1;
+                        margin-bottom: 20px;
+                        text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+                    }
+                    .sein-pure-btn {
+                        display: inline-block;
+                        padding: 12px 30px;
+                        border-radius: 4px;
+                        font-family: 'Inter', sans-serif;
+                        font-size: 14px;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        font-weight: 700;
+                        text-decoration: none;
+                        transition: all 0.3s;
+                        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                    }
+                    .sein-pure-btn:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+                    }
+                    @media (max-width: 768px) {
+                        .sein-pure-title { font-size: 35px; }
+                        .sein-pure-swiper { min-height: 300px; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
 
-                slidesArray.push(`
-                    <div class="elementor-repeater-item-c2ae5d1 swiper-slide" role="group" aria-roledescription="slide">
-                        <div class="swiper-slide-bg elementor-ken-burns elementor-ken-burns--in" role="img" style="background-image: url('${slide.imagen_url}'); background-position: center center; background-size: cover;"></div>
-                        <div class="elementor-background-overlay"></div>
-                        <a class="swiper-slide-inner" href="${enlace}" style="display:flex !important; flex-direction:column !important; justify-content:flex-end !important; height:100% !important; z-index: 10;">
-                            <div class="swiper-slide-contents" style="margin: 0 auto 60px auto !important; position: relative !important; transform: none !important; top: auto !important; bottom: auto !important; width: 100%; text-align: center;">
-                                ${tituloHtml}
+            const widgets = document.querySelectorAll('.elementor-widget-slides');
+            
+            widgets.forEach(widget => {
+                // Reconstruimos completamente el HTML saltandonos la validacion estricta de Elementor
+                let html = `
+                <div class="swiper sein-pure-swiper">
+                    <div class="swiper-wrapper">
+                `;
+                
+                data.forEach(slide => {
+                    let textoBoton = slide.boton_texto || 'Ver Más';
+                    let colorBoton = '';
+                    let colorTexto = '';
+                    if(textoBoton.includes('||')) {
+                        const parts = textoBoton.split('||');
+                        textoBoton = parts[0];
+                        colorBoton = parts[1];
+                        if(parts.length > 2) colorTexto = parts[2];
+                    }
+                    
+                    const tColor = colorTexto || '#ffffff';
+                    const bColor = colorBoton || '#c58d58';
+                    const titleHtml = slide.titulo ? `<div class="sein-pure-title" style="color: ${tColor};">${slide.titulo} <br>${slide.subtitulo || ''}</div>` : '';
+                    
+                    const enlace = slide.enlace || '#';
+                    const btnHtml = `<a href="${enlace}" class="sein-pure-btn" style="background-color: ${bColor}; color: ${tColor}; border: 1px solid ${bColor};">${textoBoton}</a>`;
+
+                    html += `
+                        <div class="swiper-slide">
+                            <div class="sein-pure-slide-bg" style="background-image: url('${slide.imagen_url}');"></div>
+                            <div class="sein-pure-overlay"></div>
+                            <div class="sein-pure-content">
+                                ${titleHtml}
                                 ${btnHtml}
                             </div>
-                        </a>
+                        </div>
+                    `;
+                });
+                
+                html += `
                     </div>
-                `);
+                    <div class="swiper-pagination"></div>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-button-next"></div>
+                </div>
+                `;
+                
+                // Sobrescribimos el widget roto de Elementor con nuestro HTML limpio
+                widget.innerHTML = html;
             });
 
-            // Use Swiper API directly to preserve navigation and pagination
-            const updateSwiper = () => {
-                if (window.jQuery) {
-                    let done = false;
-                    window.jQuery('.elementor-widget-slides .swiper').each(function(){
-                        if(this.swiper) {
-                            done = true;
-                            const swiper = this.swiper;
-                            
-                            // 1. Destroy loop if it exists
-                            if(swiper.params.loop) {
-                                swiper.loopDestroy();
-                            }
-                            
-                            // 2. Remove all slides and append the new ones safely
-                            swiper.removeAllSlides();
-                            swiper.appendSlide(slidesArray);
-                            
-                            // 3. Re-create loop
-                            if(swiper.params.loop) {
-                                swiper.loopCreate();
-                            }
-                            
-                            // 4. Force UI update for everything
-                            swiper.update();
-                            
-                            // 5. Update pagination & navigation DOM
-                            if(swiper.pagination) {
-                                swiper.pagination.render();
-                                swiper.pagination.update();
-                            }
-                            if(swiper.navigation) {
-                                swiper.navigation.update();
-                            }
-                            
-                            // 6. Restart autoplay explicitly
-                            if (swiper.autoplay && swiper.autoplay.start) {
-                                swiper.autoplay.start();
-                            }
-                            
-                            // 7. Slide to first element to trigger animations
-                            swiper.slideToLoop ? swiper.slideToLoop(0, 0) : swiper.slideTo(0, 0);
-                        }
+            // Esperamos un momento a que el DOM procese e instanciamos Swiper puro
+            setTimeout(() => {
+                if (window.Swiper) {
+                    new window.Swiper('.sein-pure-swiper', {
+                        loop: true,
+                        effect: 'fade',
+                        fadeEffect: { crossFade: true },
+                        autoplay: {
+                            delay: 5000,
+                            disableOnInteraction: false,
+                        },
+                        pagination: {
+                            el: '.swiper-pagination',
+                            clickable: true,
+                        },
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev',
+                        },
+                        speed: 1000
                     });
-                    
-                    if (!done) {
-                        setTimeout(updateSwiper, 500);
-                    }
-                } else {
-                    setTimeout(updateSwiper, 500);
                 }
-            };
-            
-            setTimeout(updateSwiper, 100);
+            }, 300);
         }
     } catch (err) {
         console.error("Error loading dynamic carousel:", err);
