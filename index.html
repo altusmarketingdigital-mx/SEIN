@@ -414,7 +414,13 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
 
 
 
+
+    <!-- PREVENT FOUC: Hide static carousel until Supabase dynamic injection runs -->
+    <style>
+        .elementor-widget-slides { display: none !important; opacity: 0 !important; visibility: hidden !important; }
+    </style>
 </head>
+
 <body class="home wp-singular page-template page-template-elementor_header_footer page page-id-7 wp-theme-hello-elementor theme-hello-elementor woocommerce-no-js yith-wcbm-theme-hello-elementor elementor-default elementor-template-full-width elementor-kit-6 elementor-page elementor-page-7">
 
 
