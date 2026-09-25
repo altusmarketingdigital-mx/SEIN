@@ -750,3 +750,37 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }, 500);
 });
+
+
+(function() {
+    const style = document.createElement('style');
+    style.innerHTML = `
+        /* Forzar Grid Layout para la lista de productos estatica (ul.products) para evitar que se apilen a la izquierda */
+        .woocommerce ul.products {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 20px !important;
+            width: 100% !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            list-style: none !important;
+        }
+        .woocommerce ul.products li.product {
+            width: 100% !important;
+            margin: 0 !important;
+            float: none !important;
+        }
+        
+        /* Responsive Grid */
+        @media (max-width: 1024px) {
+            .woocommerce ul.products { grid-template-columns: repeat(3, 1fr) !important; }
+        }
+        @media (max-width: 768px) {
+            .woocommerce ul.products { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 480px) {
+            .woocommerce ul.products { grid-template-columns: repeat(1, 1fr) !important; }
+        }
+    `;
+    document.head.appendChild(style);
+})();
