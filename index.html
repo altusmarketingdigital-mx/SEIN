@@ -1868,10 +1868,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 
                 data.forEach(slide => {
                     let textoBoton = slide.boton_texto || 'Comprar';
+                    let colorBoton = '';
+                    if(textoBoton.includes('||')) {
+                        const parts = textoBoton.split('||');
+                        textoBoton = parts[0];
+                        colorBoton = parts[1];
+                    }
                     let enlace = slide.enlace || '#';
                     
                     const titleHtml = slide.titulo ? `<div class="elementor-slide-heading">${slide.titulo} <br>${slide.subtitulo || ''}</div>` : '';
-                    const btnHtml = `<div class="elementor-button elementor-slide-button elementor-size-sm">${textoBoton}</div>`;
+                    const styleBtn = colorBoton ? `background-color: ${colorBoton} !important; border-color: ${colorBoton} !important;` : '';
+                    const btnHtml = `<div class="elementor-button elementor-slide-button elementor-size-sm" style="${styleBtn}">${textoBoton}</div>`;
 
                     html += `
                         <div class="elementor-repeater-item-c2ae5d1 swiper-slide" role="group" aria-roledescription="slide">
