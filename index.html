@@ -418,8 +418,8 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
     <!-- PREVENT FOUC: Hide static carousel but preserve layout with a white background -->
     <style>
         .elementor-widget-slides * { opacity: 0 !important; visibility: hidden !important; }
-        .elementor-widget-slides { background-color: #ffffff !important; min-height: 550px; }
-        @media (max-width: 768px) { .elementor-widget-slides { min-height: 350px; } }
+        .elementor-widget-slides { background-color: #ffffff !important; min-height: 300px; }
+        @media (max-width: 768px) { .elementor-widget-slides { min-height: 180px; } }
     </style>
 </head>
 
@@ -1892,11 +1892,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                     .sein-pure-swiper {
                         width: 100%;
-                        max-width: 1200px;
-                        margin: 0 auto;
                         height: 100%;
-                        border-radius: 8px; /* Optional: gives it a nice boxed look */
-                        min-height: 550px;
+                        min-height: 300px;
                         --swiper-navigation-color: rgba(255,255,255,0.8);
                         --swiper-pagination-color: #fff;
                         position: relative;
@@ -1980,7 +1977,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                     @media (max-width: 768px) {
                         .sein-pure-title { font-size: 32px; }
-                        .sein-pure-swiper { min-height: 350px; }
+                        .sein-pure-swiper { min-height: 180px; }
                     }
                 `;
                 document.head.appendChild(style);
