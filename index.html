@@ -1853,8 +1853,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (error) throw error;
 
         if (data && data.length > 0) {
-            let slidesHTML = '';
-            
+            let slidesArray = [];
             data.forEach(slide => {
                 let textoBoton = slide.boton_texto || 'Ver Más';
                 let colorBoton = '';
@@ -1872,7 +1871,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const btnHtml = `<div class="elementor-button elementor-slide-button elementor-size-sm" style="${styleColor}">${textoBoton}</div>`;
                 const enlace = slide.enlace || '#';
 
-                slidesHTML += `
+                slidesArray.push(`
                     <div class="elementor-repeater-item-c2ae5d1 swiper-slide" role="group" aria-roledescription="slide">
                         <div class="swiper-slide-bg elementor-ken-burns elementor-ken-burns--in" role="img" style="background-image: url('${slide.imagen_url}'); background-position: center center; background-size: cover;"></div>
                         <div class="elementor-background-overlay"></div>
@@ -1883,31 +1882,57 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </div>
                         </a>
                     </div>
-                `;
+                `);
             });
 
-            // Find wrappers and replace HTML
-            const wrappers = document.querySelectorAll('.elementor-widget-slides .swiper-wrapper');
-            wrappers.forEach(wrapper => {
-                wrapper.innerHTML = slidesHTML;
-            });
-
-            // Re-initialize the widget using Elementor's native handler
+            // Use Swiper API directly to preserve navigation and pagination
             const updateSwiper = () => {
-                if (window.jQuery && window.elementorFrontend) {
-                    window.jQuery('.elementor-widget-slides').each(function() {
-                        const $widget = window.jQuery(this);
-                        const swiperContainer = $widget.find('.swiper')[0];
-                        
-                        if (swiperContainer && swiperContainer.swiper) {
-                            // Destroy old swiper instance to clean up events, but keep DOM
-                            swiperContainer.swiper.destroy(false, false);
-                            delete swiperContainer.swiper;
+                if (window.jQuery) {
+                    let done = false;
+                    window.jQuery('.elementor-widget-slides .swiper').each(function(){
+                        if(this.swiper) {
+                            done = true;
+                            const swiper = this.swiper;
+                            
+                            // 1. Destroy loop if it exists
+                            if(swiper.params.loop) {
+                                swiper.loopDestroy();
+                            }
+                            
+                            // 2. Remove all slides and append the new ones safely
+                            swiper.removeAllSlides();
+                            swiper.appendSlide(slidesArray);
+                            
+                            // 3. Re-create loop
+                            if(swiper.params.loop) {
+                                swiper.loopCreate();
+                            }
+                            
+                            // 4. Force UI update for everything
+                            swiper.update();
+                            
+                            // 5. Update pagination & navigation DOM
+                            if(swiper.pagination) {
+                                swiper.pagination.render();
+                                swiper.pagination.update();
+                            }
+                            if(swiper.navigation) {
+                                swiper.navigation.update();
+                            }
+                            
+                            // 6. Restart autoplay explicitly
+                            if (swiper.autoplay && swiper.autoplay.start) {
+                                swiper.autoplay.start();
+                            }
+                            
+                            // 7. Slide to first element to trigger animations
+                            swiper.slideToLoop ? swiper.slideToLoop(0, 0) : swiper.slideTo(0, 0);
                         }
-                        
-                        // Force Elementor to re-initialize this specific widget from scratch
-                        window.elementorFrontend.elementsHandler.runReadyTrigger($widget);
                     });
+                    
+                    if (!done) {
+                        setTimeout(updateSwiper, 500);
+                    }
                 } else {
                     setTimeout(updateSwiper, 500);
                 }
