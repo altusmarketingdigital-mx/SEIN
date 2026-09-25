@@ -586,3 +586,167 @@
     // Inicializar estado del Carrito al cargar la página
     updateCartUI();
 })();
+
+
+// --- INYECCION DE ESTILOS GLOBALES PARA TARJETAS DE PRODUCTO ---
+(function() {
+    const style = document.createElement('style');
+    style.innerHTML = `
+        /* Unificar todas las tarjetas estaticas y dinamicas al mismo diseo limpio */
+        
+        /* 1. Contenedor de la tarjeta */
+        .woocommerce ul.products li.product, 
+        .sein-cat-card,
+        .sein-product-card {
+            background: #fff !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08) !important;
+            transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+            padding: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            border: none !important;
+        }
+        
+        .woocommerce ul.products li.product:hover,
+        .sein-cat-card:hover,
+        .sein-product-card:hover {
+            transform: translateY(-5px) !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.14) !important;
+        }
+
+        /* 2. Imagen de la tarjeta */
+        .woocommerce ul.products li.product img,
+        .sein-cat-card img,
+        .sein-product-card img {
+            width: 100% !important;
+            height: 200px !important;
+            object-fit: contain !important;
+            display: block !important;
+            margin: 0 !important;
+            padding: 10px !important;
+        }
+        
+        @media (max-width: 600px) {
+            .woocommerce ul.products li.product img,
+            .sein-cat-card img,
+            .sein-product-card img {
+                height: 150px !important;
+            }
+        }
+
+        /* 3. Titulo de la tarjeta */
+        .woocommerce ul.products li.product .woocommerce-loop-product__title,
+        .sein-cat-card .sein-card-nombre,
+        .sein-product-card .woocommerce-loop-product__title {
+            font-size: 14px !important;
+            font-weight: normal !important;
+            color: #2b2b2b !important;
+            margin: 10px 14px 5px 14px !important;
+            line-height: 1.3 !important;
+            text-align: left !important;
+        }
+
+        /* 4. Precio de la tarjeta */
+        .woocommerce ul.products li.product .price,
+        .sein-cat-card .sein-card-precio,
+        .sein-product-card .price {
+            font-size: 17px !important;
+            font-weight: normal !important;
+            color: #2b2b2b !important;
+            margin: 0 14px 10px 14px !important;
+            text-align: left !important;
+            display: block !important;
+        }
+        
+        /* Ocultar el color terracota que venia por defecto en algunas paginas */
+        .woocommerce ul.products li.product .price {
+            color: #2b2b2b !important;
+        }
+
+        /* 5. Boton de AGREGAR AL CARRITO */
+        .woocommerce ul.products li.product .button,
+        .sein-btn-cat-comprar,
+        .sein-product-card .button {
+            display: block !important;
+            width: calc(100% - 28px) !important;
+            margin: 0 14px 14px 14px !important;
+            padding: 9px 0 !important;
+            background: #f4a261 !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 4px !important;
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            text-align: center !important;
+            cursor: pointer !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+            transition: background 0.3s !important;
+        }
+        
+        .woocommerce ul.products li.product .button:hover,
+        .sein-btn-cat-comprar:hover,
+        .sein-product-card .button:hover {
+            background: #e78f4b !important;
+        }
+        
+        /* Fix elementor specific weird paddings */
+        .woocommerce ul.products li.product a {
+            text-decoration: none !important;
+            color: inherit !important;
+        }
+    `;
+    document.head.appendChild(style);
+})();
+
+
+// Cambiar el texto de todos los botones "Añadir al carrito" por "Agregar al Carrito"
+document.addEventListener("DOMContentLoaded", function() {
+    setInterval(function() {
+        document.querySelectorAll('.add_to_cart_button').forEach(btn => {
+            if(btn.innerText.toLowerCase().includes('aadir') || btn.innerText.toLowerCase().includes('añadir')) {
+                btn.innerText = 'Agregar al Carrito';
+            }
+        });
+    }, 500); // Poll para coger botones generados dinámicamente
+});
+
+
+// Fix for double dollar signs
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. Quitar el pseudo-elemento ::before si existe en CSS
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .woocommerce-Price-currencySymbol::before, 
+        .woocommerce-Price-currencySymbol::after { display: none !important; content: none !important; }
+    `;
+    document.head.appendChild(style);
+
+    // 2. Limpiar texto dinamicamente
+    setInterval(function() {
+        document.querySelectorAll('.price, .sein-card-precio, .woocommerce-Price-amount').forEach(el => {
+            // Busca nodos de texto directamente para no romper HTML
+            const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+            let node;
+            while(node = walk.nextNode()) {
+                if(node.nodeValue.includes('$$')) {
+                    node.nodeValue = node.nodeValue.replace(/\$\$/g, '$');
+                }
+            }
+        });
+        
+        // Fix for specific case where it's <span>$</span>$529.00
+        document.querySelectorAll('.woocommerce-Price-amount').forEach(el => {
+            if (el.innerText && el.innerText.includes('$$')) {
+                // If it's pure text or simple HTML, we can replace innerHTML safely
+                const html = el.innerHTML;
+                if (html.includes('</span>$')) {
+                    el.innerHTML = html.replace('</span>$', '</span>');
+                }
+            }
+        });
+    }, 500);
+});
