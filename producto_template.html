@@ -1617,12 +1617,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             catLabel.innerHTML = `Categoría: <span rel="tag" style="color:#c58d58;">${data.categoria}</span>`;
         }
 
-        // Actualizar botón de WhatsApp si existe
+                // Actualizar boton de WhatsApp si existe
         const wpBtn = document.querySelector('.wa-order-button');
         if (wpBtn) {
-            // El mensaje típico incluye la URL
             const msg = `Hola, me interesa el producto: ${data.nombre}. ${window.location.href}`;
             wpBtn.href = `https://wa.me/523334636538?text=${encodeURIComponent(msg)}`;
+        }
+
+        // Modificar el boton de anadir al carrito para conectarlo con Supabase
+        const addToCartBtn = document.querySelector('button.single_add_to_cart_button');
+        if (addToCartBtn) {
+            addToCartBtn.type = 'button'; // Evitar que mande al 404
+            addToCartBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (window.seinAddToCart) {
+                    window.seinAddToCart(data);
+                }
+            });
         }
 
     } catch (err) {
