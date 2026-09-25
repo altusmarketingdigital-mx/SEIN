@@ -2003,7 +2003,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 `;
                 
                 // Destruimos la clase de Elementor para que deje de intentar inicializarlo
-                widget.className = 'sein-pure-wrapper';
+                widget.classList.remove('elementor-widget-slides');
+                widget.classList.add('sein-pure-wrapper');
                 widget.innerHTML = html;
             });
 
