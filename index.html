@@ -1957,6 +1957,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                         width: 40px;
                         height: 40px;
                         transition: fill 0.3s;
+                        pointer-events: none; /* Prevent SVG from swallowing clicks */
+                    }
+                    .sein-pure-swiper .swiper-button-prev,
+                    .sein-pure-swiper .swiper-button-next {
+                        cursor: pointer !important;
                     }
                     .sein-pure-swiper .swiper-button-prev:hover .sein-svg-arrow,
                     .sein-pure-swiper .swiper-button-next:hover .sein-svg-arrow {
@@ -2032,7 +2037,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (window.Swiper) {
                     const carousels = document.querySelectorAll('.sein-pure-swiper');
                     carousels.forEach(el => {
-                        new window.Swiper(el, {
+                        const swiperInstance = new window.Swiper(el, {
                             loop: true,
                             slidesPerView: 1,
                             spaceBetween: 0,
@@ -2048,8 +2053,26 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 nextEl: el.querySelector('.swiper-button-next'),
                                 prevEl: el.querySelector('.swiper-button-prev'),
                             },
-                            speed: 1000
+                            speed: 800
                         });
+                        
+                        // Force manual click listeners to guarantee navigation works
+                        const nextBtn = el.querySelector('.swiper-button-next');
+                        const prevBtn = el.querySelector('.swiper-button-prev');
+                        if(nextBtn) {
+                            nextBtn.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                swiperInstance.slideNext();
+                            });
+                        }
+                        if(prevBtn) {
+                            prevBtn.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                swiperInstance.slidePrev();
+                            });
+                        }
                     });
                 }
             }, 300);
