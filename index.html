@@ -415,9 +415,11 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
 
 
 
-    <!-- PREVENT FOUC: Hide static carousel until Supabase dynamic injection runs -->
+    <!-- PREVENT FOUC: Hide static carousel but preserve layout with a white background -->
     <style>
-        .elementor-widget-slides { display: none !important; opacity: 0 !important; visibility: hidden !important; }
+        .elementor-widget-slides * { opacity: 0 !important; visibility: hidden !important; }
+        .elementor-widget-slides { background-color: #ffffff !important; min-height: 450px; }
+        @media (max-width: 768px) { .elementor-widget-slides { min-height: 280px; } }
     </style>
 </head>
 
