@@ -32,8 +32,8 @@
   ],
   "rewrites": [
     {
-      "source": "/producto/(.*)",
-      "destination": "/producto_template.html"
+      "source": "/producto/:match*",
+      "destination": "/producto_template"
     }
   ]
 }
