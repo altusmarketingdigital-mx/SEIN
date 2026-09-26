@@ -1,7 +1,5 @@
 {
   "version": 2,
-  "cleanUrls": true,
-  "trailingSlash": true,
   "headers": [
     {
       "source": "/(.*)",
@@ -32,8 +30,8 @@
   ],
   "rewrites": [
     {
-      "source": "/producto/:match*",
-      "destination": "/producto_template"
+      "source": "/producto/:path*",
+      "destination": "/producto_template.html"
     }
   ]
 }
