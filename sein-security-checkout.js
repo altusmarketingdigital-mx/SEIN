@@ -755,7 +755,13 @@ document.addEventListener("DOMContentLoaded", function() {
 (function() {
     const style = document.createElement('style');
     style.innerHTML = `
+        
         /* Forzar Grid Layout para la lista de productos estatica (ul.products) para evitar que se apilen a la izquierda */
+        .woocommerce ul.products::before,
+        .woocommerce ul.products::after {
+            display: none !important;
+            content: none !important;
+        }
         .woocommerce ul.products {
             display: grid !important;
             grid-template-columns: repeat(4, 1fr) !important;
