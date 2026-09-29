@@ -646,7 +646,7 @@
             color: #2b2b2b !important;
             margin: 10px 14px 5px 14px !important;
             line-height: 1.3 !important;
-            text-align: left !important;
+            text-align: center !important;
         }
 
         /* 4. Precio de la tarjeta */
@@ -657,7 +657,7 @@
             font-weight: normal !important;
             color: #2b2b2b !important;
             margin: 0 14px 10px 14px !important;
-            text-align: left !important;
+            text-align: center !important;
             display: block !important;
         }
         
