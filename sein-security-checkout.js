@@ -622,11 +622,11 @@
         .sein-cat-card img,
         .sein-product-card img {
             width: 100% !important;
-            height: 200px !important;
-            object-fit: contain !important;
+            height: 250px !important;
+            object-fit: cover !important;
+            border-radius: 8px !important;
+            margin: 0 auto !important;
             display: block !important;
-            margin: 0 !important;
-            padding: 10px !important;
         }
         
         @media (max-width: 600px) {
@@ -762,19 +762,37 @@ document.addEventListener("DOMContentLoaded", function() {
             display: none !important;
             content: none !important;
         }
+        .woocommerce {
+            width: 100% !important;
+            display: block !important;
+        }
+        .elementor-widget-woocommerce-products .elementor-widget-container {
+            width: 100% !important;
+            display: block !important;
+        }
         .woocommerce ul.products {
             display: grid !important;
             grid-template-columns: repeat(4, 1fr) !important;
-            gap: 20px !important;
+            gap: 30px !important;
             width: 100% !important;
+            max-width: 100% !important;
             margin: 0 auto !important;
             padding: 0 !important;
+            float: none !important;
+            justify-content: center !important;
+            align-items: stretch !important;
             list-style: none !important;
         }
         .woocommerce ul.products li.product {
             width: 100% !important;
-            margin: 0 !important;
+            max-width: none !important;
+            margin: 0 auto !important;
             float: none !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            text-align: center !important;
         }
         
         /* Responsive Grid */
