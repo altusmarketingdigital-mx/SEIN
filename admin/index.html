@@ -1060,16 +1060,26 @@
             <label>Precio (ej. $149.00)</label>
             <input type="text" id="edit-precio">
         </div>
-        <div class="form-group">
-            <label>Categoría</label>
-            <select id="edit-categoria">
-                <option value="Velas de Soja">Velas de Soja</option>
-                <option value="Libretas">Libretas</option>
-                <option value="Planners">Planners</option>
-                <option value="Organizadores">Organizadores</option>
-                <option value="Kits para Ocasiones Especiales">Kits para Ocasiones Especiales</option>
-            </select>
-        </div>
+        
+          <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div>
+                  <label>Menú</label>
+                  <select id="edit-menu" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" onchange="updateSubmenu('edit-menu', 'edit-submenu')">
+                      <option value="">-- Selecciona Menú --</option>
+                      <option value="Bienestar">Bienestar</option>
+                      <option value="Regalos con Alma">Regalos con Alma</option>
+                      <option value="Organización y Estilo">Organización y Estilo</option>
+                      <option value="Eventos">Eventos</option>
+                  </select>
+              </div>
+              <div>
+                  <label>Sub-menú</label>
+                  <select id="edit-submenu" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+                      <option value="">-- Selecciona Sub-menú --</option>
+                  </select>
+              </div>
+          </div>
+
         <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
             <div>
                 <label>Dimensiones</label>
@@ -1113,7 +1123,38 @@
 
 <script>
     const SUPABASE_URL = "https://hyibazrenjtnswtebybb.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo";
+    
+const menuMap = {
+    "Bienestar": ["Velas de Soya", "Aromas"],
+    "Regalos con Alma": ["Detalles Personalizados", "Cajas y Empaques Personalizados"],
+    "Organización y Estilo": ["Agendas y Libretas", "Organizador de Gastos", "Post its", "Extracto de Café"],
+    "Eventos": ["Religiosos | Personalizados", "Corporativos | Empresariales", "Kits Ocasiones Especiales"]
+};
+
+window.updateSubmenu = function(menuId, submenuId, selectedSubmenu = "") {
+    const menu = document.getElementById(menuId).value;
+    const submenuSelect = document.getElementById(submenuId);
+    submenuSelect.innerHTML = '<option value="">-- Selecciona Sub-menú --</option>';
+    
+    if (menuMap[menu]) {
+        menuMap[menu].forEach(sub => {
+            const opt = document.createElement('option');
+            opt.value = sub;
+            opt.textContent = sub;
+            if (sub === selectedSubmenu) opt.selected = true;
+            submenuSelect.appendChild(opt);
+        });
+    }
+};
+
+window.reverseLookupMenu = function(submenu) {
+    for (const [menu, subs] of Object.entries(menuMap)) {
+        if (subs.includes(submenu)) return menu;
+    }
+    return "";
+};
+
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo";
 
     // Función reutilizable para subir imagen a Supabase Storage
     async function uploadImageToSupabase(file) {
@@ -1279,7 +1320,11 @@
         document.getElementById('edit-precio').value = p.precio;
         document.getElementById('edit-dimensiones').value = p.dimensiones || '';
         document.getElementById('edit-peso').value = p.peso || '';
-        document.getElementById('edit-categoria').value = p.categoria;
+        
+          const menuVal = reverseLookupMenu(p.categoria);
+          document.getElementById('edit-menu').value = menuVal;
+          updateSubmenu('edit-menu', 'edit-submenu', p.categoria);
+
         document.getElementById('edit-descripcion').value = p.descripcion || '';
         document.getElementById('edit-contenido').value = p.contenido || '';
         document.getElementById('edit-activo').value = p.activo ? 'true' : 'false';
@@ -1314,7 +1359,7 @@
         const precio = document.getElementById('edit-precio').value;
         const dimensiones = document.getElementById('edit-dimensiones').value.trim();
         const peso = document.getElementById('edit-peso').value.trim();
-        const categoria = document.getElementById('edit-categoria').value;
+        const categoria = document.getElementById('edit-submenu').value;
         const descripcion = document.getElementById('edit-descripcion').value.trim();
         const contenido = document.getElementById('edit-contenido').value.trim();
         const activo = document.getElementById('edit-activo').value === 'true';
@@ -1627,17 +1672,24 @@ async function loginConSupabase(usuario, password) {
         <label>Precio <span style="color:red">*</span></label>
         <input type="text" id="np-precio" placeholder="Ej. $249.00" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
       </div>
-      <div>
-        <label>Categoría <span style="color:red">*</span></label>
-        <select id="np-categoria" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
-          <option value="">-- Selecciona --</option>
-          <option value="Velas de Soja">Velas de Soja</option>
-          <option value="Libretas">Libretas</option>
-          <option value="Planners">Planners</option>
-          <option value="Organizadores">Organizadores</option>
-          <option value="Kits para Ocasiones Especiales">Kits para Ocasiones Especiales</option>
-        </select>
-      </div>
+      
+        <div>
+          <label>Menú <span style="color:red">*</span></label>
+          <select id="np-menu" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" onchange="updateSubmenu('np-menu', 'np-submenu')">
+            <option value="">-- Selecciona Menú --</option>
+            <option value="Bienestar">Bienestar</option>
+            <option value="Regalos con Alma">Regalos con Alma</option>
+            <option value="Organización y Estilo">Organización y Estilo</option>
+            <option value="Eventos">Eventos</option>
+          </select>
+        </div>
+        <div>
+          <label>Sub-menú <span style="color:red">*</span></label>
+          <select id="np-submenu" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            <option value="">-- Selecciona Sub-menú --</option>
+          </select>
+        </div>
+
     </div>
 
     <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
@@ -1727,7 +1779,7 @@ window.openNewProductModal = function() {
   const statusSpan = document.getElementById('np-imagen-status');
   if (statusSpan) statusSpan.textContent = 'Selecciona una imagen desde tu computadora';
 
-  document.getElementById('np-categoria').value = '';
+  document.getElementById('np-menu').value = ''; document.getElementById('np-submenu').innerHTML = '<option value="">-- Selecciona Sub-menú --</option>';
   document.getElementById('np-activo').value = 'true';
   document.getElementById('np-error').style.display = 'none';
   document.getElementById('newProductModal').style.display = 'flex';
@@ -1742,7 +1794,7 @@ window.saveNewProduct = async function() {
   const precio    = document.getElementById('np-precio').value.trim();
   const dimensiones = document.getElementById('np-dimensiones').value.trim();
   const peso      = document.getElementById('np-peso').value.trim();
-  const categoria = document.getElementById('np-categoria').value;
+  const categoria = document.getElementById('np-submenu').value;
   const descripcion = document.getElementById('np-descripcion').value.trim();
   const contenido   = document.getElementById('np-contenido').value.trim();
   const imagen_url  = document.getElementById('np-imagen').value.trim();
@@ -1751,7 +1803,7 @@ window.saveNewProduct = async function() {
   const errDiv    = document.getElementById('np-error');
 
   // Validar campos obligatorios
-  if (!nombre || !precio || !categoria || !slug) {
+  if (!nombre || !precio || !document.getElementById('np-menu').value || !categoria || !slug) {
     errDiv.textContent = 'Los campos Nombre, Precio, Categoría y Slug son obligatorios.';
     errDiv.style.display = 'block';
     return;
