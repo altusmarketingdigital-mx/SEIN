@@ -30,7 +30,7 @@
   ],
   "rewrites": [
     {
-      "source": "/producto/:path*",
+      "source": "/producto/(.*)",
       "destination": "/producto_template.html"
     }
   ]

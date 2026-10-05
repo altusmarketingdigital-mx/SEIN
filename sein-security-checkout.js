@@ -876,8 +876,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     ul.innerHTML = '<li style="width:100%; text-align:center; grid-column: 1 / -1; padding: 40px; color:#666;">No hay productos disponibles en esta sección por el momento.</li>';
                 } else {
                     ul.innerHTML = filtered.map(p => {
-                        const priceNum = parseFloat(p.precio.replace(/[^0-9.]/g, '')) || 0;
-                        const priceFmt = '$' + priceNum.toFixed(2);
+                        let priceFmt = p.precio || "";
+                        if (/^[\d.,$]+$/.test(priceFmt.trim())) {
+                            const pNum = parseFloat(priceFmt.replace(/[^0-9.]/g, ''));
+                            if (!isNaN(pNum)) priceFmt = '$' + pNum.toFixed(2);
+                        }
                         const pJson = JSON.stringify(p).replace(/"/g, '&quot;');
                         return `
                         <li class="product type-product status-publish instock has-post-thumbnail purchasable product-type-simple">
