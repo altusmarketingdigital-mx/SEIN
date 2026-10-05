@@ -1571,7 +1571,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.title = data.nombre + " - SEIN";
 
         // Reemplazar precio
-        const priceEls = document.querySelectorAll('.woocommerce-Price-amount bdi');
+        const priceEls = document.querySelectorAll('p.price .woocommerce-Price-amount bdi');
         if (priceEls.length > 0) {
             priceEls.forEach(el => {
                 let pFmt = data.precio || "";
