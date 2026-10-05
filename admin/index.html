@@ -1268,7 +1268,8 @@ window.reverseLookupMenu = function(submenu) {
         let filtered = allSupabaseProducts;
         
         if(cat !== 'todos') {
-            filtered = filtered.filter(p => p.categoria === cat);
+            const catClean = cat.trim().toLowerCase();
+            filtered = filtered.filter(p => (p.categoria || '').trim().toLowerCase() === catClean);
         }
         
         if(searchTerm !== '') {
