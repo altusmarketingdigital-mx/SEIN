@@ -1574,7 +1574,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         const priceEls = document.querySelectorAll('.woocommerce-Price-amount bdi');
         if (priceEls.length > 0) {
             priceEls.forEach(el => {
-                el.innerHTML = `<span class="woocommerce-Price-currencySymbol">$</span>${data.precio}`;
+                let pFmt = data.precio || "";
+                let isText = false;
+                if (/^[\d.,$]+$/.test(pFmt.trim())) {
+                    const pNum = parseFloat(pFmt.replace(/[^0-9.]/g, ''));
+                    if (!isNaN(pNum)) pFmt = '$' + pNum.toFixed(2);
+                } else {
+                    isText = true;
+                }
+                if (isText) {
+                    el.innerHTML = `<strong>${pFmt}</strong>`;
+                    el.style.fontSize = "16px";
+                } else {
+                    el.innerHTML = pFmt;
+                }
             });
         } else {
             const fallbackPrice = document.getElementById('dyn-prod-price');

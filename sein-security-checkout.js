@@ -877,10 +877,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 } else {
                     ul.innerHTML = filtered.map(p => {
                         let priceFmt = p.precio || "";
+                        let isTextPrice = false;
                         if (/^[\d.,$]+$/.test(priceFmt.trim())) {
                             const pNum = parseFloat(priceFmt.replace(/[^0-9.]/g, ''));
                             if (!isNaN(pNum)) priceFmt = '$' + pNum.toFixed(2);
+                        } else {
+                            isTextPrice = true;
                         }
+                        const finalPriceHTML = isTextPrice ? `<strong>${priceFmt}</strong>` : priceFmt;
                         const pJson = JSON.stringify(p).replace(/"/g, '&quot;');
                         return `
                         <li class="product type-product status-publish instock has-post-thumbnail purchasable product-type-simple">
@@ -888,7 +892,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <img width="300" height="300" src="${p.imagen_url}" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt="${p.nombre}" style="width:100%; height:250px; object-fit:cover; border-radius:8px;">
                                 <h2 class="woocommerce-loop-product__title" style="margin:10px 14px 5px 14px; font-size:14px; font-weight:normal; color:#2b2b2b; text-align:center;">${p.nombre}</h2>
                                 <span class="price" style="margin:0 14px 10px 14px; text-align:center; font-size:17px; display:block; color:#2b2b2b;">
-                                    <span class="woocommerce-Price-amount amount"><bdi>${priceFmt}</bdi></span>
+                                    <span class="woocommerce-Price-amount amount"><bdi>${finalPriceHTML}</bdi></span>
                                 </span>
                             </a>
                             <a href="#" onclick="event.preventDefault(); if(window.seinAddToCart) window.seinAddToCart(${pJson});" class="button product_type_simple add_to_cart_button ajax_add_to_cart" style="display:block; width: calc(100% - 28px); margin:auto 14px 14px 14px; background:#f4a261; color:#fff; text-align:center; padding:9px 0; border-radius:4px; font-weight:700; text-transform:uppercase; font-size:13px; border:none; cursor:pointer;">AGREGAR AL CARRITO</a>
