@@ -865,7 +865,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (catSlug) {
                 const targetCat = slugToCat[catSlug];
                 if (targetCat) {
-                    filtered = products.filter(p => p.categoria === targetCat);
+                    filtered = products.filter(p => (p.categoria || '').trim().toLowerCase() === targetCat.trim().toLowerCase());
                 } else {
                     filtered = products.filter(p => slugifyCat(p.categoria) === catSlug);
                 }
