@@ -1585,6 +1585,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (isText) {
                     el.innerHTML = `<strong>${pFmt}</strong>`;
                     el.style.fontSize = "16px";
+                    
+                    const cartBtn = document.querySelector('button.single_add_to_cart_button');
+                    if (cartBtn) {
+                        cartBtn.innerText = 'COTIZAR AHORA';
+                        cartBtn.style.backgroundColor = '#25D366';
+                        cartBtn.onclick = (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const prodName = data ? data.nombre : document.title.replace(' - SEIN', '');
+                            window.open('https://wa.me/5213334636538?text=Hola,%20me%20interesa%20cotizar%20el%20producto:%20' + encodeURIComponent(prodName), '_blank');
+                        };
+                    }
+                    const qty = document.querySelector('.quantity');
+                    if (qty) qty.style.display = 'none';
+                    
+                    document.querySelectorAll('[id*="woo_pp"], [class*="paypal"]').forEach(node => {
+                        if(node.style) node.style.display = 'none';
+                    });
                 } else {
                     el.innerHTML = pFmt;
                 }
