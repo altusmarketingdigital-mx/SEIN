@@ -808,3 +808,99 @@ document.addEventListener("DOMContentLoaded", function() {
     `;
     document.head.appendChild(style);
 })();
+
+
+// FETCH DINAMICO DE PRODUCTOS PARA CATEGORIAS Y TIENDA
+document.addEventListener('DOMContentLoaded', async () => {
+    const path = window.location.pathname;
+    if (path.includes('/categoria-producto/') || path.includes('/tienda/')) {
+        let catSlug = null;
+        if (path.includes('/categoria-producto/')) {
+            const parts = path.split('/').filter(Boolean);
+            catSlug = parts[parts.length - 1];
+        }
+
+        const ul = document.querySelector('ul.products');
+        if (ul) {
+            ul.innerHTML = '<li style="width:100%; text-align:center; grid-column: 1 / -1; padding: 40px; color:#666;">Cargando productos del catálogo...</li>';
+        } else {
+            return; // No ul.products found, ignore
+        }
+
+        const SUPABASE_URL = "https://hyibazrenjtnswtebybb.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo";
+        
+        try {
+            const res = await fetch(SUPABASE_URL + "/rest/v1/productos?select=*&activo=eq.true", {
+                headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY }
+            });
+            const products = await res.json();
+            
+            const slugToCat = {
+                'velas-de-soja': 'Velas de Soya',
+                'agendas': 'Agendas y Libretas',
+                'libretas': 'Agendas y Libretas',
+                'planners': 'Planners',
+                'exclusivos-eventos-especiales': 'Religiosos | Personalizados',
+                'organizador-de-gastos': 'Organizador de Gastos',
+                'eventos-corporativos-empresariales': 'Corporativos | Empresariales',
+                'kits-para-ocasiones-especiales': 'Kits Ocasiones Especiales',
+                'extracto-de-cafe': 'Extracto de Café',
+                'post-its': 'Post its',
+                'cajas-y-empaques-personalizados': 'Cajas y Empaques Personalizados',
+                'detalles-personalizados': 'Detalles Personalizados',
+                'aromas': 'Aromas'
+            };
+
+            function slugifyCat(text) {
+                if(!text) return '';
+                return text.toString().toLowerCase().trim()
+                    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/[^\w\-]+/g, '')
+                    .replace(/\-\-+/g, '-');
+            }
+
+            let filtered = products;
+            if (catSlug) {
+                const targetCat = slugToCat[catSlug];
+                if (targetCat) {
+                    filtered = products.filter(p => p.categoria === targetCat);
+                } else {
+                    filtered = products.filter(p => slugifyCat(p.categoria) === catSlug);
+                }
+            }
+
+            if (ul) {
+                if (filtered.length === 0) {
+                    ul.innerHTML = '<li style="width:100%; text-align:center; grid-column: 1 / -1; padding: 40px; color:#666;">No hay productos disponibles en esta sección por el momento.</li>';
+                } else {
+                    ul.innerHTML = filtered.map(p => {
+                        const priceNum = parseFloat(p.precio.replace(/[^0-9.]/g, '')) || 0;
+                        const priceFmt = '$' + priceNum.toFixed(2);
+                        const pJson = JSON.stringify(p).replace(/"/g, '&quot;');
+                        return `
+                        <li class="product type-product status-publish instock has-post-thumbnail purchasable product-type-simple">
+                            <a href="/producto/${p.slug}/" class="woocommerce-LoopProduct-link woocommerce-loop-product__link" style="display:flex; flex-direction:column; height:100%; text-decoration:none;">
+                                <img width="300" height="300" src="${p.imagen_url}" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt="${p.nombre}" style="width:100%; height:250px; object-fit:cover; border-radius:8px;">
+                                <h2 class="woocommerce-loop-product__title" style="margin:10px 14px 5px 14px; font-size:14px; font-weight:normal; color:#2b2b2b; text-align:center;">${p.nombre}</h2>
+                                <span class="price" style="margin:0 14px 10px 14px; text-align:center; font-size:17px; display:block; color:#2b2b2b;">
+                                    <span class="woocommerce-Price-amount amount"><bdi>${priceFmt}</bdi></span>
+                                </span>
+                            </a>
+                            <a href="#" onclick="event.preventDefault(); if(window.seinAddToCart) window.seinAddToCart(${pJson});" class="button product_type_simple add_to_cart_button ajax_add_to_cart" style="display:block; width: calc(100% - 28px); margin:auto 14px 14px 14px; background:#f4a261; color:#fff; text-align:center; padding:9px 0; border-radius:4px; font-weight:700; text-transform:uppercase; font-size:13px; border:none; cursor:pointer;">AGREGAR AL CARRITO</a>
+                        </li>
+                    `}).join('');
+                }
+            }
+            
+            // Remove pagination
+            const nav = document.querySelector('.woocommerce-pagination');
+            if (nav) nav.style.display = 'none';
+
+        } catch(e) {
+            console.error("Error fetching category products", e);
+            if(ul) ul.innerHTML = '<li style="width:100%; text-align:center; grid-column: 1 / -1;">Error al cargar productos. Por favor recarga la página.</li>';
+        }
+    }
+});
