@@ -1080,16 +1080,19 @@
               </div>
           </div>
 
-        <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-            <div>
-                <label>Dimensiones</label>
-                <input type="text" id="edit-dimensiones" placeholder="Ej. 10x15x5 cm">
-            </div>
-            <div>
-                <label>Peso</label>
-                <input type="text" id="edit-peso" placeholder="Ej. 500 gr">
-            </div>
-        </div>
+        <div class="form-group" style="position:relative; padding-top: 10px;">
+              <button type="button" style="position:absolute; top: -5px; right: 0; font-size:11px; padding:3px 8px; border:1px solid #ddd; background:#f5f5f5; border-radius:4px; cursor:pointer;" onclick="document.getElementById('edit-dimensiones').value='No aplica'; document.getElementById('edit-peso').value='No aplica';">No aplica</button>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                  <div>
+                      <label style="margin-top:0;">Dimensiones</label>
+                      <input type="text" id="edit-dimensiones" placeholder="Ej. 10x15x5 cm">
+                  </div>
+                  <div>
+                      <label style="margin-top:0;">Peso</label>
+                      <input type="text" id="edit-peso" placeholder="Ej. 500 gr">
+                  </div>
+              </div>
+          </div>
         <div class="form-group">
             <label>Descripción</label>
             <textarea id="edit-descripcion" rows="4" placeholder="Descripción del producto..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
@@ -1696,16 +1699,19 @@ async function loginConSupabase(usuario, password) {
 
     </div>
 
-    <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-      <div>
-        <label>Dimensiones</label>
-        <input type="text" id="np-dimensiones" placeholder="Ej. 10x15x5 cm" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+    <div class="form-group" style="position:relative; padding-top: 10px;">
+        <button type="button" style="position:absolute; top: -5px; right: 0; font-size:11px; padding:3px 8px; border:1px solid #ddd; background:#f5f5f5; border-radius:4px; cursor:pointer;" onclick="document.getElementById('np-dimensiones').value='No aplica'; document.getElementById('np-peso').value='No aplica';">No aplica</button>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+                <label style="margin-top:0;">Dimensiones</label>
+                <input type="text" id="np-dimensiones" placeholder="Ej. 10x15x5 cm" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            </div>
+            <div>
+                <label style="margin-top:0;">Peso</label>
+                <input type="text" id="np-peso" placeholder="Ej. 500 gr" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            </div>
+        </div>
       </div>
-      <div>
-        <label>Peso</label>
-        <input type="text" id="np-peso" placeholder="Ej. 500 gr" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
-      </div>
-    </div>
     <div class="form-group">
       <label>Descripción</label>
       <textarea id="np-descripcion" rows="4" placeholder="Descripción del producto..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
