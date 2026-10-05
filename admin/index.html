@@ -1231,7 +1231,10 @@ window.reverseLookupMenu = function(submenu) {
     }
 
     function updateCategoryFilter() {
-        const cats = [...new Set(allSupabaseProducts.map(p => p.categoria).filter(Boolean))];
+        const cats = [];
+        for (const [menu, subs] of Object.entries(menuMap)) {
+            cats.push(...subs);
+        }
         let select = document.getElementById('admin-cat-filter');
         if(!select) {
             const filterHTML = `
