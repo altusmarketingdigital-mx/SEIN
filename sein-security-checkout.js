@@ -837,7 +837,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const products = await res.json();
             
             const slugToCat = {
-                'velas-de-soja': 'Velas de Soya',
+                'velas-de-soja': 'Velas de Soja',
                 'agendas': 'Agendas y Libretas',
                 'libretas': 'Agendas y Libretas',
                 'planners': 'Planners',
