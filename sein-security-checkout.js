@@ -838,27 +838,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             const products = await res.json();
             
-            const slugToCat = {
-                'velas-de-soja': 'Velas de Soja',
-                'agendas': 'Agendas y Libretas',
-                'libretas': 'Agendas y Libretas',
-                'planners': 'Planners',
-                'exclusivos-eventos-especiales': 'Religiosos | Personalizados',
-                'organizador-de-gastos': 'Organizador de Gastos',
-                'eventos-corporativos-empresariales': 'Corporativos | Empresariales',
-                'kits-para-ocasiones-especiales': 'Kits Ocasiones Especiales',
-                'extracto-de-cafe': 'Extracto de Café',
-                'post-its': 'Post its',
-                'cajas-y-empaques-personalizados': 'Cajas y Empaques Personalizados',
-                    'detalles-personalizados': 'Detalles Personalizados',
-                'detalles-personalizados': 'Detalles Personalizados',
-                'aromas': 'Aromas'
+                        const slugToCat = {
+                'velas-de-soja': ['Velas de Soja', 'Velas', 'Soya', 'Soja', 'Bienestar'],
+                'agendas': ['Agendas', 'Libretas', 'Agendas y Libretas', 'Organizacion', 'Estilo'],
+                'libretas': ['Agendas', 'Libretas', 'Agendas y Libretas', 'Organizacion', 'Estilo'],
+                'planners': ['Planners', 'Planner'],
+                'exclusivos-eventos-especiales': ['Religiosos', 'Personalizados', 'Exclusivos', 'Eventos'],
+                'organizador-de-gastos': ['Organizador', 'Gastos', 'Organizadores'],
+                'eventos-corporativos-empresariales': ['Corporativos', 'Empresariales', 'Eventos Corporativos'],
+                'kits-para-ocasiones-especiales': ['Kits', 'Ocasiones Especiales', 'Kit'],
+                'extracto-de-cafe': ['Extracto', 'Cafe', 'Café'],
+                'post-its': ['Post its', 'Post-it', 'Postit', 'Post it'],
+                'cajas-y-empaques-personalizados': ['Cajas', 'Empaques', 'Personalizados', 'Cajas y Empaques'],
+                'detalles-personalizados': ['Detalles', 'Personalizados', 'Regalos', 'Alma'],
+                'aromas': ['Aromas', 'Aroma', 'Bienestar']
             };
 
             function slugifyCat(text) {
                 if(!text) return '';
                 return text.toString().toLowerCase().trim()
-                    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
                     .replace(/\s+/g, '-')
                     .replace(/[^\w\-]+/g, '')
                     .replace(/\-\-+/g, '-');
@@ -866,10 +865,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             let filtered = products;
             if (catSlug) {
-                const targetCat = slugToCat[catSlug];
-                if (targetCat) {
-                    filtered = products.filter(p => (p.categoria || '').trim().toLowerCase() === targetCat.trim().toLowerCase());
+                const targetCats = slugToCat[catSlug];
+                if (targetCats) {
+                    filtered = products.filter(p => {
+                        const c = (p.categoria || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                        return targetCats.some(t => {
+                            const nt = t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                            return c.includes(nt) || nt.includes(c);
+                        });
+                    });
                 } else {
+                    filtered = products.filter(p => slugifyCat(p.categoria) === catSlug || catSlug.includes(slugifyCat(p.categoria)));
+                }
+            } else {
                     filtered = products.filter(p => slugifyCat(p.categoria) === catSlug);
                 }
             }
