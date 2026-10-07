@@ -850,7 +850,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 'extracto-de-cafe': ['Extracto', 'Cafe', 'Café'],
                 'post-its': ['Post its', 'Post-it', 'Postit', 'Post it'],
                 'cajas-y-empaques-personalizados': ['Cajas', 'Empaques', 'Personalizados', 'Cajas y Empaques'],
-                'detalles-personalizados': ['Detalles', 'Personalizados', 'Regalos', 'Alma'],
+                                'detalles-personalizados': ['Detalles', 'Personalizados', 'Regalos', 'Alma'],
+                'regalos-personalizados': ['Regalos Personalizados', 'Personalizados', 'Regalos'],
                 'aromas': ['Aromas', 'Aroma', 'Bienestar']
             };
 
