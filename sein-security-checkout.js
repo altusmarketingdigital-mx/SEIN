@@ -813,11 +813,13 @@ document.addEventListener("DOMContentLoaded", function() {
 // FETCH DINAMICO DE PRODUCTOS PARA CATEGORIAS Y TIENDA
 document.addEventListener('DOMContentLoaded', async () => {
     const path = window.location.pathname;
-    if (path.includes('/categoria-producto/') || path.includes('/tienda/')) {
+    if (path.includes('/categoria-producto/') || path.includes('/tienda/') || path.includes('/aromas/')) {
         let catSlug = null;
         if (path.includes('/categoria-producto/')) {
             const parts = path.split('/').filter(Boolean);
             catSlug = parts[parts.length - 1];
+        } else if (path.includes('/aromas/')) {
+            catSlug = 'aromas';
         }
 
         const ul = document.querySelector('ul.products');
@@ -890,7 +892,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         return `
                         <li class="product type-product status-publish instock has-post-thumbnail purchasable product-type-simple">
                             <a href="/producto/${p.slug}/" class="woocommerce-LoopProduct-link woocommerce-loop-product__link" style="display:flex; flex-direction:column; height:100%; text-decoration:none;">
-                                <img width="300" height="300" src="${p.imagen_url}" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt="${p.nombre}" style="width:100%; height:250px; object-fit:cover; border-radius:8px;">
+                                <img width="300" height="300" src="${p.imagen_url}" loading="lazy" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt="${p.nombre}" style="width:100%; height:250px; object-fit:cover; border-radius:8px;">
                                 <h2 class="woocommerce-loop-product__title" style="margin:10px 14px 5px 14px; font-size:14px; font-weight:normal; color:#2b2b2b; text-align:center;">${p.nombre}</h2>
                                 <span class="price" style="margin:0 14px 10px 14px; text-align:center; font-size:17px; display:block; color:#2b2b2b;">
                                     <span class="woocommerce-Price-amount amount"><bdi>${finalPriceHTML}</bdi></span>
