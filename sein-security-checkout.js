@@ -846,7 +846,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 'organizacion-y-estilo': ['Organizacion', 'Estilo', 'Agendas', 'Libretas', 'Agendas y Libretas', 'Planners', 'Planner', 'Organizadores', 'Organizador', 'Gastos', 'Organigastos', 'Post-it', 'Post its', 'Postit'],
                 'exclusivos-eventos-especiales': ['Religiosos', 'Exclusivos', 'Bautizo', 'Baby Shower', 'Mini Vela'],
                 'organizador-de-gastos': ['Organizador', 'Gastos', 'Organizadores', 'Organigastos', 'Libretas', 'Agendas', 'Planners', 'Post-it', 'Post its'],
-                'eventos-corporativos-empresariales': ['Corporativos', 'Empresariales', 'Eventos Corporativos'],
+                'eventos-corporativos-empresariales': ['Corporativos', 'Empresariales', 'Eventos Corporativos', 'Kits Ocasiones Especiales', 'Kits para Ocasiones Especiales', 'Kits', 'Kit'],
                 'kits-para-ocasiones-especiales': ['Kits', 'Ocasiones Especiales', 'Kit'],
                 'extracto-de-cafe': ['Extracto', 'Cafe', 'Café'],
                 'post-its': ['Post its', 'Post-it', 'Postit', 'Post it', 'Organizacion', 'Estilo', 'Libretas', 'Agendas', 'Planners'],
