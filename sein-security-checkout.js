@@ -847,12 +847,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 'exclusivos-eventos-especiales': ['Religiosos', 'Personalizados', 'Exclusivos', 'Eventos'],
                 'organizador-de-gastos': ['Organizador', 'Gastos', 'Organizadores', 'Organigastos', 'Libretas', 'Agendas', 'Planners', 'Post-it', 'Post its'],
                 'eventos-corporativos-empresariales': ['Corporativos', 'Empresariales', 'Eventos Corporativos'],
-                'kits-para-ocasiones-especiales': ['Kits', 'Ocasiones Especiales', 'Kit'],
+                'kits-para-ocasiones-especiales': ['Kits', 'Ocasiones Especiales', 'Kit', 'Kits Ocasiones Especiales', 'Kits para Ocasiones Especiales', 'Detalles', 'Personalizados'],
                 'extracto-de-cafe': ['Extracto', 'Cafe', 'Café'],
                 'post-its': ['Post its', 'Post-it', 'Postit', 'Post it', 'Organizacion', 'Estilo', 'Libretas', 'Agendas', 'Planners'],
                 'cajas-y-empaques-personalizados': ['Cajas', 'Empaques', 'Personalizados', 'Cajas y Empaques'],
-                'detalles-personalizados': ['Detalles', 'Personalizados', 'Regalos', 'Alma'],
-                'regalos-personalizados': ['Regalos Personalizados', 'Personalizados', 'Regalos', 'Alma', 'Detalles', 'Organizacion', 'Estilo', 'Cajas', 'Empaques'],
+                'detalles-personalizados': ['Detalles', 'Personalizados', 'Regalos', 'Alma', 'Kits', 'Ocasiones Especiales', 'Kit', 'Kits Ocasiones Especiales', 'Kits para Ocasiones Especiales'],
+                'regalos-personalizados': ['Regalos Personalizados', 'Personalizados', 'Regalos', 'Alma', 'Detalles', 'Organizacion', 'Estilo', 'Cajas', 'Empaques', 'Kits', 'Ocasiones Especiales'],
                 'aromas': ['Aromas', 'Aroma', 'Bienestar']
             };
 
