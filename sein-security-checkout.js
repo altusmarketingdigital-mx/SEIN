@@ -881,6 +881,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
 
+            filtered.sort((a, b) => {
+                const nameA = (a.nombre || '').trim().toLowerCase();
+                const nameB = (b.nombre || '').trim().toLowerCase();
+                
+                const getRank = (name) => {
+                    if (name.includes('alianza perfecta')) return 1;
+                    if (name.includes('brindis')) return 2;
+                    return 3;
+                };
+
+                const rankA = getRank(nameA);
+                const rankB = getRank(nameB);
+
+                if (rankA !== rankB) return rankA - rankB;
+                return nameA.localeCompare(nameB, 'es', { sensitivity: 'base' });
+            });
+
             if (ul) {
                 if (filtered.length === 0) {
                     ul.innerHTML = '<li style="width:100%; text-align:center; grid-column: 1 / -1; padding: 40px; color:#666;">No hay productos disponibles en esta sección por el momento.</li>';
