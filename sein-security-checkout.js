@@ -840,18 +840,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             
                         const slugToCat = {
                 'velas-de-soja': ['Velas de Soja', 'Velas', 'Soya', 'Soja', 'Bienestar'],
-                'agendas': ['Agendas', 'Libretas', 'Agendas y Libretas', 'Organizacion', 'Estilo'],
-                'libretas': ['Agendas', 'Libretas', 'Agendas y Libretas', 'Organizacion', 'Estilo'],
-                'planners': ['Planners', 'Planner'],
+                'agendas': ['Agendas', 'Libretas', 'Agendas y Libretas', 'Organizacion', 'Estilo', 'Planners', 'Organizadores', 'Gastos', 'Post-it', 'Post its'],
+                'libretas': ['Agendas', 'Libretas', 'Agendas y Libretas', 'Organizacion', 'Estilo', 'Planners', 'Organizadores', 'Gastos', 'Post-it', 'Post its'],
+                'planners': ['Planners', 'Planner', 'Agendas', 'Libretas', 'Agendas y Libretas', 'Organizacion', 'Estilo', 'Organizadores', 'Organizador', 'Gastos', 'Organigastos', 'Post-it', 'Post its', 'Postit'],
+                'organizacion-y-estilo': ['Organizacion', 'Estilo', 'Agendas', 'Libretas', 'Agendas y Libretas', 'Planners', 'Planner', 'Organizadores', 'Organizador', 'Gastos', 'Organigastos', 'Post-it', 'Post its', 'Postit'],
                 'exclusivos-eventos-especiales': ['Religiosos', 'Personalizados', 'Exclusivos', 'Eventos'],
-                'organizador-de-gastos': ['Organizador', 'Gastos', 'Organizadores'],
+                'organizador-de-gastos': ['Organizador', 'Gastos', 'Organizadores', 'Organigastos', 'Libretas', 'Agendas', 'Planners', 'Post-it', 'Post its'],
                 'eventos-corporativos-empresariales': ['Corporativos', 'Empresariales', 'Eventos Corporativos'],
                 'kits-para-ocasiones-especiales': ['Kits', 'Ocasiones Especiales', 'Kit'],
                 'extracto-de-cafe': ['Extracto', 'Cafe', 'Café'],
-                'post-its': ['Post its', 'Post-it', 'Postit', 'Post it'],
+                'post-its': ['Post its', 'Post-it', 'Postit', 'Post it', 'Organizacion', 'Estilo', 'Libretas', 'Agendas', 'Planners'],
                 'cajas-y-empaques-personalizados': ['Cajas', 'Empaques', 'Personalizados', 'Cajas y Empaques'],
                 'detalles-personalizados': ['Detalles', 'Personalizados', 'Regalos', 'Alma'],
-                'regalos-personalizados': ['Regalos Personalizados', 'Personalizados', 'Regalos'],
+                'regalos-personalizados': ['Regalos Personalizados', 'Personalizados', 'Regalos', 'Alma', 'Detalles', 'Organizacion', 'Estilo', 'Cajas', 'Empaques'],
                 'aromas': ['Aromas', 'Aroma', 'Bienestar']
             };
 
