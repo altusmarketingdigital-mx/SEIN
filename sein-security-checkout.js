@@ -844,14 +844,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 'libretas': ['Agendas', 'Libretas', 'Agendas y Libretas', 'Organizacion', 'Estilo', 'Planners', 'Organizadores', 'Gastos', 'Post-it', 'Post its'],
                 'planners': ['Planners', 'Planner', 'Agendas', 'Libretas', 'Agendas y Libretas', 'Organizacion', 'Estilo', 'Organizadores', 'Organizador', 'Gastos', 'Organigastos', 'Post-it', 'Post its', 'Postit'],
                 'organizacion-y-estilo': ['Organizacion', 'Estilo', 'Agendas', 'Libretas', 'Agendas y Libretas', 'Planners', 'Planner', 'Organizadores', 'Organizador', 'Gastos', 'Organigastos', 'Post-it', 'Post its', 'Postit'],
-                'exclusivos-eventos-especiales': ['Religiosos', 'Personalizados', 'Exclusivos', 'Eventos'],
+                'exclusivos-eventos-especiales': ['Religiosos', 'Exclusivos', 'Bautizo', 'Baby Shower', 'Mini Vela'],
                 'organizador-de-gastos': ['Organizador', 'Gastos', 'Organizadores', 'Organigastos', 'Libretas', 'Agendas', 'Planners', 'Post-it', 'Post its'],
                 'eventos-corporativos-empresariales': ['Corporativos', 'Empresariales', 'Eventos Corporativos'],
-                'kits-para-ocasiones-especiales': ['Kits', 'Ocasiones Especiales', 'Kit', 'Kits Ocasiones Especiales', 'Kits para Ocasiones Especiales', 'Detalles', 'Personalizados'],
+                'kits-para-ocasiones-especiales': ['Kits', 'Ocasiones Especiales', 'Kit'],
                 'extracto-de-cafe': ['Extracto', 'Cafe', 'Café'],
                 'post-its': ['Post its', 'Post-it', 'Postit', 'Post it', 'Organizacion', 'Estilo', 'Libretas', 'Agendas', 'Planners'],
-                'cajas-y-empaques-personalizados': ['Cajas', 'Empaques', 'Personalizados', 'Cajas y Empaques'],
-                'detalles-personalizados': ['Detalles', 'Personalizados', 'Regalos', 'Alma', 'Kits', 'Ocasiones Especiales', 'Kit', 'Kits Ocasiones Especiales', 'Kits para Ocasiones Especiales'],
+                'cajas-y-empaques-personalizados': ['Cajas y Empaques', 'Cajas', 'Empaques'],
+                'detalles-personalizados': ['Detalles Personalizados', 'Detalles', 'Kits Ocasiones Especiales', 'Kits para Ocasiones Especiales', 'Kits', 'Kit'],
                 'regalos-personalizados': ['Regalos Personalizados', 'Personalizados', 'Regalos', 'Alma', 'Detalles', 'Organizacion', 'Estilo', 'Cajas', 'Empaques', 'Kits', 'Ocasiones Especiales'],
                 'aromas': ['Aromas', 'Aroma', 'Bienestar']
             };
