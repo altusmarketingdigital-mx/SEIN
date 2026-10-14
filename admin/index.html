@@ -803,6 +803,14 @@
                 users: "Gestión de Usuarios del Panel"
             };
             document.getElementById('page-title').textContent = titles[secId] || "Panel de Administración";
+
+            if (secId === 'products') {
+                if (typeof filterAdminProducts === 'function') {
+                    filterAdminProducts();
+                } else if (typeof fetchAdminProducts === 'function') {
+                    fetchAdminProducts();
+                }
+            }
         }
 
         function getStatusBadge(status) {
@@ -1234,10 +1242,19 @@ window.reverseLookupMenu = function(submenu) {
     }
 
     function updateCategoryFilter() {
-        const cats = [];
+        const catSet = new Set();
+        // Collect categories from actual products
+        allSupabaseProducts.forEach(p => {
+            if (p.categoria && p.categoria.trim()) {
+                catSet.add(p.categoria.trim());
+            }
+        });
+        // Also add standard categories from menuMap
         for (const [menu, subs] of Object.entries(menuMap)) {
-            cats.push(...subs);
+            subs.forEach(s => catSet.add(s.trim()));
         }
+        const cats = Array.from(catSet).sort((a, b) => a.localeCompare(b, 'es'));
+
         let select = document.getElementById('admin-cat-filter');
         if(!select) {
             const filterHTML = `
@@ -1256,20 +1273,32 @@ window.reverseLookupMenu = function(submenu) {
                 </div>
             `;
             const header = document.querySelector('#sec-products .panel-header');
-            header.insertAdjacentHTML('afterend', filterHTML);
+            if (header) header.insertAdjacentHTML('afterend', filterHTML);
+        } else {
+            const currentVal = select.value;
+            select.innerHTML = '<option value="todos">Todas las categorías</option>' +
+                cats.map(c => `<option value="${c}" ${c === currentVal ? 'selected' : ''}>${c}</option>`).join('');
         }
     }
 
+    function normalizeCat(str) {
+        return (str || '').toString().trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/y/g, 'i');
+    }
+
     window.filterAdminProducts = function() {
-        const cat = document.getElementById('admin-cat-filter').value;
+        const select = document.getElementById('admin-cat-filter');
+        const cat = select ? select.value : 'todos';
         const searchInput = document.getElementById('admin-search-filter');
         const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
         
         let filtered = allSupabaseProducts;
         
-        if(cat !== 'todos') {
-            const catClean = cat.trim().toLowerCase();
-            filtered = filtered.filter(p => (p.categoria || '').trim().toLowerCase() === catClean);
+        if(cat && cat !== 'todos') {
+            const catNorm = normalizeCat(cat);
+            filtered = filtered.filter(p => {
+                const pCatNorm = normalizeCat(p.categoria);
+                return pCatNorm === catNorm || pCatNorm.includes(catNorm) || catNorm.includes(pCatNorm);
+            });
         }
         
         if(searchTerm !== '') {
@@ -1450,10 +1479,10 @@ window.reverseLookupMenu = function(submenu) {
     }
 
     // Hook into existing init
-
     document.addEventListener("DOMContentLoaded", () => {
-        setTimeout(fetchAdminProducts, 500); // load after existing demo data
+        fetchAdminProducts();
     });
+    fetchAdminProducts();
 </script>
 <!-- FIN SECCION SUPABASE ADMIN -->
 
