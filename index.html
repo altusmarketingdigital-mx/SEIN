@@ -1838,8 +1838,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     try {
-        const { data, error } = await supabase.from('carrusel').select('*').order('orden', { ascending: true });
+        const { data: rawData, error } = await supabase.from('carrusel').select('*').order('orden', { ascending: true });
         if (error) throw error;
+
+        // Filtrar registro de configuración de favoritos y diapositivas de carrusel hero
+        const data = (rawData || []).filter(item => item.enlace !== '__FAVORITOS_CONFIG__' && item.orden !== 9999);
+        const favConfigRecord = (rawData || []).find(item => item.enlace === '__FAVORITOS_CONFIG__');
+
+        // Cargar y renderizar Productos Favoritos dinámicamente
+        renderDynamicFavoritos(supabase, favConfigRecord);
 
         if (data && data.length > 0) {
             
@@ -2066,10 +2073,283 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (err) {
         console.error("Error loading dynamic carousel:", err);
     }
+
+    // ─── LÓGICA DINÁMICA DE PRODUCTOS FAVORITOS ───
+    async function renderDynamicFavoritos(supabase, favConfigRecord) {
+        const container = document.querySelector('.elementor-element-122dfba .elementor-widget-container');
+        if (!container) return;
+
+        try {
+            let config = { carrusel: true, slidesPerView: 4, autoplayDelay: 5000, products: [] };
+            if (favConfigRecord && favConfigRecord.subtitulo) {
+                try {
+                    config = Object.assign(config, JSON.parse(favConfigRecord.subtitulo));
+                } catch(e) {}
+            }
+
+            // Si no hay productos configurados explícitamente, mantenemos los estáticos predeterminados
+            if (!config.products || config.products.length === 0) return;
+
+            // Consultar datos de los productos favoritos desde Supabase
+            const { data: allProds, error: pErr } = await supabase.from('productos').select('*').eq('activo', true);
+            if (pErr || !allProds) return;
+
+            // Mapear y ordenar según la configuración de favoritos
+            const orderedFavorites = [];
+            config.products.forEach(item => {
+                const pId = typeof item === 'object' ? item.id : item;
+                const found = allProds.find(p => String(p.id) === String(pId));
+                if (found) orderedFavorites.push(found);
+            });
+
+            if (orderedFavorites.length === 0) return;
+
+            // Inyectar estilos para el carrusel de productos favoritos
+            if (!document.getElementById('sein-favoritos-carousel-css')) {
+                const favStyle = document.createElement('style');
+                favStyle.id = 'sein-favoritos-carousel-css';
+                favStyle.innerHTML = `
+                    .sein-fav-swiper-container {
+                        position: relative;
+                        padding: 10px 0 45px 0;
+                        width: 100%;
+                        overflow: hidden;
+                    }
+                    .sein-fav-swiper {
+                        width: 100%;
+                        overflow: hidden;
+                        position: relative;
+                    }
+                    .sein-fav-swiper .swiper-slide {
+                        height: auto;
+                        display: flex;
+                        justify-content: center;
+                    }
+                    .sein-fav-card {
+                        background: #ffffff;
+                        border-radius: 8px;
+                        padding: 16px;
+                        width: 100%;
+                        max-width: 280px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        text-align: center;
+                        transition: transform 0.25s ease, box-shadow 0.25s ease;
+                        border: 1px solid #f0ebe4;
+                    }
+                    .sein-fav-card:hover {
+                        transform: translateY(-4px);
+                        box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+                    }
+                    .sein-fav-img-wrap {
+                        width: 100%;
+                        aspect-ratio: 1/1;
+                        border-radius: 6px;
+                        overflow: hidden;
+                        margin-bottom: 14px;
+                        background: #faf8f5;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .sein-fav-img-wrap img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        display: block;
+                        transition: transform 0.3s ease;
+                    }
+                    .sein-fav-card:hover .sein-fav-img-wrap img {
+                        transform: scale(1.04);
+                    }
+                    .sein-fav-title {
+                        font-family: 'Roboto', sans-serif;
+                        font-size: 15px;
+                        font-weight: 500;
+                        color: #333333;
+                        margin-bottom: 8px;
+                        line-height: 1.3;
+                        min-height: 40px;
+                        display: -webkit-box;
+                        -webkit-line-clamp: 2;
+                        -webkit-box-orient: vertical;
+                        overflow: hidden;
+                        text-decoration: none;
+                    }
+                    .sein-fav-title:hover {
+                        color: #DB572E;
+                    }
+                    .sein-fav-price {
+                        font-family: 'Roboto', sans-serif;
+                        font-size: 16px;
+                        font-weight: 700;
+                        color: #DB572E;
+                        margin-bottom: 14px;
+                    }
+                    .sein-fav-btn {
+                        background-color: #DB572E !important;
+                        color: #ffffff !important;
+                        padding: 9px 18px;
+                        border-radius: 4px;
+                        font-size: 12px;
+                        font-weight: 600;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                        text-decoration: none;
+                        display: inline-block;
+                        transition: background-color 0.2s;
+                        width: 100%;
+                    }
+                    .sein-fav-btn:hover {
+                        background-color: #b64a26 !important;
+                    }
+                    .sein-fav-prev, .sein-fav-next {
+                        position: absolute;
+                        top: 45%;
+                        transform: translateY(-50%);
+                        width: 38px;
+                        height: 38px;
+                        background: #ffffff;
+                        border-radius: 50%;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                        z-index: 20;
+                        color: #DB572E;
+                        font-size: 18px;
+                        font-weight: bold;
+                        border: 1px solid #eee;
+                        transition: all 0.2s;
+                    }
+                    .sein-fav-prev:hover, .sein-fav-next:hover {
+                        background: #DB572E;
+                        color: #ffffff;
+                    }
+                    .sein-fav-prev { left: -15px; }
+                    .sein-fav-next { right: -15px; }
+                    .sein-fav-pagination {
+                        position: absolute;
+                        bottom: 8px;
+                        left: 0;
+                        width: 100%;
+                        text-align: center;
+                        z-index: 10;
+                    }
+                    .sein-fav-pagination .swiper-pagination-bullet-active {
+                        background: #DB572E !important;
+                        width: 20px;
+                        border-radius: 5px;
+                    }
+                    @media (max-width: 768px) {
+                        .sein-fav-prev { left: 0px; }
+                        .sein-fav-next { right: 0px; }
+                    }
+                `;
+                document.head.appendChild(favStyle);
+            }
+
+            // Construir tarjetas de productos
+            const renderCard = (p) => {
+                const img = p.imagen_url || '/wp-content/uploads/2024/09/placeholder.png';
+                const pSlug = p.slug ? `/producto/${p.slug}/` : `/producto/`;
+                const priceFormatted = (p.precio && p.precio.includes('$')) ? p.precio : `$${p.precio || '0.00'}`;
+                return `
+                    <div class="sein-fav-card">
+                        <a href="${pSlug}" class="sein-fav-img-wrap">
+                            <img src="${img}" alt="${p.nombre}" loading="lazy">
+                        </a>
+                        <a href="${pSlug}" class="sein-fav-title">${p.nombre}</a>
+                        <div class="sein-fav-price">${priceFormatted}</div>
+                        <a href="${pSlug}" class="sein-fav-btn">Ver Producto</a>
+                    </div>
+                `;
+            };
+
+            // Si es carrusel y son varios productos (o forzado en configuración)
+            const isCarouselMode = config.carrusel !== false && orderedFavorites.length >= 3;
+
+            if (isCarouselMode) {
+                let slidesHtml = orderedFavorites.map(p => `
+                    <div class="swiper-slide">
+                        ${renderCard(p)}
+                    </div>
+                `).join('');
+
+                container.innerHTML = `
+                    <div class="sein-fav-swiper-container">
+                        <div class="swiper sein-fav-swiper">
+                            <div class="swiper-wrapper">
+                                ${slidesHtml}
+                            </div>
+                        </div>
+                        <div class="sein-fav-prev">&#10094;</div>
+                        <div class="sein-fav-next">&#10095;</div>
+                        <div class="swiper-pagination sein-fav-pagination"></div>
+                    </div>
+                `;
+
+                // Inicializar Swiper para Favoritos
+                setTimeout(() => {
+                    if (window.Swiper) {
+                        const favEl = container.querySelector('.sein-fav-swiper');
+                        const perViewDesktop = config.slidesPerView || 4;
+                        const autoplayConfig = (config.autoplayDelay && config.autoplayDelay > 0) ? {
+                            delay: config.autoplayDelay,
+                            disableOnInteraction: false
+                        } : false;
+
+                        const favSwiper = new window.Swiper(favEl, {
+                            loop: orderedFavorites.length > perViewDesktop,
+                            slidesPerView: 1,
+                            spaceBetween: 16,
+                            autoplay: autoplayConfig,
+                            speed: 600,
+                            pagination: {
+                                el: container.querySelector('.sein-fav-pagination'),
+                                clickable: true,
+                            },
+                            navigation: {
+                                nextEl: container.querySelector('.sein-fav-next'),
+                                prevEl: container.querySelector('.sein-fav-prev'),
+                            },
+                            breakpoints: {
+                                520: { slidesPerView: 2, spaceBetween: 16 },
+                                768: { slidesPerView: Math.min(3, perViewDesktop), spaceBetween: 20 },
+                                1024: { slidesPerView: perViewDesktop, spaceBetween: 24 }
+                            }
+                        });
+
+                        if (favSwiper.autoplay && autoplayConfig) {
+                            favSwiper.autoplay.start();
+                        }
+                    }
+                }, 250);
+            } else {
+                // Modo Cuadrícula estática de 4 columnas
+                let gridHtml = orderedFavorites.map(p => `
+                    <li class="product type-product status-publish has-post-thumbnail shipping-taxable purchasable">
+                        ${renderCard(p)}
+                    </li>
+                `).join('');
+
+                container.innerHTML = `
+                    <div class="woocommerce columns-4">
+                        <ul class="products elementor-grid columns-4" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:20px; list-style:none; padding:0;">
+                            ${gridHtml}
+                        </ul>
+                    </div>
+                `;
+            }
+        } catch(err) {
+            console.error("Error loading dynamic favorites:", err);
+        }
+    }
 });
 </script>
 </body>
-</html>
 </html>
 
 
