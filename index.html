@@ -1778,6 +1778,10 @@ const a=JSON.parse(document.getElementById("wp-emoji-settings").textContent),o=(
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0,0,0,0.4);
     white-space: nowrap;
+    z-index: 100;
+    cursor: pointer;
+    pointer-events: auto;
+    display: inline-block;
 }
 .navidad-popup-cta:hover {
     background-color: #630000;
@@ -1795,8 +1799,10 @@ const a=JSON.parse(document.getElementById("wp-emoji-settings").textContent),o=(
 <div id="navidad-popup-overlay">
     <div id="navidad-popup-content">
         <span id="navidad-popup-close">&times;</span>
-        <img src="/assets/images/banner_navidad.jpg" alt="Catálogo Navideño - SEIN">
-        <a href="/categoria-producto/kits-para-ocasiones-especiales/index.html" class="navidad-popup-cta">Ver Kits de Ocasiones Especiales</a>
+        <a href="/categoria-producto/kits-para-ocasiones-especiales/" style="display:block; cursor:pointer;" onclick="window.location.href='/categoria-producto/kits-para-ocasiones-especiales/';">
+            <img src="/assets/images/banner_navidad.jpg" alt="Catálogo Navideño - SEIN" style="cursor:pointer; display:block;">
+        </a>
+        <a href="/categoria-producto/kits-para-ocasiones-especiales/" onclick="window.location.href='/categoria-producto/kits-para-ocasiones-especiales/';" class="navidad-popup-cta">Ver Kits de Ocasiones Especiales</a>
     </div>
 </div>
 <script>
