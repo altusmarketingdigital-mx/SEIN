@@ -1799,10 +1799,10 @@ const a=JSON.parse(document.getElementById("wp-emoji-settings").textContent),o=(
 <div id="navidad-popup-overlay">
     <div id="navidad-popup-content">
         <span id="navidad-popup-close">&times;</span>
-        <a href="/categoria-producto/kits-para-ocasiones-especiales/" style="display:block; cursor:pointer;" onclick="window.location.href='/categoria-producto/kits-para-ocasiones-especiales/';">
-            <img src="/assets/images/banner_navidad.jpg" alt="Catálogo Navideño - SEIN" style="cursor:pointer; display:block;">
+        <a id="navidad-popup-link-img" href="/categoria-producto/kits-para-ocasiones-especiales/" style="display:block; cursor:pointer;" onclick="window.location.href=this.href;">
+            <img id="navidad-popup-img" src="/assets/images/banner_navidad.jpg" alt="Catálogo Navideño - SEIN" style="cursor:pointer; display:block;">
         </a>
-        <a href="/categoria-producto/kits-para-ocasiones-especiales/" onclick="window.location.href='/categoria-producto/kits-para-ocasiones-especiales/';" class="navidad-popup-cta">Ver Kits de Ocasiones Especiales</a>
+        <a id="navidad-popup-cta-btn" href="/categoria-producto/kits-para-ocasiones-especiales/" onclick="window.location.href=this.href;" class="navidad-popup-cta">Ver Kits de Ocasiones Especiales</a>
     </div>
 </div>
 <script>
@@ -1811,26 +1811,82 @@ document.addEventListener('DOMContentLoaded', function() {
     if(window.navidadPopupInit) return;
     window.navidadPopupInit = true;
 
-    // Mostrar el popup despues de 1 segundo si no ha sido cerrado en esta sesion
-    if (!sessionStorage.getItem('navidadPopupClosed')) {
-        setTimeout(function() {
-            document.getElementById('navidad-popup-overlay').classList.add('show');
-        }, 1000); 
-    }
-    
-    // Cerrar al clickear la X
-    document.getElementById('navidad-popup-close').addEventListener('click', function() {
-        document.getElementById('navidad-popup-overlay').classList.remove('show');
-        sessionStorage.setItem('navidadPopupClosed', 'true');
-    });
-    
-    // Cerrar al clickear el fondo oscuro
-    document.getElementById('navidad-popup-overlay').addEventListener('click', function(e) {
-        if(e.target === this) {
-            this.classList.remove('show');
+    // Listeners de cierre
+    const overlay = document.getElementById('navidad-popup-overlay');
+    const closeBtn = document.getElementById('navidad-popup-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            if(overlay) overlay.classList.remove('show');
             sessionStorage.setItem('navidadPopupClosed', 'true');
+        });
+    }
+    if (overlay) {
+        overlay.addEventListener('click', function(e) {
+            if(e.target === this) {
+                this.classList.remove('show');
+                sessionStorage.setItem('navidadPopupClosed', 'true');
+            }
+        });
+    }
+
+    // Inicialización dinámica con Supabase
+    async function initDynamicPopup() {
+        if (sessionStorage.getItem('navidadPopupClosed')) return;
+
+        let delayMs = 1000;
+        let activo = true;
+
+        try {
+            const SUPABASE_URL = 'https://hyibazrenjtnswtebybb.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo';
+            const res = await fetch(SUPABASE_URL + '/rest/v1/carrusel?enlace=eq.__POPUP_CONFIG__', {
+                headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+            });
+            const data = await res.json();
+
+            if (data && data.length > 0) {
+                const conf = data[0];
+                const parsed = JSON.parse(conf.subtitulo || '{}');
+                activo = parsed.activo !== false;
+                delayMs = parsed.delay || 1000;
+
+                if (!activo) {
+                    return; // Si el administrador lo desactivó, no se muestra
+                }
+
+                const imgEl = document.getElementById('navidad-popup-img');
+                const linkImgEl = document.getElementById('navidad-popup-link-img');
+                const ctaBtn = document.getElementById('navidad-popup-cta-btn');
+
+                if (conf.imagen_url && imgEl) imgEl.src = conf.imagen_url;
+                if (parsed.enlace) {
+                    if (linkImgEl) linkImgEl.href = parsed.enlace;
+                    if (ctaBtn) ctaBtn.href = parsed.enlace;
+                }
+                if (conf.boton_texto && ctaBtn) {
+                    ctaBtn.textContent = conf.boton_texto;
+                }
+                if (parsed.btnColor && ctaBtn) {
+                    ctaBtn.style.backgroundColor = parsed.btnColor;
+                }
+                if (parsed.txtColor && ctaBtn) {
+                    ctaBtn.style.color = parsed.txtColor;
+                }
+            }
+        } catch(e) {
+            console.log('Using default popup config:', e);
         }
-    });
+
+        if (activo) {
+            setTimeout(function() {
+                if(overlay && !sessionStorage.getItem('navidadPopupClosed')) {
+                    overlay.classList.add('show');
+                }
+            }, delayMs);
+        }
+    }
+
+    initDynamicPopup();
 });
 </script>
 <!-- FIN POPUP NAVIDENO -->

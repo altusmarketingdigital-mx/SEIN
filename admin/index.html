@@ -398,6 +398,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" onclick="switchSection('popup', this); fetchPopupConfig();">
+                    <span class="icon">🎁</span> Ventana Pop-up
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" onclick="switchSection('customers', this)">
                     <span class="icon">👥</span> Clientes Registrados
                 </a>
@@ -691,6 +696,117 @@
                     </div>
                 </div>
             </section>
+
+            <!-- SECCIÓN POP-UP PROMOCIONAL (HOME / SITIO) -->
+            <section id="sec-popup" class="tab-section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title" style="margin-bottom: 4px;">🎁 Ventana Emergente (Pop-up Promocional)</h2>
+                            <p style="font-size: 0.85rem; color: #718096; margin: 0;">Configura la imagen, el botón de acción, el enlace de destino y activa o desactiva la ventana emergente en el sitio.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn-primary" onclick="savePopupConfig()" id="btn-save-popup">💾 Guardar Cambios Pop-up</button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">
+                            
+                            <!-- COLUMNA IZQUIERDA: CONFIGURACIÓN -->
+                            <div style="background: #faf8f5; border: 1px solid var(--border); border-radius: 12px; padding: 24px;">
+                                <h3 style="font-size: 1.05rem; margin-bottom: 20px; color: var(--dark); border-bottom: 1px solid var(--border); padding-bottom: 10px;">⚙️ Parámetros del Pop-up</h3>
+                                
+                                <!-- ACTIVAR / DESACTIVAR -->
+                                <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
+                                    <div>
+                                        <strong style="display: block; font-size: 0.95rem; color: var(--dark);">Estado del Pop-up</strong>
+                                        <span id="popup-status-text" style="font-size: 0.82rem; color: #28a745; font-weight: 600;">✅ Activo y visible para los visitantes</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="popup-activo" checked onchange="updatePopupLivePreview()">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <!-- IMAGEN DEL BANNER -->
+                                <div class="form-group" style="margin-bottom: 18px;">
+                                    <label style="display: block; font-size: 0.88rem; font-weight: 600; margin-bottom: 6px; color: #4a5568;">Imagen del Banner *</label>
+                                    <div style="display: flex; gap: 8px;">
+                                        <input type="text" id="popup-imagen-url" value="/assets/images/banner_navidad.jpg" style="flex: 1; padding: 9px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;" placeholder="URL de la imagen o banner" oninput="updatePopupLivePreview()">
+                                        <button type="button" class="btn-sm" style="background:#17a2b8; color:#fff; border:none; padding:9px 14px; cursor:pointer; border-radius:6px; font-weight:600;" onclick="document.getElementById('popup-image-file').click()">Subir Foto</button>
+                                    </div>
+                                    <input type="file" id="popup-image-file" style="display:none;" accept="image/*" onchange="handleImageFileSelect(this, 'popup-preview-img', 'popup-imagen-url')">
+                                    <small style="color: #718096; font-size: 0.78rem; display: block; margin-top: 4px;">Puedes subir un nuevo banner navideño, de temporada o pegar un enlace web.</small>
+                                </div>
+
+                                <!-- TEXTO DEL BOTÓN -->
+                                <div class="form-group" style="margin-bottom: 18px;">
+                                    <label style="display: block; font-size: 0.88rem; font-weight: 600; margin-bottom: 6px; color: #4a5568;">Texto del Botón CTA</label>
+                                    <input type="text" id="popup-boton-texto" value="Ver Kits de Ocasiones Especiales" style="width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;" placeholder="Ej. Ver Kits de Ocasiones Especiales" oninput="updatePopupLivePreview()">
+                                </div>
+
+                                <!-- ENLACE DE DESTINO -->
+                                <div class="form-group" style="margin-bottom: 18px;">
+                                    <label style="display: block; font-size: 0.88rem; font-weight: 600; margin-bottom: 6px; color: #4a5568;">Enlace de Destino (URL o Categoría)</label>
+                                    <input type="text" id="popup-enlace-url" value="/categoria-producto/kits-para-ocasiones-especiales/" style="width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;" placeholder="Ej. /categoria-producto/kits-para-ocasiones-especiales/">
+                                    <small style="color: #718096; font-size: 0.78rem; display: block; margin-top: 4px;">Al hacer clic en el botón o en la imagen, el usuario será redirigido a esta página.</small>
+                                </div>
+
+                                <!-- ESTILO DEL BOTÓN (COLOR DE FONDO Y TEXTO) -->
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 18px;">
+                                    <div>
+                                        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #4a5568;">Color del Botón</label>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <input type="color" id="popup-boton-color" value="#920000" style="height: 38px; width: 50px; padding: 2px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer;" oninput="updatePopupLivePreview()">
+                                            <input type="text" id="popup-boton-color-hex" value="#920000" style="flex: 1; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem;" oninput="document.getElementById('popup-boton-color').value = this.value; updatePopupLivePreview();">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #4a5568;">Color del Texto</label>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <input type="color" id="popup-texto-color" value="#ffffff" style="height: 38px; width: 50px; padding: 2px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer;" oninput="updatePopupLivePreview()">
+                                            <input type="text" id="popup-texto-color-hex" value="#ffffff" style="flex: 1; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem;" oninput="document.getElementById('popup-texto-color').value = this.value; updatePopupLivePreview();">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- DELAY / RETRASO DE APARICIÓN -->
+                                <div class="form-group" style="margin-bottom: 10px;">
+                                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #4a5568;">Retraso de Aparición (Segundos)</label>
+                                    <select id="popup-delay" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
+                                        <option value="500">Inmediato (0.5s)</option>
+                                        <option value="1000" selected>1 segundo (Recomendado)</option>
+                                        <option value="2000">2 segundos</option>
+                                        <option value="3000">3 segundos</option>
+                                        <option value="5000">5 segundos</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- COLUMNA DERECHA: VISTA PREVIA EN VIVO -->
+                            <div style="background: #23272d; border-radius: 12px; padding: 24px; text-align: center; color: #ffffff;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <h3 style="font-size: 0.95rem; color: #e2e8f0; margin: 0; text-transform: uppercase; letter-spacing: 1px;">👁️ Vista Previa en Vivo</h3>
+                                    <span id="popup-preview-badge" style="background: #28a745; color: #ffffff; padding: 3px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 600;">POPUP ACTIVO</span>
+                                </div>
+                                <p style="color: #a0aec0; font-size: 0.82rem; margin-bottom: 20px;">Así se verá la ventana emergente superpuesta en la pantalla de los clientes:</p>
+
+                                <!-- CONTENEDOR SIMULADOR DEL POPUP -->
+                                <div style="position: relative; display: inline-block; max-width: 100%; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                                    <span style="position: absolute; top: 10px; right: 12px; background: rgba(0,0,0,0.6); color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: default;">&times;</span>
+                                    <img id="popup-preview-img" src="/assets/images/banner_navidad.jpg" alt="Preview Pop-up" style="max-width: 100%; max-height: 380px; display: block; object-fit: contain; margin: 0 auto;">
+                                    <a id="popup-preview-cta" href="#" onclick="event.preventDefault()" style="position: absolute; bottom: 8%; left: 50%; transform: translateX(-50%); background-color: #920000; color: #ffffff; padding: 8px 20px; font-size: 14px; font-weight: bold; text-transform: uppercase; text-decoration: none; border-radius: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.4); white-space: nowrap; pointer-events: none;">
+                                        Ver Kits de Ocasiones Especiales
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. DIRECTORIO DE CLIENTES -->
+            <section id="sec-customers" class="tab-section">
                 <div class="panel">
                     <div class="panel-header">
                         <h3>Directorio de Clientes & Contactos</h3>
@@ -887,12 +1003,19 @@
                 products: "Inventario y Catálogo de Productos",
                 carousel: "Carrusel de Inicio",
                 favoritos: "Configuración de Productos Favoritos",
+                popup: "Ventana Pop-up Promocional",
                 customers: "Directorio de Clientes",
                 payments: "Métodos de Pago",
                 reports: "Reportes Financieros de Ventas",
                 users: "Gestión de Usuarios del Panel"
             };
             document.getElementById('page-title').textContent = titles[secId] || "Panel de Administración";
+
+            if (secId === 'popup') {
+                if (typeof fetchPopupConfig === 'function') {
+                    fetchPopupConfig();
+                }
+            }
 
             if (secId === 'favoritos') {
                 if (typeof fetchFavoritosConfig === 'function') {
@@ -2499,6 +2622,164 @@ window.saveNewProduct = async function() {
                 alert('Error al guardar configuración: ' + e.message);
             } finally {
                 btn.textContent = '💾 Guardar Favoritos';
+                btn.disabled = false;
+            }
+        }
+
+        // ==========================================
+        // GESTIÓN DE VENTANA EMERGENTE (POP-UP)
+        // ==========================================
+        const POPUP_CONFIG_ENLACE = '__POPUP_CONFIG__';
+        let popupConfigRecord = null;
+
+        async function fetchPopupConfig() {
+            try {
+                const res = await fetch(SUPABASE_URL + '/rest/v1/carrusel?enlace=eq.' + encodeURIComponent(POPUP_CONFIG_ENLACE), {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                });
+                const data = await res.json();
+
+                if (data && data.length > 0) {
+                    popupConfigRecord = data[0];
+                    try {
+                        const parsed = JSON.parse(popupConfigRecord.subtitulo || '{}');
+                        const activo = parsed.activo !== false;
+                        const delay = parsed.delay || 1000;
+                        const btnColor = parsed.btnColor || '#920000';
+                        const txtColor = parsed.txtColor || '#ffffff';
+
+                        document.getElementById('popup-activo').checked = activo;
+                        document.getElementById('popup-imagen-url').value = popupConfigRecord.imagen_url || '/assets/images/banner_navidad.jpg';
+                        document.getElementById('popup-boton-texto').value = popupConfigRecord.boton_texto || 'Ver Kits de Ocasiones Especiales';
+                        document.getElementById('popup-enlace-url').value = parsed.enlace || '/categoria-producto/kits-para-ocasiones-especiales/';
+                        document.getElementById('popup-delay').value = delay;
+
+                        document.getElementById('popup-boton-color').value = btnColor;
+                        document.getElementById('popup-boton-color-hex').value = btnColor;
+                        document.getElementById('popup-texto-color').value = txtColor;
+                        document.getElementById('popup-texto-color-hex').value = txtColor;
+
+                    } catch(err) {
+                        console.error('Error parsing popup config:', err);
+                    }
+                } else {
+                    popupConfigRecord = null;
+                }
+
+                updatePopupLivePreview();
+            } catch(e) {
+                console.error('Error fetching popup config:', e);
+            }
+        }
+
+        function updatePopupLivePreview() {
+            const activo = document.getElementById('popup-activo').checked;
+            const imgUrl = document.getElementById('popup-imagen-url').value.trim() || '/assets/images/banner_navidad.jpg';
+            const btnText = document.getElementById('popup-boton-texto').value.trim() || 'Ver Kits de Ocasiones Especiales';
+            const btnColor = document.getElementById('popup-boton-color').value;
+            const txtColor = document.getElementById('popup-texto-color').value;
+
+            // Actualizar status text y badge
+            const statusText = document.getElementById('popup-status-text');
+            const previewBadge = document.getElementById('popup-preview-badge');
+            if (activo) {
+                if (statusText) statusText.innerHTML = '✅ Activo y visible para los visitantes';
+                if (statusText) statusText.style.color = '#28a745';
+                if (previewBadge) {
+                    previewBadge.textContent = 'POPUP ACTIVO';
+                    previewBadge.style.background = '#28a745';
+                }
+            } else {
+                if (statusText) statusText.innerHTML = '⏸️ Desactivado (No se mostrará a los visitantes)';
+                if (statusText) statusText.style.color = '#e53e3e';
+                if (previewBadge) {
+                    previewBadge.textContent = 'POPUP PAUSADO';
+                    previewBadge.style.background = '#e53e3e';
+                }
+            }
+
+            // Actualizar vista previa
+            const previewImg = document.getElementById('popup-preview-img');
+            const previewCta = document.getElementById('popup-preview-cta');
+            if (previewImg) previewImg.src = imgUrl;
+            if (previewCta) {
+                previewCta.textContent = btnText;
+                previewCta.style.backgroundColor = btnColor;
+                previewCta.style.color = txtColor;
+                previewCta.style.display = btnText ? 'inline-block' : 'none';
+            }
+        }
+
+        async function savePopupConfig() {
+            const btn = document.getElementById('btn-save-popup');
+            btn.textContent = 'Guardando...';
+            btn.disabled = true;
+
+            const activo = document.getElementById('popup-activo').checked;
+            const imgUrl = document.getElementById('popup-imagen-url').value.trim();
+            const btnText = document.getElementById('popup-boton-texto').value.trim();
+            const enlaceUrl = document.getElementById('popup-enlace-url').value.trim();
+            const delay = parseInt(document.getElementById('popup-delay').value) || 1000;
+            const btnColor = document.getElementById('popup-boton-color').value;
+            const txtColor = document.getElementById('popup-texto-color').value;
+
+            if (!imgUrl) {
+                alert('Por favor especifica o sube una imagen para el banner del pop-up.');
+                btn.textContent = '💾 Guardar Cambios Pop-up';
+                btn.disabled = false;
+                return;
+            }
+
+            const configPayload = {
+                titulo: 'SEIN_POPUP_PROMO',
+                subtitulo: JSON.stringify({
+                    activo: activo,
+                    delay: delay,
+                    enlace: enlaceUrl,
+                    btnColor: btnColor,
+                    txtColor: txtColor
+                }),
+                imagen_url: imgUrl,
+                enlace: POPUP_CONFIG_ENLACE,
+                orden: 9998,
+                boton_texto: btnText
+            };
+
+            try {
+                let url = SUPABASE_URL + '/rest/v1/carrusel';
+                let method = 'POST';
+
+                if (popupConfigRecord && popupConfigRecord.id) {
+                    url += '?id=eq.' + popupConfigRecord.id;
+                    method = 'PATCH';
+                }
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(configPayload)
+                });
+
+                if (!res.ok) {
+                    const errText = await res.text();
+                    throw new Error(errText);
+                }
+
+                const savedData = await res.json();
+                if (savedData && savedData.length > 0) {
+                    popupConfigRecord = savedData[0];
+                }
+
+                alert(`✅ ¡Configuración del Pop-up guardada con éxito!\n\nEstado: ${activo ? 'ACTIVADO' : 'DESACTIVADO'}\nEnlace: ${enlaceUrl}`);
+            } catch(e) {
+                alert('Error al guardar configuración del pop-up: ' + e.message);
+            } finally {
+                btn.textContent = '💾 Guardar Cambios Pop-up';
                 btn.disabled = false;
             }
         }
