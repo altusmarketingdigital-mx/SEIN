@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -1329,13 +1329,11 @@
             <textarea id="edit-contenido" rows="4" placeholder="Detalla las especificaciones, aromas, medidas, qué incluye el kit, materiales..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
         </div>
         <div class="form-group">
-            <label>Imagen del Producto</label>
-            <input type="file" id="edit-imagen-file" accept="image/*" onchange="handleImageFileSelect(this, 'edit-imagen-preview', 'edit-imagen-url')">
+            <label>Imágenes del Producto (hasta 5 imágenes)</label>
+            <input type="file" id="edit-imagen-file" accept="image/*" multiple onchange="handleMultiImageSelect(this, 'edit')">
             <input type="hidden" id="edit-imagen-url">
-            <div style="margin-top:8px; display:flex; align-items:center; gap:10px;">
-                <img id="edit-imagen-preview" src="" style="width:60px; height:60px; object-fit:cover; border-radius:4px; border:1px solid #ddd; display:none;">
-                <span id="edit-imagen-status" style="font-size:12px; color:#666;"></span>
-            </div>
+            <div id="edit-imagen-status" style="font-size:12px; color:#666; margin-top:5px;">Puedes seleccionar hasta 5 imágenes (la primera es la principal).</div>
+            <div id="edit-images-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;"></div>
         </div>
         <div class="form-group">
             <label>Estado</label>
@@ -1446,6 +1444,80 @@ window.reverseLookupMenu = function(submenu) {
         }
     };
 
+    // --- MANEJO DE MULTIPLES IMAGENES (HASTA 5) ---
+    window.productImagesState = {
+        edit: [],
+        np: []
+    };
+
+    window.renderImagesPreview = function(prefix) {
+        const container = document.getElementById(prefix + '-images-container');
+        const hiddenInput = document.getElementById(prefix === 'edit' ? 'edit-imagen-url' : 'np-imagen');
+        const statusSpan = document.getElementById(prefix + '-imagen-status');
+        if (!container) return;
+
+        const list = window.productImagesState[prefix] || [];
+        hiddenInput.value = list.join(',');
+
+        if (list.length === 0) {
+            container.innerHTML = '';
+            if (statusSpan) statusSpan.textContent = 'Selecciona hasta 5 imágenes (la primera será la principal).';
+            return;
+        }
+
+        if (statusSpan) {
+            statusSpan.textContent = `${list.length} de 5 imágenes seleccionadas (la #1 es la principal).`;
+        }
+
+        container.innerHTML = list.map((url, idx) => `
+            <div style="position:relative; width:75px; height:75px; border-radius:6px; overflow:hidden; border:2px solid ${idx === 0 ? '#DB572E' : '#ddd'}; box-shadow:0 2px 5px rgba(0,0,0,0.1); background:#f9f9f9;">
+                <img src="${url}" style="width:100%; height:100%; object-fit:cover;" title="${idx === 0 ? 'Imagen Principal' : 'Imagen ' + (idx + 1)}">
+                ${idx === 0 ? '<span style="position:absolute; bottom:0; left:0; right:0; background:rgba(219,87,46,0.9); color:#fff; font-size:9px; text-align:center; padding:1px 0; font-weight:600;">PRINCIPAL</span>' : ''}
+                <button type="button" onclick="removeProductImage('${prefix}', ${idx})" style="position:absolute; top:2px; right:2px; background:rgba(220,53,69,0.9); color:#fff; border:none; border-radius:50%; width:18px; height:18px; font-size:11px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center;" title="Eliminar imagen">&times;</button>
+            </div>
+        `).join('');
+    };
+
+    window.removeProductImage = function(prefix, index) {
+        if (!window.productImagesState[prefix]) return;
+        window.productImagesState[prefix].splice(index, 1);
+        window.renderImagesPreview(prefix);
+    };
+
+    window.handleMultiImageSelect = async function(input, prefix) {
+        if (!input.files || input.files.length === 0) return;
+        const statusSpan = document.getElementById(prefix + '-imagen-status');
+        if (!window.productImagesState[prefix]) window.productImagesState[prefix] = [];
+        const currentList = window.productImagesState[prefix];
+
+        const filesToUpload = Array.from(input.files);
+        if (currentList.length + filesToUpload.length > 5) {
+            alert(`Solo puedes tener un máximo de 5 imágenes por producto. Actualmente tienes ${currentList.length} y seleccionaste ${filesToUpload.length}.`);
+            input.value = '';
+            return;
+        }
+
+        const saveBtns = document.querySelectorAll('.btn-primary');
+        saveBtns.forEach(btn => btn.disabled = true);
+        if (statusSpan) statusSpan.textContent = `Subiendo ${filesToUpload.length} imagen(es) a la nube...`;
+
+        try {
+            for (let i = 0; i < filesToUpload.length; i++) {
+                if (statusSpan) statusSpan.textContent = `Subiendo imagen ${i + 1} de ${filesToUpload.length}...`;
+                const file = filesToUpload[i];
+                const publicUrl = await uploadImageToSupabase(file);
+                currentList.push(publicUrl);
+                window.renderImagesPreview(prefix);
+            }
+            if (statusSpan) statusSpan.textContent = `✅ Imágenes subidas con éxito (${currentList.length}/5)`;
+        } catch (err) {
+            alert(err.message);
+            if (statusSpan) statusSpan.textContent = '❌ Error al subir una de las imágenes';
+        } finally {
+            input.value = '';
+            saveBtns.forEach(btn => btn.disabled = false);
+        }
+    };
     let allSupabaseProducts = [];
 
     async function fetchAdminProducts() {
@@ -1586,22 +1658,10 @@ window.reverseLookupMenu = function(submenu) {
         document.getElementById('edit-activo').value = p.activo ? 'true' : 'false';
         
         // Imagen
-        const preview = document.getElementById('edit-imagen-preview');
-        const hiddenUrl = document.getElementById('edit-imagen-url');
-        const fileInput = document.getElementById('edit-imagen-file');
-        const statusSpan = document.getElementById('edit-imagen-status');
-        if (fileInput) fileInput.value = '';
-        if (p.imagen_url) {
-            hiddenUrl.value = p.imagen_url;
-            preview.src = p.imagen_url;
-            preview.style.display = 'block';
-            if (statusSpan) statusSpan.textContent = 'Imagen actual cargada';
-        } else {
-            hiddenUrl.value = '';
-            preview.style.display = 'none';
-            if (statusSpan) statusSpan.textContent = 'Sin imagen';
-        }
-
+        // Manejo de multiples imagenes
+        const rawImgs = p.imagen_url ? p.imagen_url.split(',').map(s => s.trim()).filter(Boolean) : [];
+        window.productImagesState.edit = [...rawImgs];
+        window.renderImagesPreview('edit');
         document.getElementById('editProductModal').style.display = 'flex';
     }
 
@@ -1971,13 +2031,11 @@ async function loginConSupabase(usuario, password) {
     </div>
 
     <div class="form-group">
-      <label>Imagen del Producto</label>
-      <input type="file" id="np-imagen-file" accept="image/*" onchange="handleImageFileSelect(this, 'np-imagen-preview', 'np-imagen')">
+      <label>Imágenes del Producto (hasta 5 imágenes)</label>
+      <input type="file" id="np-imagen-file" accept="image/*" multiple onchange="handleMultiImageSelect(this, 'np')">
       <input type="hidden" id="np-imagen">
-      <div style="margin-top:8px; display:flex; align-items:center; gap:10px;">
-        <img id="np-imagen-preview" src="" style="width:60px; height:60px; object-fit:cover; border-radius:4px; border:1px solid #ddd; display:none;">
-        <span id="np-imagen-status" style="font-size:12px; color:#666;">Selecciona una imagen desde tu computadora</span>
-      </div>
+      <div id="np-imagen-status" style="font-size:12px; color:#666; margin-top:5px;">Puedes seleccionar hasta 5 imágenes (la primera es la principal).</div>
+      <div id="np-images-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;"></div>
     </div>
 
     <div class="form-group">
@@ -2033,11 +2091,8 @@ window.openNewProductModal = function() {
   });
   const fileInp = document.getElementById('np-imagen-file');
   if (fileInp) fileInp.value = '';
-  const preview = document.getElementById('np-imagen-preview');
-  if (preview) { preview.src = ''; preview.style.display = 'none'; }
-  const statusSpan = document.getElementById('np-imagen-status');
-  if (statusSpan) statusSpan.textContent = 'Selecciona una imagen desde tu computadora';
-
+  window.productImagesState.np = [];
+  window.renderImagesPreview('np');
   document.getElementById('np-menu').value = ''; document.getElementById('np-submenu').innerHTML = '<option value="">-- Selecciona Sub-menú --</option>';
   document.getElementById('np-activo').value = 'true';
   document.getElementById('np-error').style.display = 'none';
