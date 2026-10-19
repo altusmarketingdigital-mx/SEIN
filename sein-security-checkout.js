@@ -847,7 +847,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 'exclusivos-eventos-especiales': ['Religiosos', 'Exclusivos', 'Bautizo', 'Baby Shower', 'Mini Vela'],
                 'organizador-de-gastos': ['Organizador', 'Gastos', 'Organizadores', 'Organigastos', 'Libretas', 'Agendas', 'Planners', 'Post-it', 'Post its'],
                 'eventos-corporativos-empresariales': ['Corporativos', 'Empresariales', 'Eventos Corporativos', 'Kits Ocasiones Especiales', 'Kits para Ocasiones Especiales', 'Kits', 'Kit'],
-                'kits-para-ocasiones-especiales': ['Kits', 'Ocasiones Especiales', 'Kit'],
+                'kits-para-ocasiones-especiales': ['Corporativos', 'Empresariales', 'Eventos Corporativos', 'Kits Ocasiones Especiales', 'Kits para Ocasiones Especiales', 'Kits', 'Kit'],
                 'extracto-de-cafe': ['Extracto', 'Cafe', 'Café'],
                 'post-its': ['Post its', 'Post-it', 'Postit', 'Post it', 'Organizacion', 'Estilo', 'Libretas', 'Agendas', 'Planners'],
                 'cajas-y-empaques-personalizados': ['Cajas y Empaques', 'Cajas', 'Empaques'],
