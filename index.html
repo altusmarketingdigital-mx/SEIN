@@ -2311,7 +2311,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Construir tarjetas de productos
             const renderCard = (p) => {
-                const img = p.imagen_url || '/wp-content/uploads/2024/09/placeholder.png';
+                const img = (p.imagen_url ? p.imagen_url.split(',')[0].trim() : '') || '/wp-content/uploads/2024/09/placeholder.png';
                 const pSlug = p.slug ? `/producto/${p.slug}/` : `/producto/`;
                 const priceFormatted = (p.precio && p.precio.includes('$')) ? p.precio : `$${p.precio || '0.00'}`;
                 return `
