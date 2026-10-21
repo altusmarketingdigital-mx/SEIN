@@ -870,14 +870,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const targetCats = slugToCat[catSlug];
                 if (targetCats) {
                     filtered = products.filter(p => {
-                        const c = (p.categoria || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                        const rawCats = (p.categoria || '').split(',').map(s => s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')).filter(Boolean);
                         return targetCats.some(t => {
                             const nt = t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                            return c.includes(nt) || nt.includes(c);
+                            return rawCats.some(c => c.includes(nt) || nt.includes(c));
                         });
                     });
+                
                 } else {
-                    filtered = products.filter(p => slugifyCat(p.categoria) === catSlug || catSlug.includes(slugifyCat(p.categoria)));
+                    filtered = products.filter(p => {
+                        const rawCats = (p.categoria || '').split(',').map(s => s.trim()).filter(Boolean);
+                        return rawCats.some(c => slugifyCat(c) === catSlug || catSlug.includes(slugifyCat(c)));
+                    });
                 }
             }
 

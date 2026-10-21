@@ -1288,24 +1288,13 @@
             <input type="text" id="edit-precio">
         </div>
         
-          <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-              <div>
-                  <label>Menú</label>
-                  <select id="edit-menu" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" onchange="updateSubmenu('edit-menu', 'edit-submenu')">
-                      <option value="">-- Selecciona Menú --</option>
-                      <option value="Bienestar">Bienestar</option>
-                      <option value="Regalos con Alma">Regalos con Alma</option>
-                      <option value="Organización y Estilo">Organización y Estilo</option>
-                      <option value="Eventos">Eventos</option>
-                  </select>
-              </div>
-              <div>
-                  <label>Sub-menú</label>
-                  <select id="edit-submenu" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
-                      <option value="">-- Selecciona Sub-menú --</option>
-                  </select>
-              </div>
-          </div>
+          <div class="form-group" style="background:#fcfcfc; border:1px dashed #dcdcdc; padding:12px; border-radius:6px; margin-top:5px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <label style="margin:0; font-weight:600; color:#333;">Categorías / Menús donde aparecerá <span style="color:red">*</span></label>
+                <button type="button" onclick="addCategoryRow('edit')" class="btn-sm" style="background:#DB572E; color:#fff; border:none; padding:4px 10px; border-radius:4px; font-size:12px; cursor:pointer;">+ Agregar otro menú</button>
+            </div>
+            <div id="edit-categories-container"></div>
+        </div>
 
         <div class="form-group" style="position:relative; padding-top: 10px;">
               <button type="button" style="position:absolute; top: -5px; right: 0; font-size:11px; padding:3px 8px; border:1px solid #ddd; background:#f5f5f5; border-radius:4px; cursor:pointer;" onclick="document.getElementById('edit-dimensiones').value='No aplica'; document.getElementById('edit-peso').value='No aplica';">No aplica</button>
@@ -1374,6 +1363,84 @@ window.updateSubmenu = function(menuId, submenuId, selectedSubmenu = "") {
             submenuSelect.appendChild(opt);
         });
     }
+};
+
+
+window.addCategoryRow = function(prefix, selectedMenu = "", selectedSubmenu = "") {
+    const container = document.getElementById(prefix + '-categories-container');
+    if (!container) return;
+
+    const rowId = 'cat-row-' + prefix + '-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+    const row = document.createElement('div');
+    row.id = rowId;
+    row.className = 'cat-select-row';
+    row.style = 'display:flex; gap:10px; align-items:center; margin-bottom:8px;';
+
+    const menuOptions = Object.keys(menuMap).map(m => 
+        `<option value="${m}" ${m === selectedMenu ? 'selected' : ''}>${m}</option>`
+    ).join('');
+
+    row.innerHTML = `
+        <select class="cat-menu-select" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;" onchange="handleRowMenuChange('${rowId}')">
+            <option value="">-- Selecciona Menú --</option>
+            ${menuOptions}
+        </select>
+        <select class="cat-submenu-select" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            <option value="">-- Selecciona Sub-menú --</option>
+        </select>
+        <button type="button" onclick="removeCategoryRow('${rowId}', '${prefix}')" style="background:#dc3545; color:#fff; border:none; border-radius:4px; padding:6px 10px; cursor:pointer; font-weight:bold;" title="Eliminar fila">&times;</button>
+    `;
+
+    container.appendChild(row);
+
+    // Si ya viene con submenú, poblar y seleccionar
+    if (selectedMenu) {
+        populateRowSubmenu(row, selectedMenu, selectedSubmenu);
+    }
+};
+
+window.handleRowMenuChange = function(rowId) {
+    const row = document.getElementById(rowId);
+    if (!row) return;
+    const menuSelect = row.querySelector('.cat-menu-select');
+    populateRowSubmenu(row, menuSelect.value, '');
+};
+
+function populateRowSubmenu(row, menu, selectedSubmenu) {
+    const subSelect = row.querySelector('.cat-submenu-select');
+    subSelect.innerHTML = '<option value="">-- Selecciona Sub-menú --</option>';
+    if (menuMap[menu]) {
+        menuMap[menu].forEach(sub => {
+            const opt = document.createElement('option');
+            opt.value = sub;
+            opt.textContent = sub;
+            if (sub === selectedSubmenu) opt.selected = true;
+            subSelect.appendChild(opt);
+        });
+    }
+}
+
+window.removeCategoryRow = function(rowId, prefix) {
+    const row = document.getElementById(rowId);
+    if (row) row.remove();
+    const container = document.getElementById(prefix + '-categories-container');
+    if (container && container.children.length === 0) {
+        window.addCategoryRow(prefix);
+    }
+};
+
+window.getSelectedCategories = function(prefix) {
+    const container = document.getElementById(prefix + '-categories-container');
+    if (!container) return [];
+    const subSelects = container.querySelectorAll('.cat-submenu-select');
+    const cats = [];
+    subSelects.forEach(sel => {
+        const val = sel.value ? sel.value.trim() : '';
+        if (val && !cats.includes(val)) {
+            cats.push(val);
+        }
+    });
+    return cats;
 };
 
 window.reverseLookupMenu = function(submenu) {
@@ -1587,8 +1654,8 @@ window.reverseLookupMenu = function(submenu) {
         if(cat && cat !== 'todos') {
             const catNorm = normalizeCat(cat);
             filtered = filtered.filter(p => {
-                const pCatNorm = normalizeCat(p.categoria);
-                return pCatNorm === catNorm || pCatNorm.includes(catNorm) || catNorm.includes(pCatNorm);
+                const cats = (p.categoria || '').split(',').map(c => normalizeCat(c)).filter(Boolean);
+                return cats.some(pCatNorm => pCatNorm === catNorm || pCatNorm.includes(catNorm) || catNorm.includes(pCatNorm));
             });
         }
         
@@ -1649,9 +1716,20 @@ window.reverseLookupMenu = function(submenu) {
         document.getElementById('edit-dimensiones').value = p.dimensiones || '';
         document.getElementById('edit-peso').value = p.peso || '';
         
-          const menuVal = reverseLookupMenu(p.categoria);
-          document.getElementById('edit-menu').value = menuVal;
-          updateSubmenu('edit-menu', 'edit-submenu', p.categoria);
+        // Poblar categorías múltiples
+        const editCatContainer = document.getElementById('edit-categories-container');
+        if (editCatContainer) {
+            editCatContainer.innerHTML = '';
+            const cats = (p.categoria || '').split(',').map(s => s.trim()).filter(Boolean);
+            if (cats.length === 0) {
+                window.addCategoryRow('edit');
+            } else {
+                cats.forEach(c => {
+                    const m = reverseLookupMenu(c);
+                    window.addCategoryRow('edit', m, c);
+                });
+            }
+        }
 
         document.getElementById('edit-descripcion').value = p.descripcion || '';
         document.getElementById('edit-contenido').value = p.contenido || '';
@@ -1675,7 +1753,12 @@ window.reverseLookupMenu = function(submenu) {
         const precio = document.getElementById('edit-precio').value;
         const dimensiones = document.getElementById('edit-dimensiones').value.trim();
         const peso = document.getElementById('edit-peso').value.trim();
-        const categoria = document.getElementById('edit-submenu').value;
+        const selectedCats = window.getSelectedCategories('edit');
+        if (selectedCats.length === 0) {
+            alert('Debes seleccionar al menos un menú / sub-menú para el producto.');
+            return;
+        }
+        const categoria = selectedCats.join(', ');
         const descripcion = document.getElementById('edit-descripcion').value.trim();
         const contenido = document.getElementById('edit-contenido').value.trim();
         const activo = document.getElementById('edit-activo').value === 'true';
@@ -1989,22 +2072,14 @@ async function loginConSupabase(usuario, password) {
         <input type="text" id="np-precio" placeholder="Ej. $249.00" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
       </div>
       
-        <div>
-          <label>Menú <span style="color:red">*</span></label>
-          <select id="np-menu" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;" onchange="updateSubmenu('np-menu', 'np-submenu')">
-            <option value="">-- Selecciona Menú --</option>
-            <option value="Bienestar">Bienestar</option>
-            <option value="Regalos con Alma">Regalos con Alma</option>
-            <option value="Organización y Estilo">Organización y Estilo</option>
-            <option value="Eventos">Eventos</option>
-          </select>
         </div>
-        <div>
-          <label>Sub-menú <span style="color:red">*</span></label>
-          <select id="np-submenu" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
-            <option value="">-- Selecciona Sub-menú --</option>
-          </select>
+      <div class="form-group" style="background:#fcfcfc; border:1px dashed #dcdcdc; padding:12px; border-radius:6px; margin-top:5px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <label style="margin:0; font-weight:600; color:#333;">Categorías / Menús donde aparecerá <span style="color:red">*</span></label>
+          <button type="button" onclick="addCategoryRow('np')" class="btn-sm" style="background:#DB572E; color:#fff; border:none; padding:4px 10px; border-radius:4px; font-size:12px; cursor:pointer;">+ Agregar otro menú</button>
         </div>
+        <div id="np-categories-container"></div>
+      </div>
 
     </div>
 
@@ -2093,7 +2168,11 @@ window.openNewProductModal = function() {
   if (fileInp) fileInp.value = '';
   window.productImagesState.np = [];
   window.renderImagesPreview('np');
-  document.getElementById('np-menu').value = ''; document.getElementById('np-submenu').innerHTML = '<option value="">-- Selecciona Sub-menú --</option>';
+  const npCatContainer = document.getElementById('np-categories-container');
+  if (npCatContainer) {
+      npCatContainer.innerHTML = '';
+      window.addCategoryRow('np');
+  }
   document.getElementById('np-activo').value = 'true';
   document.getElementById('np-error').style.display = 'none';
   document.getElementById('newProductModal').style.display = 'flex';
@@ -2108,7 +2187,8 @@ window.saveNewProduct = async function() {
   const precio    = document.getElementById('np-precio').value.trim();
   const dimensiones = document.getElementById('np-dimensiones').value.trim();
   const peso      = document.getElementById('np-peso').value.trim();
-  const categoria = document.getElementById('np-submenu').value;
+  const selectedCats = window.getSelectedCategories('np');
+  const categoria = selectedCats.join(', ');
   const descripcion = document.getElementById('np-descripcion').value.trim();
   const contenido   = document.getElementById('np-contenido').value.trim();
   const imagen_url  = document.getElementById('np-imagen').value.trim();
