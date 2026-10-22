@@ -516,6 +516,26 @@ div[id*="paypal"], iframe[name*="paypal"] {
 }
 </style>
 
+
+<style id="sein-product-cloak">
+/* Oculta suavemente el contenido hasta que Supabase inyecte los datos del producto seleccionado */
+.summary.entry-summary,
+.woocommerce-product-gallery,
+.sein-product-image,
+#tab-description,
+.woocommerce-product-details__short-description {
+    opacity: 0;
+    transition: opacity 0.25s ease-in-out;
+}
+.sein-loaded .summary.entry-summary,
+.sein-loaded .woocommerce-product-gallery,
+.sein-loaded .sein-product-image,
+.sein-loaded #tab-description,
+.sein-loaded .woocommerce-product-details__short-description {
+    opacity: 1 !important;
+}
+</style>
+
 </head>
 
 <body class="wp-singular product-template-default single single-product postid-1287 wp-theme-hello-elementor theme-hello-elementor woocommerce woocommerce-page woocommerce-no-js yith-wcbm-theme-hello-elementor elementor-default elementor-kit-6">
@@ -1630,6 +1650,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             wpBtn.href = `https://wa.me/523334636538?text=${encodeURIComponent(msg)}`;
         }
 
+        document.body.classList.add('sein-loaded');
         // Modificar el boton de anadir al carrito para conectarlo con Supabase
         const addToCartBtn = document.querySelector('button.single_add_to_cart_button');
         if (addToCartBtn) {
