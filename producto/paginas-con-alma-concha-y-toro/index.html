@@ -535,6 +535,53 @@ div[id*="paypal"], iframe[name*="paypal"] {
 }
 </style>
 
+
+<link rel="preconnect" href="https://hyibazrenjtnswtebybb.supabase.co" crossorigin>
+<link rel="dns-prefetch" href="https://hyibazrenjtnswtebybb.supabase.co">
+<script>
+(function() {
+    var parts = window.location.pathname.split('/').filter(Boolean);
+    var slug = parts[parts.length - 1];
+    if (slug && slug !== 'producto') {
+        window.__SEIN_EARLY_FETCH__ = {
+            slug: slug,
+            cached: null,
+            promise: null
+        };
+        try {
+            var raw = sessionStorage.getItem('sein_prod_' + slug);
+            if (raw) {
+                window.__SEIN_EARLY_FETCH__.cached = JSON.parse(raw);
+            }
+        } catch (e) {}
+
+        var url = 'https://hyibazrenjtnswtebybb.supabase.co/rest/v1/productos?slug=eq.' + encodeURIComponent(slug) + '&select=*';
+        var key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo';
+        
+        window.__SEIN_EARLY_FETCH__.promise = fetch(url, {
+            headers: {
+                'apikey': key,
+                'Authorization': 'Bearer ' + key,
+                'Accept': 'application/vnd.pgrst.object+json'
+            }
+        }).then(function(res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+        }).then(function(data) {
+            if (data && data.id) {
+                try {
+                    sessionStorage.setItem('sein_prod_' + slug, JSON.stringify(data));
+                } catch (e) {}
+            }
+            return data;
+        }).catch(function(err) {
+            console.warn('[SEIN] Early fetch error:', err);
+            return null;
+        });
+    }
+})();
+</script>
+
 </head>
 
 <body class="wp-singular product-template-default single single-product postid-1287 wp-theme-hello-elementor theme-hello-elementor woocommerce woocommerce-page woocommerce-no-js yith-wcbm-theme-hello-elementor elementor-default elementor-kit-6">
@@ -1450,17 +1497,17 @@ var elementorFrontendConfig = {"environmentMode":{"edit":false,"wpPreview":false
 <script src="/wp-content/plugins/elementor/assets/js/frontend.min.js?ver=3.35.7" id="elementor-frontend-js"></script>
 <script src="/wp-content/plugins/elementor-pro/assets/lib/smartmenus/jquery.smartmenus.min.js?ver=1.2.1" id="smartmenus-js"></script>
 <script src="/wp-content/plugins/creame-whatsapp-me/public/js/joinchat.min.js?ver=6.1.1" id="joinchat-js" defer data-wp-strategy="defer" fetchpriority="low"></script>
-<script src="/wp-content/plugins/woocommerce/assets/js/sourcebuster/sourcebuster.min.js?ver=9.6.4" id="sourcebuster-js-js"></script>
+<script src="/wp-content/plugins/woocommerce/assets/js/sourcebuster/sourcebuster.min.js?ver=9.6.4" id="sourcebuster-js-js" defer></script>
 <script id="wc-order-attribution-js-extra">
 var wc_order_attribution = {"params":{"lifetime":1.0e-5,"session":30,"base64":false,"ajaxurl":"/wp-admin/admin-ajax.php","prefix":"wc_order_attribution_","allowTracking":true},"fields":{"source_type":"current.typ","referrer":"current_add.rf","utm_campaign":"current.cmp","utm_source":"current.src","utm_medium":"current.mdm","utm_content":"current.cnt","utm_id":"current.id","utm_term":"current.trm","utm_source_platform":"current.plt","utm_creative_format":"current.fmt","utm_marketing_tactic":"current.tct","session_entry":"current_add.ep","session_start_time":"current_add.fd","session_pages":"session.pgs","session_count":"udata.vst","user_agent":"udata.uag"}};
 //# sourceURL=wc-order-attribution-js-extra
 </script>
-<script src="/wp-content/plugins/woocommerce/assets/js/frontend/order-attribution.min.js?ver=9.6.4" id="wc-order-attribution-js"></script>
+<script src="/wp-content/plugins/woocommerce/assets/js/frontend/order-attribution.min.js?ver=9.6.4" id="wc-order-attribution-js" defer></script>
 <script id="ppcp-fraudnet-js-extra">
 var FraudNetConfig = {"f":"44d2d3488eae289cd26df60eee26241e","s":"NH22J5HKK6R64_checkout-page","sandbox":""};
 //# sourceURL=ppcp-fraudnet-js-extra
 </script>
-<script src="/wp-content/plugins/woocommerce-paypal-payments/modules/ppcp-wc-gateway/assets/js/fraudnet.js?ver=2.9.6" id="ppcp-fraudnet-js"></script>
+<script src="/wp-content/plugins/woocommerce-paypal-payments/modules/ppcp-wc-gateway/assets/js/fraudnet.js?ver=2.9.6" id="ppcp-fraudnet-js" defer></script>
 <script id="eael-general-js-extra">
 var localize = {"ajaxurl":"/wp-admin/admin-ajax.php","nonce":"643fb143b5","i18n":{"added":"A\u00f1adido","compare":"Comparar","loading":"Cargando..."},"eael_translate_text":{"required_text":"es un campo obligatorio","invalid_text":"No v\u00e1lido","billing_text":"Facturaci\u00f3n","shipping_text":"Env\u00edo","fg_mfp_counter_text":"de"},"page_permalink":"/producto/vela-alta-pino/","cart_redirectition":"no","cart_page_url":"/carrito/","el_breakpoints":{"mobile":{"label":"M\u00f3vil vertical","value":767,"default_value":767,"direction":"max","is_enabled":true},"mobile_extra":{"label":"M\u00f3vil horizontal","value":880,"default_value":880,"direction":"max","is_enabled":false},"tablet":{"label":"Tableta vertical","value":1024,"default_value":1024,"direction":"max","is_enabled":true},"tablet_extra":{"label":"Tableta horizontal","value":1200,"default_value":1200,"direction":"max","is_enabled":false},"laptop":{"label":"Port\u00e1til","value":1366,"default_value":1366,"direction":"max","is_enabled":false},"widescreen":{"label":"Pantalla grande","value":2400,"default_value":2400,"direction":"min","is_enabled":false}},"ParticleThemesData":{"default":"{\"particles\":{\"number\":{\"value\":160,\"density\":{\"enable\":true,\"value_area\":800}},\"color\":{\"value\":\"#ffffff\"},\"shape\":{\"type\":\"circle\",\"stroke\":{\"width\":0,\"color\":\"#000000\"},\"polygon\":{\"nb_sides\":5},\"image\":{\"src\":\"img/github.svg\",\"width\":100,\"height\":100}},\"opacity\":{\"value\":0.5,\"random\":false,\"anim\":{\"enable\":false,\"speed\":1,\"opacity_min\":0.1,\"sync\":false}},\"size\":{\"value\":3,\"random\":true,\"anim\":{\"enable\":false,\"speed\":40,\"size_min\":0.1,\"sync\":false}},\"line_linked\":{\"enable\":true,\"distance\":150,\"color\":\"#ffffff\",\"opacity\":0.4,\"width\":1},\"move\":{\"enable\":true,\"speed\":6,\"direction\":\"none\",\"random\":false,\"straight\":false,\"out_mode\":\"out\",\"bounce\":false,\"attract\":{\"enable\":false,\"rotateX\":600,\"rotateY\":1200}}},\"interactivity\":{\"detect_on\":\"canvas\",\"events\":{\"onhover\":{\"enable\":true,\"mode\":\"repulse\"},\"onclick\":{\"enable\":true,\"mode\":\"push\"},\"resize\":true},\"modes\":{\"grab\":{\"distance\":400,\"line_linked\":{\"opacity\":1}},\"bubble\":{\"distance\":400,\"size\":40,\"duration\":2,\"opacity\":8,\"speed\":3},\"repulse\":{\"distance\":200,\"duration\":0.4},\"push\":{\"particles_nb\":4},\"remove\":{\"particles_nb\":2}}},\"retina_detect\":true}","nasa":"{\"particles\":{\"number\":{\"value\":250,\"density\":{\"enable\":true,\"value_area\":800}},\"color\":{\"value\":\"#ffffff\"},\"shape\":{\"type\":\"circle\",\"stroke\":{\"width\":0,\"color\":\"#000000\"},\"polygon\":{\"nb_sides\":5},\"image\":{\"src\":\"img/github.svg\",\"width\":100,\"height\":100}},\"opacity\":{\"value\":1,\"random\":true,\"anim\":{\"enable\":true,\"speed\":1,\"opacity_min\":0,\"sync\":false}},\"size\":{\"value\":3,\"random\":true,\"anim\":{\"enable\":false,\"speed\":4,\"size_min\":0.3,\"sync\":false}},\"line_linked\":{\"enable\":false,\"distance\":150,\"color\":\"#ffffff\",\"opacity\":0.4,\"width\":1},\"move\":{\"enable\":true,\"speed\":1,\"direction\":\"none\",\"random\":true,\"straight\":false,\"out_mode\":\"out\",\"bounce\":false,\"attract\":{\"enable\":false,\"rotateX\":600,\"rotateY\":600}}},\"interactivity\":{\"detect_on\":\"canvas\",\"events\":{\"onhover\":{\"enable\":true,\"mode\":\"bubble\"},\"onclick\":{\"enable\":true,\"mode\":\"repulse\"},\"resize\":true},\"modes\":{\"grab\":{\"distance\":400,\"line_linked\":{\"opacity\":1}},\"bubble\":{\"distance\":250,\"size\":0,\"duration\":2,\"opacity\":0,\"speed\":3},\"repulse\":{\"distance\":400,\"duration\":0.4},\"push\":{\"particles_nb\":4},\"remove\":{\"particles_nb\":2}}},\"retina_detect\":true}","bubble":"{\"particles\":{\"number\":{\"value\":15,\"density\":{\"enable\":true,\"value_area\":800}},\"color\":{\"value\":\"#1b1e34\"},\"shape\":{\"type\":\"polygon\",\"stroke\":{\"width\":0,\"color\":\"#000\"},\"polygon\":{\"nb_sides\":6},\"image\":{\"src\":\"img/github.svg\",\"width\":100,\"height\":100}},\"opacity\":{\"value\":0.3,\"random\":true,\"anim\":{\"enable\":false,\"speed\":1,\"opacity_min\":0.1,\"sync\":false}},\"size\":{\"value\":50,\"random\":false,\"anim\":{\"enable\":true,\"speed\":10,\"size_min\":40,\"sync\":false}},\"line_linked\":{\"enable\":false,\"distance\":200,\"color\":\"#ffffff\",\"opacity\":1,\"width\":2},\"move\":{\"enable\":true,\"speed\":8,\"direction\":\"none\",\"random\":false,\"straight\":false,\"out_mode\":\"out\",\"bounce\":false,\"attract\":{\"enable\":false,\"rotateX\":600,\"rotateY\":1200}}},\"interactivity\":{\"detect_on\":\"canvas\",\"events\":{\"onhover\":{\"enable\":false,\"mode\":\"grab\"},\"onclick\":{\"enable\":false,\"mode\":\"push\"},\"resize\":true},\"modes\":{\"grab\":{\"distance\":400,\"line_linked\":{\"opacity\":1}},\"bubble\":{\"distance\":400,\"size\":40,\"duration\":2,\"opacity\":8,\"speed\":3},\"repulse\":{\"distance\":200,\"duration\":0.4},\"push\":{\"particles_nb\":4},\"remove\":{\"particles_nb\":2}}},\"retina_detect\":true}","snow":"{\"particles\":{\"number\":{\"value\":450,\"density\":{\"enable\":true,\"value_area\":800}},\"color\":{\"value\":\"#fff\"},\"shape\":{\"type\":\"circle\",\"stroke\":{\"width\":0,\"color\":\"#000000\"},\"polygon\":{\"nb_sides\":5},\"image\":{\"src\":\"img/github.svg\",\"width\":100,\"height\":100}},\"opacity\":{\"value\":0.5,\"random\":true,\"anim\":{\"enable\":false,\"speed\":1,\"opacity_min\":0.1,\"sync\":false}},\"size\":{\"value\":5,\"random\":true,\"anim\":{\"enable\":false,\"speed\":40,\"size_min\":0.1,\"sync\":false}},\"line_linked\":{\"enable\":false,\"distance\":500,\"color\":\"#ffffff\",\"opacity\":0.4,\"width\":2},\"move\":{\"enable\":true,\"speed\":6,\"direction\":\"bottom\",\"random\":false,\"straight\":false,\"out_mode\":\"out\",\"bounce\":false,\"attract\":{\"enable\":false,\"rotateX\":600,\"rotateY\":1200}}},\"interactivity\":{\"detect_on\":\"canvas\",\"events\":{\"onhover\":{\"enable\":true,\"mode\":\"bubble\"},\"onclick\":{\"enable\":true,\"mode\":\"repulse\"},\"resize\":true},\"modes\":{\"grab\":{\"distance\":400,\"line_linked\":{\"opacity\":0.5}},\"bubble\":{\"distance\":400,\"size\":4,\"duration\":0.3,\"opacity\":1,\"speed\":3},\"repulse\":{\"distance\":200,\"duration\":0.4},\"push\":{\"particles_nb\":4},\"remove\":{\"particles_nb\":2}}},\"retina_detect\":true}","nyan_cat":"{\"particles\":{\"number\":{\"value\":150,\"density\":{\"enable\":false,\"value_area\":800}},\"color\":{\"value\":\"#ffffff\"},\"shape\":{\"type\":\"star\",\"stroke\":{\"width\":0,\"color\":\"#000000\"},\"polygon\":{\"nb_sides\":5},\"image\":{\"src\":\"http://wiki.lexisnexis.com/academic/images/f/fb/Itunes_podcast_icon_300.jpg\",\"width\":100,\"height\":100}},\"opacity\":{\"value\":0.5,\"random\":false,\"anim\":{\"enable\":false,\"speed\":1,\"opacity_min\":0.1,\"sync\":false}},\"size\":{\"value\":4,\"random\":true,\"anim\":{\"enable\":false,\"speed\":40,\"size_min\":0.1,\"sync\":false}},\"line_linked\":{\"enable\":false,\"distance\":150,\"color\":\"#ffffff\",\"opacity\":0.4,\"width\":1},\"move\":{\"enable\":true,\"speed\":14,\"direction\":\"left\",\"random\":false,\"straight\":true,\"out_mode\":\"out\",\"bounce\":false,\"attract\":{\"enable\":false,\"rotateX\":600,\"rotateY\":1200}}},\"interactivity\":{\"detect_on\":\"canvas\",\"events\":{\"onhover\":{\"enable\":false,\"mode\":\"grab\"},\"onclick\":{\"enable\":true,\"mode\":\"repulse\"},\"resize\":true},\"modes\":{\"grab\":{\"distance\":200,\"line_linked\":{\"opacity\":1}},\"bubble\":{\"distance\":400,\"size\":40,\"duration\":2,\"opacity\":8,\"speed\":3},\"repulse\":{\"distance\":200,\"duration\":0.4},\"push\":{\"particles_nb\":4},\"remove\":{\"particles_nb\":2}}},\"retina_detect\":true}"},"eael_login_nonce":"17200a3e6e","eael_register_nonce":"a584d0c29e","eael_lostpassword_nonce":"e6b51e63d7","eael_resetpassword_nonce":"5881021afa"};
 //# sourceURL=eael-general-js-extra
@@ -1506,170 +1553,193 @@ const a=JSON.parse(document.getElementById("wp-emoji-settings").textContent),o=(
 
 <script src='/sein-security-checkout.js?v=1792610349313' defer></script>
 
-<!-- SECCION DINAMICA SUPABASE PRODUCTO INDIVIDUAL -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- SECCION DINAMICA SUPABASE PRODUCTO INDIVIDUAL (OPTIMIZADA) -->
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Obtener el slug de la URL. Ej: /producto/vela-alta-pino/ -> vela-alta-pino
-    const pathParts = window.location.pathname.split('/').filter(p => p);
-    // pathParts = ["producto", "vela-alta-pino"]
-    let slug = pathParts[pathParts.length - 1];
-    
-    // Si la URL es solo /producto/, redirigir a tienda
-    if (!slug || slug === 'producto') {
-        window.location.href = '/tienda/';
-        return;
-    }
-
-    const SUPABASE_URL = 'https://hyibazrenjtnswtebybb.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    try {
-        const { data, error } = await supabase
-            .from('productos')
-            .select('*')
-            .eq('slug', slug)
-            .single();
-
-        if (error || !data) {
-            console.error('Producto no encontrado:', error);
-            document.querySelector('.product_title').innerText = 'Producto no encontrado';
-            return;
-        }
+(function() {
+    function renderProduct(data) {
+        if (!data || !data.nombre) return;
 
         // Reemplazar título
-        const titleEl = document.querySelector('.product_title');
+        var titleEl = document.querySelector('.product_title');
         if (titleEl) {
             titleEl.innerHTML = data.nombre;
         } else {
-            // Fallback: buscar el elemento que insertamos
-            const fallbackTitle = document.getElementById('dyn-prod-title');
-            if(fallbackTitle) fallbackTitle.innerText = data.nombre;
+            var fallbackTitle = document.getElementById('dyn-prod-title');
+            if (fallbackTitle) fallbackTitle.innerText = data.nombre;
         }
         
         // Reemplazar título en la etiqueta <title>
         document.title = data.nombre + " - SEIN";
 
         // Reemplazar precio
-        const priceEls = document.querySelectorAll('p.price .woocommerce-Price-amount bdi');
+        var priceEls = document.querySelectorAll('p.price .woocommerce-Price-amount bdi');
         if (priceEls.length > 0) {
-            priceEls.forEach(el => {
-                let pFmt = data.precio || "";
-                let isText = false;
+            priceEls.forEach(function(el) {
+                var pFmt = data.precio || "";
+                var isText = false;
                 if (/^[\d.,$]+$/.test(pFmt.trim())) {
-                    const pNum = parseFloat(pFmt.replace(/[^0-9.]/g, ''));
-                    if (!isNaN(pNum)) pFmt = '$' + pNum.toFixed(2);
+                    var pNum = parseFloat(pFmt.replace(/[^0-9.]/g, ''));
+                    if (!isNaN(pNum)) pFmt = '</body>
+</html>
+
+
+ + pNum.toFixed(2);
                 } else {
                     isText = true;
                 }
                 if (isText) {
-                    el.innerHTML = `<strong>${pFmt}</strong>`;
+                    el.innerHTML = '<strong>' + pFmt + '</strong>';
                     el.style.fontSize = "16px";
                     
-                    const cartBtn = document.querySelector('button.single_add_to_cart_button');
+                    var cartBtn = document.querySelector('button.single_add_to_cart_button');
                     if (cartBtn) {
                         cartBtn.innerText = 'COTIZAR AHORA';
                         cartBtn.style.backgroundColor = '#25D366';
-                        cartBtn.onclick = (e) => {
+                        cartBtn.onclick = function(e) {
                             e.preventDefault();
                             e.stopPropagation();
-                            const prodName = data ? data.nombre : document.title.replace(' - SEIN', '');
+                            var prodName = data ? data.nombre : document.title.replace(' - SEIN', '');
                             window.open('https://wa.me/5213334636538?text=Hola,%20me%20interesa%20cotizar%20el%20producto:%20' + encodeURIComponent(prodName), '_blank');
                         };
                     }
-                    const qty = document.querySelector('.quantity');
+                    var qty = document.querySelector('.quantity');
                     if (qty) qty.style.display = 'none';
                     
-                    document.querySelectorAll('[id*="woo_pp"], [class*="paypal"]').forEach(node => {
-                        if(node.style) node.style.display = 'none';
+                    document.querySelectorAll('[id*="woo_pp"], [class*="paypal"]').forEach(function(node) {
+                        if (node.style) node.style.display = 'none';
                     });
                 } else {
                     el.innerHTML = pFmt;
                 }
             });
         } else {
-            const fallbackPrice = document.getElementById('dyn-prod-price');
-            if(fallbackPrice) fallbackPrice.innerText = data.precio;
+            var fallbackPrice = document.getElementById('dyn-prod-price');
+            if (fallbackPrice) fallbackPrice.innerText = data.precio;
         }
 
         // Formatear texto con saltos de línea
-        const formatText = (text) => text ? text.replace(/\n/g, '<br>') : '';
+        var formatText = function(text) { return text ? text.replace(/\n/g, '<br>') : ''; };
 
         // Reemplazar descripción corta
-        const descEl = document.querySelector('.woocommerce-product-details__short-description');
-        if (descEl) descEl.innerHTML = `<p>${formatText(data.descripcion)}</p>`;
+        var descEl = document.querySelector('.woocommerce-product-details__short-description');
+        if (descEl) descEl.innerHTML = '<p>' + formatText(data.descripcion) + '</p>';
 
         // Reemplazar contenido/especificaciones (si hay tab de descripción)
-        const tabDescEl = document.querySelector('#tab-description');
+        var tabDescEl = document.querySelector('#tab-description');
         if (tabDescEl) {
-            let htmlContent = `<h2>Descripción</h2><p>${formatText(data.contenido || data.descripcion)}</p>`;
-            if (data.dimensiones) htmlContent += `<p><strong>Dimensiones:</strong> ${data.dimensiones}</p>`;
-            if (data.peso) htmlContent += `<p><strong>Peso:</strong> ${data.peso}</p>`;
+            var htmlContent = '<h2>Descripción</h2><p>' + formatText(data.contenido || data.descripcion) + '</p>';
+            if (data.dimensiones) htmlContent += '<p><strong>Dimensiones:</strong> ' + data.dimensiones + '</p>';
+            if (data.peso) htmlContent += '<p><strong>Peso:</strong> ' + data.peso + '</p>';
             tabDescEl.innerHTML = htmlContent;
         }
 
         // Reemplazar galería de imágenes (soporta hasta 5 imágenes)
-        const imgGallery = document.querySelector('.woocommerce-product-gallery, .sein-product-image');
+        var imgGallery = document.querySelector('.woocommerce-product-gallery, .sein-product-image');
         if (imgGallery && data.imagen_url) {
             imgGallery.className = "images sein-product-image";
             imgGallery.style.opacity = '1';
-            const imgs = data.imagen_url.split(',').map(s => s.trim()).filter(Boolean);
-            const mainImg = imgs[0] || '';
-            const thumbs = imgs.length > 1 ? `
-                <div class="sein-thumbs" style="display:flex; gap:8px; margin-top:12px; overflow-x:auto; padding-bottom:4px;">
-                    ${imgs.map((im, idx) => `
-                        <div onclick="document.getElementById('sein-main-product-img').src='${im}'; document.querySelectorAll('.sein-thumb-box').forEach(b => b.style.borderColor='#ddd'); this.style.borderColor='#DB572E';" class="sein-thumb-box" style="cursor:pointer; width:60px; height:60px; border-radius:6px; overflow:hidden; border:2px solid ${idx === 0 ? '#DB572E' : '#ddd'}; flex-shrink:0; transition:all 0.2s;">
-                            <img src="${im}" alt="${data.nombre}" style="width:100%; height:100%; object-fit:cover;">
-                        </div>
-                    `).join('')}
-                </div>
-            ` : '';
+            var imgs = data.imagen_url.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+            var mainImg = imgs[0] || '';
+            var thumbs = imgs.length > 1 ? (
+                '<div class="sein-thumbs" style="display:flex; gap:8px; margin-top:12px; overflow-x:auto; padding-bottom:4px;">' +
+                    imgs.map(function(im, idx) {
+                        return '<div onclick="document.getElementById(\'sein-main-product-img\').src=\'' + im + '\'; document.querySelectorAll(\'.sein-thumb-box\').forEach(function(b){b.style.borderColor=\'#ddd\'}); this.style.borderColor=\'#DB572E\';" class="sein-thumb-box" style="cursor:pointer; width:60px; height:60px; border-radius:6px; overflow:hidden; border:2px solid ' + (idx === 0 ? '#DB572E' : '#ddd') + '; flex-shrink:0; transition:all 0.2s;">' +
+                            '<img src="' + im + '" alt="' + data.nombre + '" style="width:100%; height:100%; object-fit:cover;">' +
+                        '</div>';
+                    }).join('') +
+                '</div>'
+            ) : '';
 
-            imgGallery.innerHTML = `
-                <div style="border-radius:12px; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background:#fff;">
-                    <img id="sein-main-product-img" src="${mainImg}" alt="${data.nombre}" style="width:100%; display:block; object-fit:cover; max-height:550px; transition: opacity 0.3s ease;">
-                </div>
-                ${thumbs}
-            `;
+            imgGallery.innerHTML = 
+                '<div style="border-radius:12px; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background:#fff;">' +
+                    '<img id="sein-main-product-img" src="' + mainImg + '" alt="' + data.nombre + '" style="width:100%; display:block; object-fit:cover; max-height:550px; transition: opacity 0.3s ease;">' +
+                '</div>' + thumbs;
         }
 
         // Reemplazar Breadcrumb
-        const breadcrumb = document.querySelector('.woocommerce-breadcrumb');
+        var breadcrumb = document.querySelector('.woocommerce-breadcrumb');
         if (breadcrumb) {
-            breadcrumb.innerHTML = `<a href="/">Inicio</a> &nbsp;/&nbsp; <a href="/tienda/">Tienda</a> &nbsp;/&nbsp; ${data.nombre}`;
+            breadcrumb.innerHTML = '<a href="/">Inicio</a> &nbsp;/&nbsp; <a href="/tienda/">Tienda</a> &nbsp;/&nbsp; ' + data.nombre;
         }
 
         // Reemplazar Categoría
-        const catLabel = document.querySelector('.posted_in');
+        var catLabel = document.querySelector('.posted_in');
         if (catLabel && data.categoria) {
-            catLabel.innerHTML = `Categoría: <span rel="tag" style="color:#c58d58;">${data.categoria}</span>`;
+            catLabel.innerHTML = 'Categoría: <span rel="tag" style="color:#c58d58;">' + data.categoria + '</span>';
         }
 
-                // Actualizar boton de WhatsApp si existe
-        const wpBtn = document.querySelector('.wa-order-button');
+        // Actualizar boton de WhatsApp si existe
+        var wpBtn = document.querySelector('.wa-order-button');
         if (wpBtn) {
-            const msg = `Hola, me interesa el producto: ${data.nombre}. ${window.location.href}`;
-            wpBtn.href = `https://wa.me/523334636538?text=${encodeURIComponent(msg)}`;
+            var msg = 'Hola, me interesa el producto: ' + data.nombre + '. ' + window.location.href;
+            wpBtn.href = 'https://wa.me/523334636538?text=' + encodeURIComponent(msg);
         }
 
         document.body.classList.add('sein-loaded');
+
         // Modificar el boton de anadir al carrito para conectarlo con Supabase
-        const addToCartBtn = document.querySelector('button.single_add_to_cart_button');
+        var addToCartBtn = document.querySelector('button.single_add_to_cart_button');
         if (addToCartBtn) {
-            addToCartBtn.type = 'button'; // Evitar que mande al 404
-            addToCartBtn.addEventListener('click', (e) => {
+            addToCartBtn.type = 'button';
+            addToCartBtn.onclick = function(e) {
                 e.preventDefault();
                 if (window.seinAddToCart) {
                     window.seinAddToCart(data);
                 }
-            });
+            };
+        }
+    }
+
+    async function initProductPage() {
+        var parts = window.location.pathname.split('/').filter(Boolean);
+        var slug = parts[parts.length - 1];
+        if (!slug || slug === 'producto') {
+            window.location.href = '/tienda/';
+            return;
         }
 
-    } catch (err) {
-        console.error('Error cargando producto:', err);
+        // 1. Si tenemos datos en cache de sessionStorage, renderizar de inmediato (0ms de espera)
+        var early = window.__SEIN_EARLY_FETCH__;
+        if (early && early.cached && early.slug === slug) {
+            renderProduct(early.cached);
+        }
+
+        // 2. Esperar al fetch nativo anticipado
+        var data = null;
+        if (early && early.promise && early.slug === slug) {
+            data = await early.promise;
+        } else {
+            try {
+                var url = 'https://hyibazrenjtnswtebybb.supabase.co/rest/v1/productos?slug=eq.' + encodeURIComponent(slug) + '&select=*';
+                var key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo';
+                var res = await fetch(url, {
+                    headers: {
+                        'apikey': key,
+                        'Authorization': 'Bearer ' + key,
+                        'Accept': 'application/vnd.pgrst.object+json'
+                    }
+                });
+                if (res.ok) data = await res.json();
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        if (data && data.nombre) {
+            renderProduct(data);
+        } else if (!early || !early.cached) {
+            var titleEl = document.querySelector('.product_title');
+            if (titleEl) titleEl.innerText = 'Producto no encontrado';
+            document.body.classList.add('sein-loaded');
+        }
     }
-});
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initProductPage);
+    } else {
+        initProductPage();
+    }
+})();
 </script>
 
 </body>
