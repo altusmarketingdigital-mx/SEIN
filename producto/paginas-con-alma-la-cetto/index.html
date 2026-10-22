@@ -431,6 +431,90 @@ button.single_add_to_cart_button:hover,
 }
 </style>
 
+
+<style id="sein-cls-layout-reserve">
+/* =========================================================
+   PREVENCION DE CUMULATIVE LAYOUT SHIFT (CLS) EN FICHA DE PRODUCTO
+   ========================================================= */
+
+/* 1. Reserva estructural para el formulario de compra */
+.woocommerce div.product form.cart {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    min-height: 52px !important;
+    contain: layout style;
+    contain-intrinsic-size: 100% 52px;
+    margin-bottom: 15px !important;
+}
+
+/* 2. Reserva de tamaño explícito para el botón y selector de cantidad */
+.woocommerce div.product form.cart .quantity {
+    display: inline-block !important;
+    min-width: 70px !important;
+    height: 48px !important;
+}
+.woocommerce div.product form.cart .quantity input.qty {
+    height: 48px !important;
+    min-width: 65px !important;
+}
+button.single_add_to_cart_button,
+.woocommerce button.button.alt,
+.woocommerce div.product form.cart .button {
+    min-height: 48px !important;
+    height: 48px !important;
+    min-width: 200px !important;
+    contain: layout style;
+    contain-intrinsic-size: 220px 48px;
+}
+
+/* 3. Reserva estática y skeleton para el contenedor de PayPal / Express Checkout */
+.ppc-button-wrapper {
+    min-height: 55px !important;
+    margin-top: 12px !important;
+    margin-bottom: 12px !important;
+    display: block !important;
+    position: relative !important;
+    contain: layout style;
+    contain-intrinsic-size: 100% 55px;
+    background: #fbfbfb;
+    border-radius: 6px;
+    transition: min-height 0.2s ease;
+}
+#ppc-button-ppcp-gateway {
+    min-height: 50px !important;
+    width: 100% !important;
+    display: block !important;
+}
+div[id*="paypal"], iframe[name*="paypal"] {
+    min-height: 45px !important;
+    display: block !important;
+}
+
+/* 4. Estabilidad en Variaciones / Opciones de Producto */
+.woocommerce div.product form.cart .variations {
+    min-height: 70px !important;
+    contain: layout style;
+    contain-intrinsic-size: 100% 70px;
+    margin-bottom: 15px !important;
+}
+.single_variation_wrap {
+    min-height: 40px !important;
+    contain: layout style;
+}
+
+/* 5. Estabilidad en Bloque de Precios y Metadatos */
+.woocommerce-Price-amount {
+    display: inline-block !important;
+    min-height: 28px !important;
+}
+.product_meta {
+    min-height: 40px !important;
+    contain: layout style;
+    contain-intrinsic-size: 100% 40px;
+}
+</style>
+
 </head>
 
 <body class="wp-singular product-template-default single single-product postid-1287 wp-theme-hello-elementor theme-hello-elementor woocommerce woocommerce-page woocommerce-no-js yith-wcbm-theme-hello-elementor elementor-default elementor-kit-6">
