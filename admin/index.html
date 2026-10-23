@@ -1784,6 +1784,11 @@ window.reverseLookupMenu = function(submenu) {
             });
             
             alert('Producto actualizado con éxito!');
+            // Invalidar cache de producto
+            const currentProd = allSupabaseProducts.find(x => x.id == id);
+            if (currentProd && currentProd.slug) {
+                try { sessionStorage.removeItem('sein_prod_' + currentProd.slug); localStorage.removeItem('sein_prod_' + currentProd.slug); } catch(e) {}
+            }
             closeEditModal();
             fetchAdminProducts(); // recargar
         } catch (e) {
