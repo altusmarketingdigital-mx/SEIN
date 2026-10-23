@@ -518,20 +518,12 @@ div[id*="paypal"], iframe[name*="paypal"] {
 
 
 <style id="sein-product-cloak">
-/* Oculta suavemente el contenido hasta que Supabase inyecte los datos del producto seleccionado */
+/* Renderizado fluido sin brinco visual ni destello */
 .summary.entry-summary,
 .woocommerce-product-gallery,
 .sein-product-image,
 #tab-description,
 .woocommerce-product-details__short-description {
-    opacity: 0;
-    transition: opacity 0.25s ease-in-out;
-}
-.sein-loaded .summary.entry-summary,
-.sein-loaded .woocommerce-product-gallery,
-.sein-loaded .sein-product-image,
-.sein-loaded #tab-description,
-.sein-loaded .woocommerce-product-details__short-description {
     opacity: 1 !important;
 }
 </style>
@@ -785,17 +777,15 @@ div[id*="paypal"], iframe[name*="paypal"] {
 				</div>
 				</header>
 		
-	<div id="primary" class="content-area"><main id="main" class="site-main" role="main"><nav class="woocommerce-breadcrumb" aria-label="Breadcrumb"><a href="/">Inicio</a> / <a href="/categoria-producto/velas-de-soja/">Velas de Soya</a> / Vela Alta – Pino</nav>
+	<div id="primary" class="content-area"><main id="main" class="site-main" role="main"><nav class="woocommerce-breadcrumb" aria-label="Breadcrumb"><a href="/">Inicio</a> &nbsp;/&nbsp; <a href="/tienda/">Tienda</a> &nbsp;/&nbsp; Vela Alta | San Valentin</nav>
 					
 			<div class="woocommerce-notices-wrapper"></div><div id="product-1287" class="product type-product post-1287 status-publish first instock product_cat-velas-de-soja has-post-thumbnail shipping-taxable purchasable product-type-simple">
 
-	<div class="images sein-product-image" style="opacity: 1;">
-    <div style="border-radius:12px; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-        <img src="/wp-content/uploads/2025/02/vela-alta-2.png" alt="Vela Alta | San Valentin" style="width:100%; display:block; object-fit:cover;">
+		<div class="images sein-product-image" style="opacity: 1;">
+    <div style="border-radius:12px; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background:#fff;">
+        <img id="sein-main-product-img" src="/wp-content/uploads/2025/02/vela-alta-2.png" alt="Vela Alta | San Valentin" style="width:100%; display:block; object-fit:cover; max-height:550px; transition: opacity 0.3s ease;">
     </div>
-</div>
-
-	<div class="summary entry-summary">
+</div><div class="summary entry-summary">
 		<h1 class="product_title entry-title">Vela Alta | San Valentin</h1><p class="price"><span class="woocommerce-Price-amount amount"><bdi>$379.00</bdi></span></p>
 <div class="woocommerce-product-details__short-description">
 <p>Vela de Soja en vasito de cristal y tapa de corcho | Capacidad: 220 grs<br>*Se entrega en cajita de MDF ¡Lista para regalar!<br> <br>¡Elige tu aroma favorito!<br><br>Arrefice: Vainilla, Coco<br><br><br>Pradera: Fresa, Lavanda, Limón<br><br><br>Bosque: Naranja – Copal<br><br><br>Polo Norte: Moka – Eucalipto<br><br><br>Manzana, Canela<br><br><br>Fresa, Frambuesa, Zarzamora<br><br><br>Chocolate, Menta<br><br><br>Pino</p>
@@ -841,16 +831,8 @@ div[id*="paypal"], iframe[name*="paypal"] {
 				</li>
 					</ul>
 					<div class="woocommerce-Tabs-panel woocommerce-Tabs-panel--description panel entry-content wc-tab" id="tab-description" role="tabpanel" aria-labelledby="tab-title-description">
-				
-	<h2>Descripción</h2>
-
-<p>Al realizar tu compra, estas apoyando dos grandes causas:</p>
-<ul>
-<li><strong><em>Causa Social: </em></strong>Con cada compra, contribuyes a diversos proyectos sociales que abordan problemas significativos en la sociedad</li>
-<li><em><strong>Apoyo al Medio Ambiente: </strong></em>Al recibir tu pedido, encontrarás una tarjeta en papel semilla; la cuál, podrás sembrar en alguno de nuestros recipientes SEIN y contribuir de manera positiva al medio ambiente.</li>
-</ul>
-<p>¡Apoya estas increíbles causas!</p>
-			</div>
+	<h2>Descripción</h2><p>Vela de Soja en vasito de cristal y tapa de corcho | Capacidad: 220 grs<br>*Se entrega en cajita de MDF ¡Lista para regalar!<br> <br>¡Elige tu aroma favorito!<br><br>Arrefice: Vainilla, Coco<br><br><br>Pradera: Fresa, Lavanda, Limón<br><br><br>Bosque: Naranja – Copal<br><br><br>Polo Norte: Moka – Eucalipto<br><br><br>Manzana, Canela<br><br><br>Fresa, Frambuesa, Zarzamora<br><br><br>Chocolate, Menta<br><br><br>Pino</p>
+	</div>
 					<div class="woocommerce-Tabs-panel woocommerce-Tabs-panel--additional_information panel entry-content wc-tab" id="tab-additional_information" role="tabpanel" aria-labelledby="tab-title-additional_information">
 				
 	<h2>Información adicional</h2>

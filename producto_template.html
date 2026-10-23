@@ -606,20 +606,12 @@ div[id*="paypal"], iframe[name*="paypal"] {
 
 
 <style id="sein-product-cloak">
-/* Oculta suavemente el contenido hasta que Supabase inyecte los datos del producto seleccionado */
+/* Renderizado fluido sin brinco visual ni destello */
 .summary.entry-summary,
 .woocommerce-product-gallery,
 .sein-product-image,
 #tab-description,
 .woocommerce-product-details__short-description {
-    opacity: 0;
-    transition: opacity 0.25s ease-in-out;
-}
-.sein-loaded .summary.entry-summary,
-.sein-loaded .woocommerce-product-gallery,
-.sein-loaded .sein-product-image,
-.sein-loaded #tab-description,
-.sein-loaded .woocommerce-product-details__short-description {
     opacity: 1 !important;
 }
 </style>
