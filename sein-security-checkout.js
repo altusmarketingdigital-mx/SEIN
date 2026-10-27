@@ -354,7 +354,38 @@
             opacity: 1;
             transform: translateY(0);
         }
-    `;
+    
+        @media (max-width: 767px) {
+            #sein-cart-btn {
+                bottom: 85px !important;
+                right: 18px !important;
+                width: 52px !important;
+                height: 52px !important;
+            }
+            #sein-cart-btn svg {
+                width: 22px !important;
+                height: 22px !important;
+            }
+            #sein-cart-badge {
+                width: 22px !important;
+                height: 22px !important;
+                font-size: 11px !important;
+            }
+            #sein-cart-drawer {
+                max-width: 100vw !important;
+                right: -100vw !important;
+            }
+            .sein-drawer-header {
+                padding: 18px 20px !important;
+            }
+            .sein-drawer-body {
+                padding: 20px 15px !important;
+            }
+            .sein-drawer-footer {
+                padding: 20px !important;
+            }
+        }
+`;
     document.head.appendChild(style);
 
     // 4. Crear Elementos HTML del Carrito
@@ -942,3 +973,65 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 });
+
+
+// RESPONSIVE MENU HAMBURGER CONTROLLER (SEIN)
+(function() {
+    function initMobileNavToggle() {
+        document.querySelectorAll('.elementor-menu-toggle').forEach(function(toggle) {
+            if (toggle.dataset.seinNavBound) return;
+            toggle.dataset.seinNavBound = 'true';
+
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const widget = toggle.closest('.elementor-widget-nav-menu');
+                if (!widget) return;
+
+                const dropdown = widget.querySelector('.elementor-nav-menu--dropdown');
+                const isOpen = toggle.classList.contains('elementor-active');
+
+                if (isOpen) {
+                    toggle.classList.remove('elementor-active');
+                    toggle.setAttribute('aria-expanded', 'false');
+                    if (dropdown) {
+                        dropdown.style.display = 'none';
+                        dropdown.setAttribute('aria-hidden', 'true');
+                    }
+                } else {
+                    toggle.classList.add('elementor-active');
+                    toggle.setAttribute('aria-expanded', 'true');
+                    if (dropdown) {
+                        dropdown.style.display = 'block';
+                        dropdown.setAttribute('aria-hidden', 'false');
+                    }
+                }
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.elementor-widget-nav-menu')) {
+                document.querySelectorAll('.elementor-menu-toggle.elementor-active').forEach(function(t) {
+                    t.classList.remove('elementor-active');
+                    t.setAttribute('aria-expanded', 'false');
+                    const w = t.closest('.elementor-widget-nav-menu');
+                    const d = w ? w.querySelector('.elementor-nav-menu--dropdown') : null;
+                    if (d) {
+                        d.style.display = 'none';
+                        d.setAttribute('aria-hidden', 'true');
+                    }
+                });
+            }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initMobileNavToggle);
+    } else {
+        initMobileNavToggle();
+    }
+    setTimeout(initMobileNavToggle, 500);
+    setTimeout(initMobileNavToggle, 1500);
+})();
