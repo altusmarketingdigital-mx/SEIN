@@ -358,9 +358,14 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
     display: flex !important;
     align-items: center !important;
   }
-  /* OCULTAR HEADER SECUNDARIO DUPLICADO EN DESKTOP */
+  /* CONTROL DE HEADER DESKTOP / MOVIL */
   @media (min-width: 768px) {
     .elementor-590 .elementor-element.elementor-element-bdfa93e {
+      display: none !important;
+    }
+  }
+  @media (max-width: 767px) {
+    .elementor-590 .elementor-element.elementor-element-2b538268 {
       display: none !important;
     }
   }
