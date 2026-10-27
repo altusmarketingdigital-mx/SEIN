@@ -43,7 +43,7 @@
         /* SEIN Elegant Floating Cart */
         #sein-cart-btn {
             position: fixed;
-            bottom: 110px;
+            bottom: 100px;
             right: 30px;
             background: #d36440;
             color: #ffffff;
@@ -357,8 +357,8 @@
     
         @media (max-width: 767px) {
             #sein-cart-btn {
-                bottom: 85px !important;
-                right: 18px !important;
+                bottom: 95px !important;
+                right: 20px !important;
                 width: 52px !important;
                 height: 52px !important;
             }
