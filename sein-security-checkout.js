@@ -993,8 +993,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function initMobileNavToggle() {
+        // Enforce visible styles on mobile header items
+        const bdfHeader = document.querySelector('.elementor-element-bdfa93e');
+        if (bdfHeader) {
+            bdfHeader.style.setProperty('display', 'flex', 'important');
+            bdfHeader.style.setProperty('flex-direction', 'row', 'important');
+            bdfHeader.style.setProperty('align-items', 'center', 'important');
+            bdfHeader.style.setProperty('justify-content', 'flex-start', 'important');
+            
+            const logoCont = bdfHeader.querySelector('.elementor-element-7ab1baa');
+            if (logoCont) {
+                logoCont.style.setProperty('order', '1', 'important');
+                logoCont.style.setProperty('margin-right', 'auto', 'important');
+                logoCont.style.setProperty('margin-left', '0', 'important');
+            }
+            const cartCont = bdfHeader.querySelector('.elementor-element-fa94a79');
+            if (cartCont) {
+                cartCont.style.setProperty('order', '2', 'important');
+                cartCont.style.setProperty('margin-left', '0', 'important');
+                cartCont.style.setProperty('margin-right', '12px', 'important');
+                cartCont.style.setProperty('display', 'flex', 'important');
+            }
+            const menuCont = bdfHeader.querySelector('.elementor-element-81d39d3');
+            if (menuCont) {
+                menuCont.style.setProperty('order', '3', 'important');
+                menuCont.style.setProperty('margin', '0', 'important');
+                menuCont.style.setProperty('display', 'flex', 'important');
+                menuCont.style.setProperty('visibility', 'visible', 'important');
+                menuCont.style.setProperty('opacity', '1', 'important');
+            }
+        }
+
         document.querySelectorAll('.elementor-menu-toggle').forEach(function(toggle) {
-            // Garantizar que tenga siempre los iconos SVG de las 3 líneas
             if (!toggle.dataset.seinNavIconSet) {
                 toggle.dataset.seinNavIconSet = 'true';
                 toggle.innerHTML = hamburgerSvgOpen + hamburgerSvgClose;
@@ -1010,7 +1040,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const widget = toggle.closest('.elementor-widget-nav-menu');
                 if (!widget) return;
 
-                // Seleccionar específicamente el contenedor <nav> principal del dropdown móvil
                 const navDropdown = widget.querySelector('nav.elementor-nav-menu--dropdown, nav.elementor-nav-menu__container');
                 const isCurrentlyActive = toggle.classList.contains('elementor-active') || (navDropdown && navDropdown.classList.contains('sein-menu-open'));
 
@@ -1082,7 +1111,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
         initMobileNavToggle();
     }
-    setTimeout(initMobileNavToggle, 200);
-    setTimeout(initMobileNavToggle, 600);
+    setTimeout(initMobileNavToggle, 150);
+    setTimeout(initMobileNavToggle, 500);
     setTimeout(initMobileNavToggle, 1500);
+    window.addEventListener('resize', initMobileNavToggle);
 })();

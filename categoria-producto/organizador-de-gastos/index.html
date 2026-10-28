@@ -360,12 +360,15 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
     align-items: center !important;
   }
   /* CONTROL DE HEADER DESKTOP / MOVIL */
-  @media (min-width: 768px) {
+  @media (min-width: 1025px) {
     .elementor-590 .elementor-element.elementor-element-bdfa93e {
       display: none !important;
     }
+    .elementor-590 .elementor-element.elementor-element-2b538268 {
+      display: flex !important;
+    }
   }
-  @media (max-width: 767px) {
+  @media (max-width: 1024px) {
     .elementor-590 .elementor-element.elementor-element-2b538268 {
       display: none !important;
     }
@@ -375,38 +378,40 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
       flex-direction: row !important;
       flex-wrap: nowrap !important;
       align-items: center !important;
-      justify-content: space-between !important;
-      padding: 10px 16px !important;
+      justify-content: flex-start !important;
+      padding: 10px 14px !important;
       min-height: 60px !important;
       position: relative !important;
       width: 100% !important;
       box-sizing: border-box !important;
+      overflow: visible !important;
     }
     .elementor-590 .elementor-element.elementor-element-7ab1baa {
       width: auto !important;
       flex: 0 0 auto !important;
+      margin-right: auto !important;
+      margin-left: 0 !important;
+      order: 1 !important;
     }
     .elementor-590 .elementor-element.elementor-element-7ab1baa img {
       max-width: 130px !important;
       max-height: 40px !important;
+      display: block !important;
     }
     .elementor-590 .elementor-element.elementor-element-b8432bb {
       display: none !important;
     }
-    .elementor-590 .elementor-element.elementor-element-81d39d3 {
+    /* Carrito en móvil: antes del botón hamburguesa */
+    .elementor-590 .elementor-element.elementor-element-fa94a79 {
       width: auto !important;
       flex: 0 0 auto !important;
       display: flex !important;
       align-items: center !important;
       order: 2 !important;
+      margin-left: 0 !important;
+      margin-right: 12px !important;
     }
-    .elementor-590 .elementor-element.elementor-element-fa94a79 {
-      width: auto !important;
-      flex: 0 0 auto !important;
-      order: 3 !important;
-      margin-left: 10px !important;
-    }
-    /* Ocultar menú horizontal de escritorio en móviles y mostrar botón hamburguesa (3 líneas) */
+    /* Botón menú hamburguesa (3 líneas) */
     .elementor-590 {
       overflow: visible !important;
       position: relative !important;
@@ -419,23 +424,17 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
       align-items: center !important;
       justify-content: center !important;
       order: 3 !important;
-      margin-left: 10px !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
       overflow: visible !important;
       position: static !important;
-    }
-    .elementor-590 .elementor-element.elementor-element-fa94a79 {
-      width: auto !important;
-      flex: 0 0 auto !important;
-      display: flex !important;
-      align-items: center !important;
-      order: 2 !important;
-      margin-left: auto !important;
     }
     .elementor-590 .elementor-element.elementor-element-8c8b3a5 {
       overflow: visible !important;
       position: static !important;
       display: block !important;
       width: auto !important;
+      margin: 0 !important;
     }
     .elementor-590 .elementor-element.elementor-element-8c8b3a5 .elementor-nav-menu--main {
       display: none !important;
@@ -452,9 +451,9 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
       margin: 0 !important;
       cursor: pointer !important;
       background: #ffffff !important;
-      border: 1.5px solid #dfd8cf !important;
+      border: 1.5px solid #d4cdc3 !important;
       border-radius: 8px !important;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06) !important;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
       outline: none !important;
       box-sizing: border-box !important;
     }
@@ -465,6 +464,7 @@ font-family: Tahoma, Verdana, Segoe, sans-serif;
       min-width: 24px !important;
       min-height: 24px !important;
       stroke: #2b2b2b !important;
+      stroke-width: 2.5px !important;
       fill: none !important;
     }
     .elementor-menu-toggle.elementor-active .elementor-menu-toggle__icon--open {
@@ -1474,7 +1474,7 @@ const a=JSON.parse(document.getElementById("wp-emoji-settings").textContent),o=(
 //# sourceURL=/wp-includes/js/wp-emoji-loader.min.js
 </script>
 
-<script src='/sein-security-checkout.js?v=1793216784334' defer></script>
+<script src='/sein-security-checkout.js?v=1793217884045' defer></script>
 
 
 </body>
