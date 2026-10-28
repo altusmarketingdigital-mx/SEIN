@@ -977,8 +977,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // RESPONSIVE MENU HAMBURGER CONTROLLER (SEIN)
 (function() {
+    const hamburgerSvgOpen = '<svg class="elementor-menu-toggle__icon--open" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2b2b2b" stroke-width="2.5" stroke-linecap="round" style="display:block;width:24px;height:24px;"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>';
+    const hamburgerSvgClose = '<svg class="elementor-menu-toggle__icon--close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2b2b2b" stroke-width="2.5" stroke-linecap="round" style="display:none;width:24px;height:24px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+
+    function updateToggleIcons(toggle, isActive) {
+        let openIcon = toggle.querySelector('.elementor-menu-toggle__icon--open');
+        let closeIcon = toggle.querySelector('.elementor-menu-toggle__icon--close');
+        if (!openIcon || !closeIcon) {
+            toggle.innerHTML = hamburgerSvgOpen + hamburgerSvgClose;
+            openIcon = toggle.querySelector('.elementor-menu-toggle__icon--open');
+            closeIcon = toggle.querySelector('.elementor-menu-toggle__icon--close');
+        }
+        if (openIcon) openIcon.style.display = isActive ? 'none' : 'block';
+        if (closeIcon) closeIcon.style.display = isActive ? 'block' : 'none';
+    }
+
     function initMobileNavToggle() {
         document.querySelectorAll('.elementor-menu-toggle').forEach(function(toggle) {
+            // Garantizar que tenga siempre los iconos SVG de las 3 líneas
+            if (!toggle.dataset.seinNavIconSet) {
+                toggle.dataset.seinNavIconSet = 'true';
+                toggle.innerHTML = hamburgerSvgOpen + hamburgerSvgClose;
+            }
+
             if (toggle.dataset.seinNavBound === 'true') return;
             toggle.dataset.seinNavBound = 'true';
 
@@ -997,6 +1018,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     toggle.classList.remove('elementor-active');
                     toggle.setAttribute('aria-expanded', 'false');
                     widget.classList.remove('sein-menu-active');
+                    updateToggleIcons(toggle, false);
                     if (navDropdown) {
                         navDropdown.classList.remove('sein-menu-open');
                         navDropdown.style.setProperty('display', 'none', 'important');
@@ -1006,6 +1028,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     toggle.classList.add('elementor-active');
                     toggle.setAttribute('aria-expanded', 'true');
                     widget.classList.add('sein-menu-active');
+                    updateToggleIcons(toggle, true);
                     if (navDropdown) {
                         navDropdown.classList.add('sein-menu-open');
                         navDropdown.style.setProperty('display', 'block', 'important');
@@ -1021,6 +1044,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.querySelectorAll('.elementor-menu-toggle.elementor-active').forEach(function(t) {
                     t.classList.remove('elementor-active');
                     t.setAttribute('aria-expanded', 'false');
+                    updateToggleIcons(t, false);
                 });
                 document.querySelectorAll('.elementor-widget-nav-menu.sein-menu-active').forEach(function(w) {
                     w.classList.remove('sein-menu-active');
@@ -1039,6 +1063,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.querySelectorAll('.elementor-menu-toggle.elementor-active').forEach(function(t) {
                     t.classList.remove('elementor-active');
                     t.setAttribute('aria-expanded', 'false');
+                    updateToggleIcons(t, false);
                 });
                 document.querySelectorAll('.elementor-widget-nav-menu.sein-menu-active').forEach(function(w) {
                     w.classList.remove('sein-menu-active');
@@ -1057,6 +1082,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
         initMobileNavToggle();
     }
-    setTimeout(initMobileNavToggle, 300);
-    setTimeout(initMobileNavToggle, 1000);
+    setTimeout(initMobileNavToggle, 200);
+    setTimeout(initMobileNavToggle, 600);
+    setTimeout(initMobileNavToggle, 1500);
 })();
