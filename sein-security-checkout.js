@@ -542,51 +542,76 @@
 
     // 7. Añadir Producto al Carrito
     function addToCart(title, price, img, qty = 1) {
+        if (!title) title = 'Producto SEIN';
+        if (typeof qty !== 'number' || isNaN(qty) || qty < 1) qty = 1;
         const existing = cart.find(item => item.title === title);
         if (existing) {
             existing.qty += qty;
         } else {
-            cart.push({ title, price, img, qty });
+            cart.push({ title, price: String(price || ''), img: img || '', qty });
         }
         saveCart();
         showToast(`"${title}" añadido al carrito ✨`);
         openCart();
     }
 
-    // 8. Interceptar Formulario de Producto Individual
-    const singleProductForm = document.querySelector('form.cart');
-    if (singleProductForm) {
-        singleProductForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const productTitleElem = document.querySelector('h1.product_title, h1.entry-title');
-            const title = productTitleElem ? productTitleElem.textContent.trim() : 'Producto SEIN';
-            const qtyElem = singleProductForm.querySelector('input.qty');
+    // Exponer globalmente para plantillas de producto y catálogo dinámico
+    window.seinAddToCart = function(productOrTitle, price, img, qty) {
+        if (typeof productOrTitle === 'object' && productOrTitle !== null) {
+            const p = productOrTitle;
+            const title = p.nombre || p.title || 'Producto SEIN';
+            const pPrice = p.precio_rebajado || p.precio || p.price || '';
+            const pImg = p.imagen_url ? p.imagen_url.split(',')[0].trim() : (p.img || '');
+            const pQty = parseInt(qty) || 1;
+            addToCart(title, pPrice ? '$' + pPrice : '', pImg, pQty);
+        } else {
+            addToCart(productOrTitle, price, img, parseInt(qty) || 1);
+        }
+    };
+    window.addToCart = addToCart;
+    window.openSeinCart = openCart;
+    window.closeSeinCart = closeCart;
+
+    // Delegación global para interceptar CUALQUIER clic en Agregar al Carrito (estático o dinámico)
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.add_to_cart_button, button.single_add_to_cart_button, .single_add_to_cart_button');
+        if (!btn) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        // 1. Si es botón de ficha de producto individual
+        if (btn.classList.contains('single_add_to_cart_button')) {
+            const form = btn.closest('form.cart') || document.querySelector('form.cart');
+            const qtyElem = form ? form.querySelector('input.qty') : document.querySelector('input.qty');
             const qty = qtyElem ? parseInt(qtyElem.value) || 1 : 1;
-            const priceElem = document.querySelector('.summary .price .amount, .price .amount');
+
+            const titleElem = document.querySelector('h1.product_title, h1.entry-title');
+            const title = titleElem ? titleElem.textContent.trim() : 'Producto SEIN';
+
+            const priceElem = document.querySelector('.summary .price ins .amount, .summary .price .amount, .price .amount');
             const price = priceElem ? priceElem.textContent.trim() : '';
-            const imgElem = document.querySelector('.woocommerce-product-gallery__image img, .product-images img');
+
+            const imgElem = document.querySelector('.woocommerce-product-gallery__image img, .product-images img, .woocommerce-main-image');
             const img = imgElem ? imgElem.src : '';
 
             addToCart(title, price, img, qty);
-        });
-    }
+            return;
+        }
 
-    // 9. Interceptar Botones de Catálogos y Relacionados
-    document.querySelectorAll('.add_to_cart_button').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const card = btn.closest('.product');
-            const titleElem = card ? card.querySelector('.woocommerce-loop-product__title') : null;
-            const title = titleElem ? titleElem.textContent.trim() : 'Producto SEIN';
-            const priceElem = card ? card.querySelector('.price .amount') : null;
-            const price = priceElem ? priceElem.textContent.trim() : '';
-            const imgElem = card ? card.querySelector('img') : null;
-            const img = imgElem ? imgElem.src : '';
+        // 2. Si es tarjeta de producto en catálogo / tienda / categorías / inicio
+        const card = btn.closest('.product, .sein-cat-card, .sein-product-card') || btn.parentElement;
+        const titleElem = card ? card.querySelector('.woocommerce-loop-product__title, .sein-card-nombre, h2') : null;
+        const title = titleElem ? titleElem.textContent.trim() : 'Producto SEIN';
 
-            addToCart(title, price, img, 1);
-        });
-    });
+        const priceElem = card ? card.querySelector('.price ins .amount, .price .amount, .sein-card-precio') : null;
+        const price = priceElem ? priceElem.textContent.trim() : '';
+
+        const imgElem = card ? card.querySelector('img') : null;
+        const img = imgElem ? imgElem.src : '';
+
+        addToCart(title, price, img, 1);
+    }, true);
 
     // 10. Generar Mensaje Consolidado de Checkout para WhatsApp
     checkoutBtn.addEventListener('click', function() {
@@ -734,17 +759,23 @@
 })();
 
 
-// Cambiar el texto de todos los botones "Añadir al carrito" por "Agregar al Carrito"
+// Cambiar el texto de todos los botones "Añadir al carrito" por "Agregar al Carrito" de forma segura
 document.addEventListener("DOMContentLoaded", function() {
-    setInterval(function() {
-        document.querySelectorAll('.add_to_cart_button').forEach(btn => {
-            if(btn.innerText.toLowerCase().includes('aadir') || btn.innerText.toLowerCase().includes('añadir')) {
-                btn.innerText = 'Agregar al Carrito';
+    function renameButtons() {
+        document.querySelectorAll('.add_to_cart_button, .single_add_to_cart_button').forEach(btn => {
+            if (btn.childNodes.length === 1 && btn.childNodes[0].nodeType === 3) {
+                var txt = btn.childNodes[0].nodeValue;
+                if (txt.toLowerCase().includes('aadir') || txt.toLowerCase().includes('añadir')) {
+                    btn.childNodes[0].nodeValue = 'Agregar al Carrito';
+                }
+            } else if (btn.innerText && (btn.innerText.toLowerCase().includes('aadir') || btn.innerText.toLowerCase().includes('añadir'))) {
+                btn.textContent = 'Agregar al Carrito';
             }
         });
-    }, 500); // Poll para coger botones generados dinámicamente
+    }
+    renameButtons();
+    setInterval(renameButtons, 1500);
 });
-
 
 // Fix for double dollar signs
 document.addEventListener("DOMContentLoaded", function() {
