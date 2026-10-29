@@ -420,11 +420,13 @@
                     <span>Total Estimado:</span>
                     <span class="sein-subtotal-amount" id="sein-cart-total">$0.00 MXN</span>
                 </div>
-                <button class="sein-checkout-btn" id="sein-checkout-action">
-                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.075-2.044-.483-1.614-.668-2.65-2.302-2.73-2.41-.081-.108-.65-0.865-.65-1.65 0-.785.412-1.172.557-1.328.145-.157.319-.196.425-.196.106 0 .213.001.306.006.098.005.23-.037.36.276.134.324.456 1.111.496 1.192.04.081.067.176.013.281-.053.107-.08.174-.16.268-.08.093-.17.208-.242.279-.081.08-.166.166-.071.328.094.162.42 0.693.901 1.122.619.551 1.141.722 1.303.803.162.081.258.071.353-.04.096-.11.41-.478.52-.641.11-.162.221-.136.371-.081.151.054.957.451 1.121.533.164.081.273.122.313.19.04.068.04.394-.104.799z"/>
+                <button class="sein-checkout-btn" id="sein-checkout-action" style="background: #2b2b2b;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
                     </svg>
-                    Pedir por WhatsApp
+                    Finalizar Compra
                 </button>
             </div>
         </div>
@@ -613,30 +615,13 @@
         addToCart(title, price, img, 1);
     }, true);
 
-    // 10. Generar Mensaje Consolidado de Checkout para WhatsApp
+    // 10. Redirigir al Checkout / Finalizar Compra en la tienda
     checkoutBtn.addEventListener('click', function() {
-        if (cart.length === 0) return;
-
-        let grandTotal = 0;
-        let msg = `¡Hola! Me gustaría realizar el siguiente pedido desde la tienda web de SEIN:%0A%0A`;
-        msg += `🛍️ *RESUMEN DEL PEDIDO:*%0A`;
-        msg += `---------------------------------%0A`;
-
-        cart.forEach((item, i) => {
-            const numPrice = parsePrice(item.price);
-            grandTotal += numPrice * item.qty;
-            msg += `${i + 1}. *${encodeURIComponent(item.title)}*%0A`;
-            msg += `   • Cantidad: ${item.qty}%0A`;
-            if (item.price) msg += `   • Precio: ${encodeURIComponent(item.price)} c/u%0A`;
-        });
-
-        msg += `---------------------------------%0A`;
-        if (grandTotal > 0) {
-            msg += `💵 *TOTAL ESTIMADO:* ${encodeURIComponent(formatCurrency(grandTotal))}%0A%0A`;
+        if (cart.length === 0) {
+            showToast('Tu carrito está vacío. Agrega productos para comprar.');
+            return;
         }
-        msg += `📍 ¿Me podrían apoyar con la confirmación de existencias, costo de envío y formas de pago? ¡Gracias!`;
-
-        window.open(`https://wa.me/${whatsappPhone}?text=${msg}`, '_blank', 'noopener,noreferrer');
+        window.location.href = '/finalizar-compra/';
     });
 
     // Inicializar estado del Carrito al cargar la página

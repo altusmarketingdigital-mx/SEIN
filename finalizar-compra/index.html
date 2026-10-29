@@ -1,372 +1,1251 @@
-﻿<!DOCTYPE html>
-<html>
-	<head>
-		<title>Redirigiendo...</title>
-		<meta http-equiv="refresh" content="0;url=/carrito/">
-	
-<style id="sein-menu-single-line-fix">
-  /* HEADER & MENU PERFECTAMENTE BALANCEADO EN UNA SOLA FILA */
-  header.elementor-590 {
-    width: 100% !important;
-    background: #ffffff !important;
-    border-bottom: 1px solid #f0ebe4 !important;
-    position: relative !important;
-    z-index: 9999 !important;
-  }
-  .elementor-590 .elementor-element.elementor-element-2b538268 {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    max-width: 1280px !important;
-    margin: 0 auto !important;
-    padding: 10px 24px !important;
-    min-height: 80px !important;
-  }
-  /* LOGO SEIN: Tamaño controlado para no romper el header */
-  .elementor-590 .elementor-element.elementor-element-25d1dba9,
-  .elementor-590 .elementor-element.elementor-element-7ab1baa {
-    width: auto !important;
-    flex: 0 0 auto !important;
-    display: flex !important;
-    align-items: center !important;
-  }
-  .elementor-590 .elementor-element.elementor-element-25d1dba9 img,
-  .elementor-590 .elementor-element.elementor-element-7ab1baa img,
-  .elementor-590 .elementor-widget-image img {
-    max-width: 170px !important;
-    height: auto !important;
-    max-height: 50px !important;
-    object-fit: contain !important;
-    display: block !important;
-  }
-  /* MENU DE NAVEGACIÓN CENTRADO */
-  .elementor-590 .elementor-element.elementor-element-64d35e14,
-  .elementor-590 .elementor-element.elementor-element-b8432bb {
-    width: auto !important;
-    flex: 1 1 auto !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-  }
-  .elementor-590 .elementor-nav-menu--main {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-  }
-  .elementor-590 .elementor-nav-menu--main .elementor-nav-menu {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    gap: 16px !important;
-    list-style: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    align-items: center !important;
-  }
-  .elementor-590 .elementor-nav-menu--main .elementor-item {
-    font-size: 0.9rem !important;
-    font-weight: 500 !important;
-    color: #4a4a4a !important;
-    text-decoration: none !important;
-    white-space: nowrap !important;
-    padding: 6px 4px !important;
-  }
-  .elementor-590 .elementor-nav-menu--main .elementor-item:hover,
-  .elementor-590 .elementor-nav-menu--main .elementor-item.elementor-item-active {
-    color: #c58d58 !important;
-  }
-  /* ACCIONES Y CARRITO */
-  .elementor-590 .elementor-element.elementor-element-407d4c6b,
-  .elementor-590 .elementor-element.elementor-element-fa94a79 {
-    width: auto !important;
-    flex: 0 0 auto !important;
-    display: flex !important;
-    align-items: center !important;
-  }
-  /* CONTROL DE HEADER DESKTOP / MOVIL */
-  @media (min-width: 1025px) {
-    .elementor-590 .elementor-element.elementor-element-bdfa93e {
-      display: none !important;
-    }
-    .elementor-590 .elementor-element.elementor-element-2b538268 {
-      display: flex !important;
-    }
-  }
-  @media (max-width: 1024px) {
-    .elementor-590 .elementor-element.elementor-element-2b538268 {
-      display: none !important;
-    }
-    /* Estructura limpia y alineada en una sola fila en móviles */
-    .elementor-590 .elementor-element.elementor-element-bdfa93e {
-      display: flex !important;
-      flex-direction: row !important;
-      flex-wrap: nowrap !important;
-      align-items: center !important;
-      justify-content: flex-start !important;
-      padding: 10px 14px !important;
-      min-height: 60px !important;
-      position: relative !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-      overflow: visible !important;
-    }
-    .elementor-590 .elementor-element.elementor-element-7ab1baa {
-      width: auto !important;
-      flex: 0 0 auto !important;
-      margin-right: auto !important;
-      margin-left: 0 !important;
-      order: 1 !important;
-    }
-    .elementor-590 .elementor-element.elementor-element-7ab1baa img {
-      max-width: 130px !important;
-      max-height: 40px !important;
-      display: block !important;
-    }
-    .elementor-590 .elementor-element.elementor-element-b8432bb {
-      display: none !important;
-    }
-    /* Carrito en móvil: antes del botón hamburguesa */
-    .elementor-590 .elementor-element.elementor-element-fa94a79 {
-      width: auto !important;
-      flex: 0 0 auto !important;
-      display: flex !important;
-      align-items: center !important;
-      order: 2 !important;
-      margin-left: 0 !important;
-      margin-right: 12px !important;
-    }
-    /* Botón menú hamburguesa (3 líneas) */
-    .elementor-590 {
-      overflow: visible !important;
-      position: relative !important;
-      z-index: 9999 !important;
-    }
-    .elementor-590 .elementor-element.elementor-element-81d39d3 {
-      width: auto !important;
-      flex: 0 0 auto !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      order: 3 !important;
-      margin-left: 0 !important;
-      margin-right: 0 !important;
-      overflow: visible !important;
-      position: static !important;
-    }
-    .elementor-590 .elementor-element.elementor-element-8c8b3a5 {
-      overflow: visible !important;
-      position: static !important;
-      display: block !important;
-      width: auto !important;
-      margin: 0 !important;
-    }
-    .elementor-590 .elementor-element.elementor-element-8c8b3a5 .elementor-nav-menu--main {
-      display: none !important;
-    }
-    .elementor-590 .elementor-element.elementor-element-8c8b3a5 .elementor-menu-toggle {
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      width: 44px !important;
-      height: 44px !important;
-      min-width: 44px !important;
-      min-height: 44px !important;
-      padding: 8px !important;
-      margin: 0 !important;
-      cursor: pointer !important;
-      background: #ffffff !important;
-      border: 1.5px solid #d4cdc3 !important;
-      border-radius: 8px !important;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
-      outline: none !important;
-      box-sizing: border-box !important;
-    }
-    .elementor-590 .elementor-element.elementor-element-8c8b3a5 .elementor-menu-toggle svg {
-      display: block !important;
-      width: 24px !important;
-      height: 24px !important;
-      min-width: 24px !important;
-      min-height: 24px !important;
-      stroke: #2b2b2b !important;
-      stroke-width: 2.5px !important;
-      fill: none !important;
-    }
-    .elementor-menu-toggle.elementor-active .elementor-menu-toggle__icon--open {
-      display: none !important;
-    }
-    .elementor-menu-toggle.elementor-active .elementor-menu-toggle__icon--close {
-      display: block !important;
-    }
-    .elementor-menu-toggle:not(.elementor-active) .elementor-menu-toggle__icon--open {
-      display: block !important;
-    }
-    .elementor-menu-toggle:not(.elementor-active) .elementor-menu-toggle__icon--close {
-      display: none !important;
-    }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra | SEIN Candle Co.</title>
+    <meta name="description" content="Finaliza tu compra de forma segura en SEIN Candle Co. Envío a todo México con seguimiento y confirmación en tiempo real.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2b2b2b;
+            --accent: #a3875e;
+            --accent-hover: #846c48;
+            --bg: #faf8f5;
+            --card-bg: #ffffff;
+            --border: #e9e4dc;
+            --text: #2b2b2b;
+            --text-muted: #666666;
+            --success: #2e7d32;
+        }
 
-    /* Menú desplegable móvil a pantalla completa o bloque flotante */
-    .elementor-590 nav.elementor-nav-menu--dropdown,
-    .elementor-590 .elementor-nav-menu__container.elementor-nav-menu--dropdown {
-      display: none !important;
-      position: absolute !important;
-      top: 100% !important;
-      left: 0 !important;
-      width: 100% !important;
-      background: #ffffff !important;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.12) !important;
-      border-top: 1px solid #f0ebe4 !important;
-      padding: 15px 20px 20px 20px !important;
-      z-index: 99999 !important;
-      box-sizing: border-box !important;
-      max-height: 80vh !important;
-      overflow-y: auto !important;
-      transform: none !important;
-    }
-    .elementor-590 .elementor-menu-toggle.elementor-active + nav.elementor-nav-menu--dropdown,
-    .elementor-590 nav.elementor-nav-menu--dropdown.sein-menu-open,
-    .elementor-590 .elementor-widget-nav-menu.sein-menu-active nav.elementor-nav-menu--dropdown {
-      display: block !important;
-      visibility: visible !important;
-      max-height: 80vh !important;
-      transform: none !important;
-    }
-    .elementor-590 nav.elementor-nav-menu--dropdown ul.elementor-nav-menu {
-      list-style: none !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      display: flex !important;
-      flex-direction: column !important;
-      width: 100% !important;
-    }
-    .elementor-590 nav.elementor-nav-menu--dropdown ul.elementor-nav-menu > li {
-      padding: 8px 0 !important;
-      border-bottom: 1px solid #f7f5f2 !important;
-      display: block !important;
-      width: 100% !important;
-    }
-    .elementor-590 nav.elementor-nav-menu--dropdown a.elementor-item {
-      color: #333333 !important;
-      font-size: 15px !important;
-      font-weight: 500 !important;
-      text-decoration: none !important;
-      display: block !important;
-      padding: 4px 0 !important;
-    }
-    .elementor-590 nav.elementor-nav-menu--dropdown ul.sub-menu {
-      position: static !important;
-      width: 100% !important;
-      box-shadow: none !important;
-      border: none !important;
-      padding: 4px 0 4px 14px !important;
-      margin: 0 !important;
-      background: transparent !important;
-      display: flex !important;
-      flex-direction: column !important;
-    }
-    .elementor-590 nav.elementor-nav-menu--dropdown ul.sub-menu > li {
-      padding: 4px 0 !important;
-      border: none !important;
-      display: block !important;
-    }
-    .elementor-590 nav.elementor-nav-menu--dropdown ul.sub-menu a.elementor-sub-item {
-      color: #777777 !important;
-      font-size: 14px !important;
-      font-weight: 400 !important;
-      display: block !important;
-      padding: 3px 0 !important;
-      text-decoration: none !important;
-    }
-  }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-  /* REGLAS GLOBALES DE RESPONSIVIDAD PARA CUALQUIER DISPOSITIVO */
-  *, *:before, *:after {
-    box-sizing: border-box;
-  }
-  html, body {
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-  }
-  img, video, iframe {
-    max-width: 100%;
-    height: auto;
-  }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-  /* Cuadrícula de productos responsiva fluida */
-  ul.products {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 20px !important;
-    width: 100% !important;
-    margin: 0 auto !important;
-    padding: 0 !important;
-    list-style: none !important;
-  }
-  ul.products li.product {
-    width: 100% !important;
-    float: none !important;
-    margin: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-  }
-  ul.products li.product img {
-    width: 100% !important;
-    height: auto !important;
-    object-fit: cover !important;
-  }
+        /* Header Minimalista y Elegante */
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-  @media (max-width: 1024px) {
-    ul.products {
-      grid-template-columns: repeat(3, 1fr) !important;
-      gap: 16px !important;
-    }
-  }
-  @media (max-width: 768px) {
-    ul.products {
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 12px !important;
-    }
-    .elementor-widget-slides .swiper-slide {
-      height: 480px !important;
-    }
-    .single-product .summary.entry-summary {
-      width: 100% !important;
-      padding: 15px 0 !important;
-    }
-    .single-product .woocommerce-product-gallery {
-      width: 100% !important;
-    }
-  }
-  @media (max-width: 480px) {
-    ul.products {
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 10px !important;
-    }
-    ul.products li.product .woocommerce-loop-product__title {
-      font-size: 13px !important;
-      min-height: 36px !important;
-    }
-    ul.products li.product .price {
-      font-size: 13px !important;
-    }
-    ul.products li.product .button {
-      font-size: 10px !important;
-      padding: 6px 4px !important;
-    }
-    .elementor-widget-slides .swiper-slide {
-      height: 380px !important;
-    }
-  }
-</style>
+        .header-logo {
+            font-size: 19px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-secure {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .header-secure svg {
+            color: var(--success);
+        }
+
+        .header-back {
+            text-decoration: none;
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+
+        .header-back:hover {
+            color: var(--accent-hover);
+        }
+
+        /* Contenedor Principal */
+        .checkout-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 30px auto 60px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1.35fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                margin-top: 20px;
+            }
+        }
+
+        /* Tarjetas de Sección */
+        .step-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .step-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+        }
+
+        .user-logged-badge {
+            margin-left: auto;
+            background: #eef7ed;
+            color: var(--success);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Formularios y Campos */
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 6px;
+        }
+
+        .form-group input, 
+        .form-group textarea, 
+        .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d4cdc3;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text);
+            background: #fff;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .form-group input:focus, 
+        .form-group textarea:focus, 
+        .form-group select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(163, 135, 94, 0.15);
+        }
+
+        /* Opciones de Envío */
+        .shipping-option {
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+        }
+
+        .shipping-option:hover {
+            border-color: var(--accent);
+            background: #fdfcfb;
+        }
+
+        .shipping-option.selected {
+            border-color: var(--accent);
+            background: #faf6f0;
+        }
+
+        .shipping-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .shipping-radio {
+            accent-color: var(--accent);
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .shipping-title {
+            font-size: 14.5px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .shipping-subtitle {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .shipping-price {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Opciones de Método de Pago */
+        .payment-methods-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .payment-method-card {
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        .payment-method-card:hover {
+            border-color: var(--accent);
+        }
+
+        .payment-method-card.active {
+            border-color: var(--accent);
+            background: #faf6f0;
+            box-shadow: 0 4px 12px rgba(163, 135, 94, 0.1);
+        }
+
+        .payment-icon {
+            font-size: 26px;
+            margin-bottom: 6px;
+        }
+
+        .payment-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .payment-details-box {
+            background: #faf8f5;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .bank-info-table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+        }
+
+        .bank-info-table td {
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border);
+            font-size: 13.5px;
+        }
+
+        .bank-info-table td strong {
+            color: var(--primary);
+        }
+
+        .copy-clabe-btn {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 8px;
+            color: var(--accent);
+            font-weight: 600;
+            font-family: inherit;
+        }
+
+        .copy-clabe-btn:hover {
+            background: #f0ebe4;
+        }
+
+        /* Columna Derecha: Resumen de Compra */
+        .order-summary-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 28px;
+            position: sticky;
+            top: 90px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.03);
+        }
+
+        .summary-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .summary-items-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 6px;
+        }
+
+        .summary-items-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .summary-items-list::-webkit-scrollbar-thumb {
+            background: #ddd6cc;
+            border-radius: 10px;
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f2ede7;
+        }
+
+        .summary-item-img {
+            width: 55px;
+            height: 55px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #faf8f5;
+            border: 1px solid #eee;
+            flex-shrink: 0;
+        }
+
+        .summary-item-details {
+            flex: 1;
+        }
+
+        .summary-item-name {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .summary-item-qty {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .summary-item-price {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+
+        .summary-rows {
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .summary-row.total {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+
+        .btn-submit-order {
+            width: 100%;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            padding: 16px 20px;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-family: inherit;
+        }
+
+        .btn-submit-order:hover {
+            background: #1a1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn-submit-order:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .guarantee-badges {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            border-top: 1px dashed var(--border);
+            padding-top: 16px;
+        }
+
+        .guarantee-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Pantalla de Éxito / Confirmación de Pedido */
+        #order-success-screen {
+            max-width: 750px;
+            margin: 40px auto 80px;
+            padding: 0 20px;
+            display: none;
+        }
+
+        .success-card {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        }
+
+        .success-icon-wrap {
+            width: 72px;
+            height: 72px;
+            background: #eef7ed;
+            color: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 34px;
+        }
+
+        .order-badge-pill {
+            display: inline-block;
+            background: #f4ede4;
+            color: var(--accent);
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 15px;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .order-instructions-box {
+            background: #faf8f5;
+            border: 1.5px dashed var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: left;
+        }
+
+        .success-actions {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: var(--primary);
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-primary-link {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary-link:hover {
+            background: #1a1a1a;
+        }
+
+        /* Empty Cart State */
+        #empty-cart-screen {
+            max-width: 600px;
+            margin: 60px auto;
+            text-align: center;
+            padding: 40px 20px;
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            display: none;
+        }
+    </style>
 </head>
-	<body>
-		<script type="text/javascript">
-			window.location = "/carrito/";
-		</script>
+<body>
 
-		<p>Estás siendo redirigido a <a href="/carrito/">/carrito/</a></p>
-	<script src='/sein-security-checkout.js?v=1793302301945' defer></script>
+    <!-- Header Checkout -->
+    <header class="header">
+        <a href="/" class="header-logo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2a5 5 0 0 1 5 5c0 5-5 13-5 13s-5-8-5-13a5 5 0 0 1 5-5z"></path>
+                <circle cx="12" cy="7" r="2"></circle>
+            </svg>
+            SEIN CANDLE CO.
+        </a>
+        <div class="header-secure">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>Checkout Seguro 100% Encriptado</span>
+        </div>
+        <a href="/tienda/" class="header-back">← Volver al Catálogo</a>
+    </header>
+
+    <!-- PANTALLA: CARRITO VACÍO -->
+    <div id="empty-cart-screen">
+        <div style="font-size: 55px; margin-bottom: 15px;">🛍️</div>
+        <h2 style="font-size: 22px; margin-bottom: 10px; color: var(--primary);">Tu carrito está vacío</h2>
+        <p style="color: var(--text-muted); font-size: 14.5px; margin-bottom: 25px;">Agrega tus velas y difusores aromáticos favoritos para continuar con tu compra.</p>
+        <a href="/tienda/" class="btn-primary-link" style="padding: 14px 28px;">Ver Colección de Velas</a>
+    </div>
+
+    <!-- PANTALLA PRINCIPAL: FORMULARIO CHECKOUT -->
+    <div class="checkout-container" id="main-checkout-screen">
+        
+        <!-- Columna Izquierda: Formulario y Pasos -->
+        <div class="checkout-steps-column">
+            
+            <form id="checkout-form" onsubmit="handlePlaceOrder(event)">
+                
+                <!-- PASO 1: DATOS DEL CLIENTE Y ENVÍO -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Información de Contacto y Envío</div>
+                        <div id="logged-user-pill" class="user-logged-badge" style="display: none;">
+                            ✓ Cuenta Activa
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label for="cust-name">Nombre Completo *</label>
+                            <input type="text" id="cust-name" required placeholder="Ej. Ana García Morales">
+                        </div>
+                        <div class="form-group">
+                            <label for="cust-email">Correo Electrónico * (Para confirmación)</label>
+                            <input type="email" id="cust-email" required placeholder="ejemplo@correo.com">
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label for="cust-phone">Teléfono / WhatsApp *</label>
+                            <input type="tel" id="cust-phone" required placeholder="Ej. 33 1234 5678">
+                        </div>
+                        <div class="form-group">
+                            <label for="cust-zip">Código Postal *</label>
+                            <input type="text" id="cust-zip" required placeholder="Ej. 44100" maxlength="10">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cust-address">Calle, Número Exterior e Interior *</label>
+                        <input type="text" id="cust-address" required placeholder="Ej. Av. Chapultepec #123, Depto 4B">
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label for="cust-colony">Colonia / Fraccionamiento *</label>
+                            <input type="text" id="cust-colony" required placeholder="Ej. Col. Americana">
+                        </div>
+                        <div class="form-group">
+                            <label for="cust-city">Ciudad / Municipio *</label>
+                            <input type="text" id="cust-city" required placeholder="Ej. Guadalajara">
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label for="cust-state">Estado *</label>
+                            <input type="text" id="cust-state" required placeholder="Ej. Jalisco">
+                        </div>
+                        <div class="form-group">
+                            <label for="cust-notes">Referencias de Entrega (Opcional)</label>
+                            <input type="text" id="cust-notes" placeholder="Ej. Entre calles Vallarta y López Cotilla, portón café">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASO 2: MÉTODO DE ENVÍO -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Método de Envío</div>
+                    </div>
+
+                    <div class="shipping-option selected" id="shipping-opt-std" onclick="selectShipping('std')">
+                        <div class="shipping-left">
+                            <input type="radio" name="shipping" id="radio-std" class="shipping-radio" checked>
+                            <div>
+                                <div class="shipping-title">Envío Estándar Nacional (3 a 5 días hábiles)</div>
+                                <div class="shipping-subtitle">Entrega garantizada por paquetería express con número de rastreo</div>
+                            </div>
+                        </div>
+                        <div class="shipping-price" id="shipping-std-price">$149.00 MXN</div>
+                    </div>
+
+                    <div class="shipping-option" id="shipping-opt-free" style="display:none;" onclick="selectShipping('free')">
+                        <div class="shipping-left">
+                            <input type="radio" name="shipping" id="radio-free" class="shipping-radio">
+                            <div>
+                                <div class="shipping-title" style="color: var(--success);">¡Envío Gratis! 🎉</div>
+                                <div class="shipping-subtitle">Aplica por compras superiores a $999.00 MXN</div>
+                            </div>
+                        </div>
+                        <div class="shipping-price" style="color: var(--success);">GRATIS</div>
+                    </div>
+                </div>
+
+                <!-- PASO 3: MÉTODO DE PAGO -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Forma de Pago Segura</div>
+                    </div>
+
+                    <div class="payment-methods-tabs">
+                        <div class="payment-method-card active" id="pay-card-spei" onclick="selectPaymentMethod('spei')">
+                            <div class="payment-icon">⚡</div>
+                            <div class="payment-name">Transferencia SPEI</div>
+                            <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 3px;">Sin comisiones • Aprobación inmediata</div>
+                        </div>
+                        <div class="payment-method-card" id="pay-card-card" onclick="selectPaymentMethod('card')">
+                            <div class="payment-icon">💳</div>
+                            <div class="payment-name">Tarjeta Débito / Crédito</div>
+                            <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 3px;">Visa, Mastercard, AMEX</div>
+                        </div>
+                    </div>
+
+                    <!-- Detalles SPEI -->
+                    <div id="payment-box-spei" class="payment-details-box">
+                        <div style="font-weight: 700; color: var(--primary); margin-bottom: 8px;">Instrucciones para Pago por SPEI:</div>
+                        <p style="color: #555; font-size: 13.5px; margin-bottom: 12px;">
+                            Al confirmar tu compra, se reservará tu pedido y se generará tu clave de seguimiento. Puedes transferir desde la banca móvil de cualquier banco:
+                        </p>
+                        <table class="bank-info-table">
+                            <tr>
+                                <td><strong>Banco Receptor:</strong></td>
+                                <td>BBVA México / STP</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Beneficiario:</strong></td>
+                                <td>SEIN Candle Co. (Miriam Castro)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>CLABE Interbancaria:</strong></td>
+                                <td>
+                                    <span id="clabe-number" style="font-family: monospace; font-weight:700; font-size:14px; letter-spacing:1px;">012320015489765432</span>
+                                    <button type="button" class="copy-clabe-btn" onclick="copyClabe()">Copiar</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Concepto de Pago:</strong></td>
+                                <td><span id="spei-concept" style="font-weight: 700; color: var(--accent);">SEIN-[ID-PEDIDO]</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Detalles Tarjeta -->
+                    <div id="payment-box-card" class="payment-details-box" style="display: none;">
+                        <div style="font-weight: 700; color: var(--primary); margin-bottom: 8px;">Pago con Tarjeta de Crédito o Débito</div>
+                        <p style="color: #555; font-size: 13.5px; margin-bottom: 15px;">
+                            Ingresa los datos de tu tarjeta respaldados por cifrado SSL seguro de 256 bits:
+                        </p>
+                        
+                        <div class="form-group">
+                            <label>Número de Tarjeta</label>
+                            <input type="text" placeholder="•••• •••• •••• ••••" maxlength="19" id="card-number">
+                        </div>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label>Vencimiento (MM/AA)</label>
+                                <input type="text" placeholder="MM/AA" maxlength="5" id="card-exp">
+                            </div>
+                            <div class="form-group">
+                                <label>Código de Seguridad (CVV)</label>
+                                <input type="password" placeholder="•••" maxlength="4" id="card-cvv">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Nombre del Titular</label>
+                            <input type="text" placeholder="Como figura en la tarjeta" id="card-holder">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-submit-checkout" class="btn-submit-order">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <span id="btn-submit-text">Confirmar y Realizar Pedido</span>
+                </button>
+
+            </form>
+        </div>
+
+        <!-- Columna Derecha: Resumen de la Orden -->
+        <div class="checkout-summary-column">
+            <div class="order-summary-card">
+                <div class="summary-title">
+                    <span>Resumen del Pedido</span>
+                    <span id="summary-items-count" style="font-size: 13px; font-weight: 500; color: var(--text-muted);">(0 piezas)</span>
+                </div>
+
+                <!-- Lista de Productos en el Carrito -->
+                <div class="summary-items-list" id="summary-items-container">
+                    <!-- Dinámico -->
+                </div>
+
+                <!-- Desglose de Precios -->
+                <div class="summary-rows">
+                    <div class="summary-row">
+                        <span>Subtotal Productos:</span>
+                        <span id="summary-subtotal" style="font-weight: 600; color: var(--primary);">$0.00 MXN</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Costo de Envío:</span>
+                        <span id="summary-shipping" style="font-weight: 600; color: var(--primary);">$149.00 MXN</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total a Pagar:</span>
+                        <span id="summary-total" style="color: var(--accent);">$0.00 MXN</span>
+                    </div>
+                </div>
+
+                <div class="guarantee-badges">
+                    <div class="guarantee-item">
+                        <span>📦</span>
+                        <span>Empaque Protector Seguro</span>
+                    </div>
+                    <div class="guarantee-item">
+                        <span>🌿</span>
+                        <span>Cera 100% de Soja Natural</span>
+                    </div>
+                    <div class="guarantee-item">
+                        <span>🚚</span>
+                        <span>Guía con Rastreo en Línea</span>
+                    </div>
+                    <div class="guarantee-item">
+                        <span>🔒</span>
+                        <span>Compra 100% Protegida</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PANTALLA: CONFIRMACIÓN EXITOSA DE COMPRA -->
+    <div id="order-success-screen">
+        <div class="success-card">
+            <div class="success-icon-wrap">✓</div>
+            <h1 style="font-size: 24px; color: var(--primary); margin-bottom: 8px;">¡Muchas Gracias por tu Compra!</h1>
+            <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 18px;">Tu pedido ha sido registrado exitosamente en el sistema de SEIN Candle Co.</p>
+            
+            <div class="order-badge-pill">
+                PEDIDO #<span id="confirmed-order-id">SEIN-XXXX</span>
+            </div>
+
+            <div class="order-instructions-box" id="success-instructions-content">
+                <!-- Se llena según el método de pago -->
+            </div>
+
+            <p style="font-size: 13.5px; color: #777; line-height: 1.5;">
+                Hemos registrado esta orden en tu historial. Puedes darle seguimiento desde tu panel de cliente en cualquier momento.
+            </p>
+
+            <div class="success-actions">
+                <a href="/mi-cuenta/" class="btn-primary-link">Ir a Mi Cuenta / Mis Pedidos</a>
+                <a href="/tienda/" class="btn-secondary">Seguir Comprando</a>
+            </div>
+
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border);">
+                <span style="font-size: 13px; color: var(--text-muted);">¿Tienes dudas sobre tu pedido? </span>
+                <a id="success-wa-contact" href="https://wa.me/5217772675971?text=Hola,%20acabo%20de%20realizar%20mi%20pedido%20en%20la%20tienda%20web" target="_blank" style="font-size: 13px; color: #25d366; font-weight: 700; text-decoration: none;">
+                    💬 Contactar Soporte por WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de Lógica del Checkout -->
+    <script>
+        const SUPABASE_URL = 'https://hyibazrenjtnswtebybb.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo';
+
+        let cart = [];
+        let currentShippingCost = 149;
+        let selectedPayment = 'spei';
+        let generatedOrderId = '';
+
+        function parsePrice(val) {
+            if (typeof val === 'number') return val;
+            if (!val) return 0;
+            const cleaned = String(val).replace(/[^0-9.]/g, '');
+            return parseFloat(cleaned) || 0;
+        }
+
+        function formatCurrency(val) {
+            return '$' + val.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MXN';
+        }
+
+        // Cargar Carrito desde localStorage
+        function loadCartData() {
+            try {
+                cart = JSON.parse(localStorage.getItem('sein_cart') || '[]');
+            } catch(e) {
+                cart = [];
+            }
+
+            if (!Array.isArray(cart) || cart.length === 0) {
+                document.getElementById('main-checkout-screen').style.display = 'none';
+                document.getElementById('empty-cart-screen').style.display = 'block';
+                return false;
+            }
+
+            renderOrderSummary();
+            return true;
+        }
+
+        // Cargar Cliente Logueado si existe
+        function loadLoggedCustomer() {
+            try {
+                const client = JSON.parse(localStorage.getItem('sein_cliente') || 'null');
+                if (client) {
+                    if (client.nombre) document.getElementById('cust-name').value = client.nombre;
+                    if (client.correo) document.getElementById('cust-email').value = client.correo;
+                    if (client.telefono) document.getElementById('cust-phone').value = client.telefono;
+                    if (client.direccion) {
+                        document.getElementById('cust-address').value = client.direccion;
+                    }
+                    const pill = document.getElementById('logged-user-pill');
+                    if (pill) {
+                        pill.style.display = 'flex';
+                        pill.title = 'Sesión iniciada como ' + client.correo;
+                    }
+                }
+            } catch(e) {
+                console.warn('Error al leer sesión de cliente:', e);
+            }
+        }
+
+        // Renderizar el desglose del pedido
+        function renderOrderSummary() {
+            const container = document.getElementById('summary-items-container');
+            container.innerHTML = '';
+
+            let subtotal = 0;
+            let totalQty = 0;
+
+            cart.forEach(item => {
+                const priceNum = parsePrice(item.price);
+                const itemTotal = priceNum * (item.qty || 1);
+                subtotal += itemTotal;
+                totalQty += (item.qty || 1);
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'summary-item';
+                itemDiv.innerHTML = `
+                    <img src="${item.img || '/wp-content/uploads/2026/02/WhatsApp-Image-2026-02-27-at-2.58.55-PM-1.jpeg'}" alt="${item.title}" class="summary-item-img">
+                    <div class="summary-item-details">
+                        <div class="summary-item-name">${item.title}</div>
+                        <div class="summary-item-qty">Cantidad: ${item.qty} × ${formatCurrency(priceNum)}</div>
+                    </div>
+                    <div class="summary-item-price">${formatCurrency(itemTotal)}</div>
+                `;
+                container.appendChild(itemDiv);
+            });
+
+            document.getElementById('summary-items-count').textContent = `(${totalQty} ${totalQty === 1 ? 'pieza' : 'piezas'})`;
+
+            // Lógica de Envío Gratis sobre $999
+            const freeShippingCard = document.getElementById('shipping-opt-free');
+            if (subtotal >= 999) {
+                freeShippingCard.style.display = 'flex';
+                selectShipping('free');
+            } else {
+                freeShippingCard.style.display = 'none';
+                selectShipping('std');
+            }
+
+            updateTotals(subtotal);
+        }
+
+        function updateTotals(subtotal) {
+            const shippingCost = currentShippingCost;
+            const grandTotal = subtotal + shippingCost;
+
+            document.getElementById('summary-subtotal').textContent = formatCurrency(subtotal);
+            document.getElementById('summary-shipping').textContent = shippingCost === 0 ? 'GRATIS' : formatCurrency(shippingCost);
+            document.getElementById('summary-total').textContent = formatCurrency(grandTotal);
+        }
+
+        // Selección de Envío
+        window.selectShipping = function(type) {
+            const stdCard = document.getElementById('shipping-opt-std');
+            const freeCard = document.getElementById('shipping-opt-free');
+            const radioStd = document.getElementById('radio-std');
+            const radioFree = document.getElementById('radio-free');
+
+            if (type === 'free') {
+                currentShippingCost = 0;
+                freeCard.classList.add('selected');
+                stdCard.classList.remove('selected');
+                radioFree.checked = true;
+                radioStd.checked = false;
+            } else {
+                currentShippingCost = 149;
+                stdCard.classList.add('selected');
+                freeCard.classList.remove('selected');
+                radioStd.checked = true;
+                radioFree.checked = false;
+            }
+
+            let subtotal = cart.reduce((sum, item) => sum + (parsePrice(item.price) * item.qty), 0);
+            updateTotals(subtotal);
+        };
+
+        // Selección de Método de Pago
+        window.selectPaymentMethod = function(method) {
+            selectedPayment = method;
+            const cardSpei = document.getElementById('pay-card-spei');
+            const cardCard = document.getElementById('pay-card-card');
+            const boxSpei = document.getElementById('payment-box-spei');
+            const boxCard = document.getElementById('payment-box-card');
+
+            if (method === 'spei') {
+                cardSpei.classList.add('active');
+                cardCard.classList.remove('active');
+                boxSpei.style.display = 'block';
+                boxCard.style.display = 'none';
+            } else {
+                cardCard.classList.add('active');
+                cardSpei.classList.remove('active');
+                boxCard.style.display = 'block';
+                boxSpei.style.display = 'none';
+            }
+        };
+
+        // Copiar CLABE al portapapeles
+        window.copyClabe = function() {
+            const clabe = document.getElementById('clabe-number').innerText;
+            navigator.clipboard.writeText(clabe).then(() => {
+                alert('¡CLABE copiada al portapapeles! (' + clabe + ')');
+            });
+        };
+
+        // GENERAR PEDIDO
+        window.handlePlaceOrder = async function(e) {
+            e.preventDefault();
+
+            if (cart.length === 0) {
+                alert('Tu carrito está vacío.');
+                return;
+            }
+
+            const submitBtn = document.getElementById('btn-submit-checkout');
+            const submitText = document.getElementById('btn-submit-text');
+            submitBtn.disabled = true;
+            submitText.textContent = 'Procesando y registrando pedido...';
+
+            // Datos del cliente
+            const name = document.getElementById('cust-name').value.trim();
+            const email = document.getElementById('cust-email').value.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
+            const zip = document.getElementById('cust-zip').value.trim();
+            const address = document.getElementById('cust-address').value.trim();
+            const colony = document.getElementById('cust-colony').value.trim();
+            const city = document.getElementById('cust-city').value.trim();
+            const state = document.getElementById('cust-state').value.trim();
+            const notes = document.getElementById('cust-notes').value.trim();
+
+            const fullShippingAddress = `${address}, Col. ${colony}, C.P. ${zip}, ${city}, ${state}` + (notes ? ` (Ref: ${notes})` : '');
+
+            // Subtotal y Total
+            const subtotal = cart.reduce((sum, item) => sum + (parsePrice(item.price) * item.qty), 0);
+            const total = subtotal + currentShippingCost;
+
+            // Generar Order ID único
+            const randomCode = Math.floor(10000 + Math.random() * 90000);
+            generatedOrderId = 'SEIN-' + randomCode;
+
+            // Construir Items String
+            const itemsSummary = cart.map(i => `${i.qty}x ${i.title}`).join(', ');
+
+            // Objeto de Pedido
+            const newOrder = {
+                id: generatedOrderId,
+                date: new Date().toISOString().split('T')[0],
+                created_at: new Date().toISOString(),
+                customer: name,
+                email: email,
+                phone: phone,
+                address: fullShippingAddress,
+                items: itemsSummary,
+                items_detail: cart,
+                subtotal: subtotal,
+                shipping: currentShippingCost,
+                total: total,
+                payment_method: selectedPayment === 'spei' ? 'Transferencia SPEI' : 'Tarjeta de Crédito / Débito',
+                status: 'Pendiente de Pago'
+            };
+
+            // 1. Guardar en `sein_admin_orders` para el Administrador
+            try {
+                let adminOrders = JSON.parse(localStorage.getItem('sein_admin_orders') || '[]');
+                adminOrders.unshift(newOrder);
+                localStorage.setItem('sein_admin_orders', JSON.stringify(adminOrders));
+            } catch(err) {
+                console.warn('Error guardando en admin orders:', err);
+            }
+
+            // 2. Guardar en `sein_orders` y `sein_customer_orders` para el Portal del Cliente
+            try {
+                let customerOrders = JSON.parse(localStorage.getItem('sein_customer_orders') || '[]');
+                customerOrders.unshift(newOrder);
+                localStorage.setItem('sein_customer_orders', JSON.stringify(customerOrders));
+            } catch(err) {
+                console.warn('Error guardando en customer orders:', err);
+            }
+
+            // 3. Si el usuario está registrado o desea actualizar sus datos en local
+            try {
+                let client = JSON.parse(localStorage.getItem('sein_cliente') || '{}');
+                if (client && client.correo) {
+                    client.direccion = fullShippingAddress;
+                    client.telefono = phone;
+                    localStorage.setItem('sein_cliente', JSON.stringify(client));
+                }
+            } catch(e) {}
+
+            // 4. Intentar guardar en Supabase si existe tabla de pedidos
+            try {
+                await fetch(SUPABASE_URL + '/rest/v1/pedidos', {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({
+                        order_id: generatedOrderId,
+                        cliente_nombre: name,
+                        cliente_email: email,
+                        cliente_telefono: phone,
+                        direccion_envio: fullShippingAddress,
+                        productos: itemsSummary,
+                        total: total,
+                        metodo_pago: newOrder.payment_method,
+                        estado: 'Pendiente'
+                    })
+                });
+            } catch(err) {
+                console.log('Sync de pedido en la nube omitido o offline.');
+            }
+
+            // 5. Vaciar carrito
+            localStorage.setItem('sein_cart', '[]');
+
+            // 6. Mostrar Pantalla de Confirmación
+            showSuccessScreen(newOrder);
+        };
+
+        function showSuccessScreen(order) {
+            document.getElementById('main-checkout-screen').style.display = 'none';
+            const successScreen = document.getElementById('order-success-screen');
+            successScreen.style.display = 'block';
+
+            document.getElementById('confirmed-order-id').textContent = order.id;
+
+            const instructionsBox = document.getElementById('success-instructions-content');
+            if (order.payment_method.includes('SPEI')) {
+                instructionsBox.innerHTML = `
+                    <div style="font-weight: 700; color: var(--primary); font-size: 15px; margin-bottom: 8px;">
+                        ⚡ Pasos para completar tu Transferencia SPEI:
+                    </div>
+                    <p style="font-size: 14px; color: #444; margin-bottom: 12px;">
+                        Tu pedido ha quedado reservado. Realiza tu transferencia por el monto exacto de 
+                        <strong style="color: var(--accent); font-size: 16px;">${formatCurrency(order.total)}</strong>:
+                    </p>
+                    <table class="bank-info-table">
+                        <tr><td><strong>Banco:</strong></td><td>BBVA México</td></tr>
+                        <tr><td><strong>Beneficiario:</strong></td><td>SEIN Candle Co. (Miriam Castro)</td></tr>
+                        <tr><td><strong>CLABE:</strong></td><td><strong style="font-family: monospace; font-size: 14px;">012320015489765432</strong></td></tr>
+                        <tr><td><strong>Concepto:</strong></td><td><strong>${order.id}</strong></td></tr>
+                    </table>
+                `;
+            } else {
+                instructionsBox.innerHTML = `
+                    <div style="font-weight: 700; color: var(--primary); font-size: 15px; margin-bottom: 8px;">
+                        💳 Pago con Tarjeta Recibido
+                    </div>
+                    <p style="font-size: 14px; color: #444; margin-bottom: 12px;">
+                        Hemos recibido la confirmación de pago por <strong style="color: var(--accent);">${formatCurrency(order.total)}</strong>. 
+                        Comenzamos a preparar tus piezas aromáticas de inmediato.
+                    </p>
+                `;
+            }
+
+            // Enlace de soporte WhatsApp con ID de pedido precargado (SOPORTE, no para venta)
+            const waLink = document.getElementById('success-wa-contact');
+            if (waLink) {
+                waLink.href = `https://wa.me/5217772675971?text=Hola,%20acabo%20de%20realizar%20el%20pedido%20${order.id}%20en%20la%20tienda%20web%20y%20tengo%20una%20consulta`;
+            }
+
+            // Scroll arriba suave
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            const hasItems = loadCartData();
+            if (hasItems) {
+                loadLoggedCustomer();
+            }
+        });
+    </script>
 </body>
 </html>
-
