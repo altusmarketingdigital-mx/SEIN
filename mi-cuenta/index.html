@@ -66,7 +66,7 @@
         }
         .auth-tab-btn {
             flex: 1;
-            padding: 12px 10px;
+            padding: 14px 10px;
             background: transparent;
             border: none;
             border-bottom: 3px solid transparent;
@@ -78,6 +78,8 @@
             text-align: center;
             transition: all 0.2s ease;
             margin-bottom: -2px;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
         }
         .auth-tab-btn.active {
             color: #a3875e;
@@ -124,6 +126,7 @@
             margin-top: 10px; 
             letter-spacing: 0.5px;
             transition: background 0.2s ease, transform 0.1s ease;
+            outline: none;
         }
         .btn:hover { background: #a3875e; }
         .btn:active { transform: scale(0.99); }
@@ -143,8 +146,10 @@
             text-decoration: underline; 
             background: none;
             border: none;
-            padding: 5px;
+            padding: 8px 12px;
             font-family: inherit;
+            outline: none;
+            display: inline-block;
         }
         .toggle-link:hover { color: #846c48; }
         
@@ -184,7 +189,6 @@
         }
         .profile-data-box strong { color: #555; }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -199,8 +203,8 @@
             
             <!-- PESTAÑAS TABS -->
             <div class="auth-tabs">
-                <button type="button" id="tab-login-btn" class="auth-tab-btn active">Iniciar Sesión</button>
-                <button type="button" id="tab-register-btn" class="auth-tab-btn">Crear Cuenta</button>
+                <button type="button" id="tab-login-btn" class="auth-tab-btn active" onclick="toggleView('login')">Iniciar Sesión</button>
+                <button type="button" id="tab-register-btn" class="auth-tab-btn" onclick="toggleView('register')">Crear Cuenta</button>
             </div>
 
             <!-- LOGIN VIEW -->
@@ -219,7 +223,7 @@
                 </form>
                 <div id="login-msg" class="hidden"></div>
                 <div class="toggle-link-container">
-                    <button type="button" class="toggle-link" id="link-to-register">¿No tienes cuenta? Regístrate aquí</button>
+                    <button type="button" class="toggle-link" id="link-to-register" onclick="toggleView('register')">¿No tienes cuenta? Regístrate aquí</button>
                 </div>
             </div>
 
@@ -251,7 +255,7 @@
                 </form>
                 <div id="reg-msg" class="hidden"></div>
                 <div class="toggle-link-container">
-                    <button type="button" class="toggle-link" id="link-to-login">¿Ya tienes cuenta? Inicia sesión</button>
+                    <button type="button" class="toggle-link" id="link-to-login" onclick="toggleView('login')">¿Ya tienes cuenta? Inicia sesión</button>
                 </div>
             </div>
 
@@ -280,50 +284,44 @@
 
     </div>
 
+    <!-- Script sin dependencias externas obligatorias -->
     <script>
         const SUPABASE_URL = 'https://hyibazrenjtnswtebybb.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo';
-        const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-        const authCard = document.getElementById('auth-main-card');
-        const loginView = document.getElementById('login-view');
-        const registerView = document.getElementById('register-view');
-        const profileView = document.getElementById('profile-view');
-        const tabLoginBtn = document.getElementById('tab-login-btn');
-        const tabRegisterBtn = document.getElementById('tab-register-btn');
+        window.toggleView = function(view) {
+            var authCard = document.getElementById('auth-main-card');
+            var loginView = document.getElementById('login-view');
+            var registerView = document.getElementById('register-view');
+            var profileView = document.getElementById('profile-view');
+            var tabLoginBtn = document.getElementById('tab-login-btn');
+            var tabRegisterBtn = document.getElementById('tab-register-btn');
+            var loginMsg = document.getElementById('login-msg');
+            var regMsg = document.getElementById('reg-msg');
 
-        function toggleView(view) {
-            const loginMsg = document.getElementById('login-msg');
-            const regMsg = document.getElementById('reg-msg');
             if (loginMsg) { loginMsg.className = 'hidden'; loginMsg.innerText = ''; }
             if (regMsg) { regMsg.className = 'hidden'; regMsg.innerText = ''; }
 
             if (view === 'login') {
-                authCard.classList.remove('hidden');
-                profileView.classList.add('hidden');
-                loginView.classList.remove('hidden');
-                registerView.classList.add('hidden');
-                tabLoginBtn.classList.add('active');
-                tabRegisterBtn.classList.remove('active');
+                if (authCard) authCard.classList.remove('hidden');
+                if (profileView) profileView.classList.add('hidden');
+                if (loginView) loginView.classList.remove('hidden');
+                if (registerView) registerView.classList.add('hidden');
+                if (tabLoginBtn) tabLoginBtn.classList.add('active');
+                if (tabRegisterBtn) tabRegisterBtn.classList.remove('active');
             } else if (view === 'register') {
-                authCard.classList.remove('hidden');
-                profileView.classList.add('hidden');
-                loginView.classList.add('hidden');
-                registerView.classList.remove('hidden');
-                tabLoginBtn.classList.remove('active');
-                tabRegisterBtn.classList.add('active');
+                if (authCard) authCard.classList.remove('hidden');
+                if (profileView) profileView.classList.add('hidden');
+                if (loginView) loginView.classList.add('hidden');
+                if (registerView) registerView.classList.remove('hidden');
+                if (tabLoginBtn) tabLoginBtn.classList.remove('active');
+                if (tabRegisterBtn) tabRegisterBtn.classList.add('active');
             } else if (view === 'profile') {
-                authCard.classList.add('hidden');
-                profileView.classList.remove('hidden');
+                if (authCard) authCard.classList.add('hidden');
+                if (profileView) profileView.classList.remove('hidden');
                 loadProfileData();
             }
-        }
-
-        // Attach listeners to tabs and toggle buttons
-        tabLoginBtn.addEventListener('click', () => toggleView('login'));
-        tabRegisterBtn.addEventListener('click', () => toggleView('register'));
-        document.getElementById('link-to-register').addEventListener('click', () => toggleView('register'));
-        document.getElementById('link-to-login').addEventListener('click', () => toggleView('login'));
+        };
 
         function getLocalAccounts() {
             try {
@@ -334,8 +332,14 @@
         }
 
         function saveLocalAccount(account) {
-            const list = getLocalAccounts();
-            const idx = list.findIndex(a => a.correo.toLowerCase() === account.correo.toLowerCase());
+            var list = getLocalAccounts();
+            var idx = -1;
+            for (var i = 0; i < list.length; i++) {
+                if (list[i].correo && list[i].correo.toLowerCase() === account.correo.toLowerCase()) {
+                    idx = i;
+                    break;
+                }
+            }
             if (idx >= 0) {
                 list[idx] = account;
             } else {
@@ -345,160 +349,206 @@
         }
 
         function checkSession() {
-            const clientSession = localStorage.getItem('sein_cliente');
+            var clientSession = localStorage.getItem('sein_cliente');
             if (clientSession) {
-                toggleView('profile');
+                window.toggleView('profile');
             } else {
-                toggleView('login');
+                window.toggleView('login');
             }
         }
 
         function loadProfileData() {
             try {
-                const client = JSON.parse(localStorage.getItem('sein_cliente'));
+                var client = JSON.parse(localStorage.getItem('sein_cliente'));
                 if (client) {
-                    document.getElementById('prof-nombre').innerText = client.nombre || 'Cliente';
-                    document.getElementById('prof-email').innerText = client.correo || '';
-                    document.getElementById('prof-telefono').innerText = client.telefono || 'No proporcionado';
-                    document.getElementById('prof-direccion').innerText = client.direccion || 'No proporcionada';
+                    var elNom = document.getElementById('prof-nombre');
+                    var elMail = document.getElementById('prof-email');
+                    var elTel = document.getElementById('prof-telefono');
+                    var elDir = document.getElementById('prof-direccion');
+                    if (elNom) elNom.innerText = client.nombre || 'Cliente';
+                    if (elMail) elMail.innerText = client.correo || '';
+                    if (elTel) elTel.innerText = client.telefono || 'No proporcionado';
+                    if (elDir) elDir.innerText = client.direccion || 'No proporcionada';
                 }
             } catch(e) {
                 logout();
             }
         }
 
-        function logout() {
+        window.logout = function() {
             localStorage.removeItem('sein_cliente');
             checkSession();
-        }
+        };
 
         // LOGIN SUBMIT
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value.trim().toLowerCase();
-            const password = document.getElementById('login-password').value.trim();
-            const msgBox = document.getElementById('login-msg');
-            const submitBtn = document.getElementById('btn-login-submit');
+        document.addEventListener('DOMContentLoaded', function() {
+            var loginForm = document.getElementById('login-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    var emailInput = document.getElementById('login-email');
+                    var passInput = document.getElementById('login-password');
+                    var msgBox = document.getElementById('login-msg');
+                    var submitBtn = document.getElementById('btn-login-submit');
 
-            msgBox.className = 'error';
-            msgBox.classList.remove('hidden');
-            msgBox.innerText = 'Verificando datos...';
-            submitBtn.disabled = true;
+                    var email = (emailInput ? emailInput.value : '').trim().toLowerCase();
+                    var password = (passInput ? passInput.value : '').trim();
 
-            // 1. Try Supabase if available
-            let foundClient = null;
-            if (supabase) {
-                try {
-                    const { data, error } = await supabase
-                        .from('usuarios_clientes')
-                        .select('*')
-                        .eq('correo', email)
-                        .eq('password', password)
-                        .maybeSingle();
-
-                    if (!error && data) {
-                        foundClient = data;
+                    if (msgBox) {
+                        msgBox.className = 'error';
+                        msgBox.classList.remove('hidden');
+                        msgBox.innerText = 'Verificando datos...';
                     }
-                } catch(err) {
-                    console.warn('Supabase query error, fallback to local', err);
-                }
+                    if (submitBtn) submitBtn.disabled = true;
+
+                    var foundClient = null;
+
+                    // 1. Check Supabase REST API directly via fetch
+                    try {
+                        var res = await fetch(SUPABASE_URL + '/rest/v1/usuarios_clientes?correo=eq.' + encodeURIComponent(email) + '&password=eq.' + encodeURIComponent(password) + '&select=*', {
+                            headers: {
+                                'apikey': SUPABASE_KEY,
+                                'Authorization': 'Bearer ' + SUPABASE_KEY
+                            }
+                        });
+                        if (res.ok) {
+                            var data = await res.json();
+                            if (data && data.length > 0) {
+                                foundClient = data[0];
+                            }
+                        }
+                    } catch(err) {
+                        console.warn('Supabase fetch error:', err);
+                    }
+
+                    // 2. Fallback to Local Accounts
+                    if (!foundClient) {
+                        var localList = getLocalAccounts();
+                        for (var i = 0; i < localList.length; i++) {
+                            if (localList[i].correo && localList[i].correo.toLowerCase() === email && localList[i].password === password) {
+                                foundClient = localList[i];
+                                break;
+                            }
+                        }
+                    }
+
+                    if (submitBtn) submitBtn.disabled = false;
+
+                    if (foundClient) {
+                        if (msgBox) {
+                            msgBox.className = 'hidden';
+                            msgBox.innerText = '';
+                        }
+                        localStorage.setItem('sein_cliente', JSON.stringify(foundClient));
+                        window.toggleView('profile');
+                    } else {
+                        if (msgBox) msgBox.innerText = 'Correo o contraseña incorrectos. Verifica o crea tu cuenta.';
+                    }
+                });
             }
 
-            // 2. Try Local Accounts fallback
-            if (!foundClient) {
-                const localList = getLocalAccounts();
-                const matched = localList.find(a => a.correo.toLowerCase() === email && a.password === password);
-                if (matched) {
-                    foundClient = matched;
-                }
-            }
+            // REGISTER SUBMIT
+            var regForm = document.getElementById('register-form');
+            if (regForm) {
+                regForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    var msgBox = document.getElementById('reg-msg');
+                    var submitBtn = document.getElementById('btn-reg-submit');
 
-            submitBtn.disabled = false;
+                    var nomInput = document.getElementById('reg-nombre');
+                    var emailInput = document.getElementById('reg-email');
+                    var passInput = document.getElementById('reg-password');
+                    var telInput = document.getElementById('reg-telefono');
+                    var dirInput = document.getElementById('reg-direccion');
 
-            if (foundClient) {
-                msgBox.className = 'hidden';
-                msgBox.innerText = '';
-                localStorage.setItem('sein_cliente', JSON.stringify(foundClient));
-                toggleView('profile');
-            } else {
-                msgBox.innerText = 'Correo o contraseña incorrectos. Verifica o crea tu cuenta.';
-            }
-        });
+                    var payload = {
+                        nombre: (nomInput ? nomInput.value : '').trim(),
+                        correo: (emailInput ? emailInput.value : '').trim().toLowerCase(),
+                        password: (passInput ? passInput.value : '').trim(),
+                        telefono: (telInput ? telInput.value : '').trim(),
+                        direccion: (dirInput ? dirInput.value : '').trim(),
+                        created_at: new Date().toISOString()
+                    };
 
-        // REGISTER SUBMIT
-        document.getElementById('register-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const msgBox = document.getElementById('reg-msg');
-            const submitBtn = document.getElementById('btn-reg-submit');
+                    if (msgBox) {
+                        msgBox.className = 'error';
+                        msgBox.classList.remove('hidden');
+                        msgBox.innerText = 'Creando tu cuenta...';
+                    }
+                    if (submitBtn) submitBtn.disabled = true;
 
-            const payload = {
-                nombre: document.getElementById('reg-nombre').value.trim(),
-                correo: document.getElementById('reg-email').value.trim().toLowerCase(),
-                password: document.getElementById('reg-password').value.trim(),
-                telefono: document.getElementById('reg-telefono').value.trim(),
-                direccion: document.getElementById('reg-direccion').value.trim(),
-                created_at: new Date().toISOString()
-            };
-
-            msgBox.className = 'error';
-            msgBox.classList.remove('hidden');
-            msgBox.innerText = 'Creando tu cuenta...';
-            submitBtn.disabled = true;
-
-            // Check if email already registered locally
-            const localList = getLocalAccounts();
-            if (localList.some(a => a.correo.toLowerCase() === payload.correo)) {
-                msgBox.innerText = 'Este correo ya se encuentra registrado. Por favor inicia sesión.';
-                submitBtn.disabled = false;
-                return;
-            }
-
-            let registeredData = payload;
-
-            // Try to sync to Supabase
-            if (supabase) {
-                try {
-                    const { data: exists } = await supabase
-                        .from('usuarios_clientes')
-                        .select('id')
-                        .eq('correo', payload.correo)
-                        .maybeSingle();
-
-                    if (exists) {
-                        msgBox.innerText = 'Este correo ya está registrado en la base de datos.';
-                        submitBtn.disabled = false;
+                    // Check if exists locally
+                    var localList = getLocalAccounts();
+                    var existsLocal = false;
+                    for (var i = 0; i < localList.length; i++) {
+                        if (localList[i].correo && localList[i].correo.toLowerCase() === payload.correo) {
+                            existsLocal = true;
+                            break;
+                        }
+                    }
+                    if (existsLocal) {
+                        if (msgBox) msgBox.innerText = 'Este correo ya se encuentra registrado. Por favor inicia sesión.';
+                        if (submitBtn) submitBtn.disabled = false;
                         return;
                     }
 
-                    const { data, error } = await supabase
-                        .from('usuarios_clientes')
-                        .insert([payload])
-                        .select()
-                        .maybeSingle();
+                    var registeredData = payload;
 
-                    if (!error && data) {
-                        registeredData = data;
+                    // Try saving to Supabase REST API directly via fetch
+                    try {
+                        var resCheck = await fetch(SUPABASE_URL + '/rest/v1/usuarios_clientes?correo=eq.' + encodeURIComponent(payload.correo) + '&select=id', {
+                            headers: {
+                                'apikey': SUPABASE_KEY,
+                                'Authorization': 'Bearer ' + SUPABASE_KEY
+                            }
+                        });
+                        if (resCheck.ok) {
+                            var existList = await resCheck.json();
+                            if (existList && existList.length > 0) {
+                                if (msgBox) msgBox.innerText = 'Este correo ya está registrado en la base de datos.';
+                                if (submitBtn) submitBtn.disabled = false;
+                                return;
+                            }
+                        }
+
+                        var resInsert = await fetch(SUPABASE_URL + '/rest/v1/usuarios_clientes', {
+                            method: 'POST',
+                            headers: {
+                                'apikey': SUPABASE_KEY,
+                                'Authorization': 'Bearer ' + SUPABASE_KEY,
+                                'Content-Type': 'application/json',
+                                'Prefer': 'return=representation'
+                            },
+                            body: JSON.stringify(payload)
+                        });
+                        if (resInsert.ok) {
+                            var inserted = await resInsert.json();
+                            if (inserted && inserted.length > 0) {
+                                registeredData = inserted[0];
+                            }
+                        }
+                    } catch(err) {
+                        console.warn('Supabase sync warning:', err);
                     }
-                } catch(err) {
-                    console.warn('Supabase sync warning:', err);
-                }
+
+                    // Save locally to guarantee 100% login persistence
+                    saveLocalAccount(registeredData);
+                    localStorage.setItem('sein_cliente', JSON.stringify(registeredData));
+
+                    if (submitBtn) submitBtn.disabled = false;
+                    if (msgBox) {
+                        msgBox.className = 'success';
+                        msgBox.innerText = '¡Cuenta creada con éxito! Entrando a tu perfil...';
+                    }
+
+                    setTimeout(function() {
+                        window.toggleView('profile');
+                    }, 1000);
+                });
             }
 
-            // Always save locally to guarantee 100% success and no blocking
-            saveLocalAccount(registeredData);
-            localStorage.setItem('sein_cliente', JSON.stringify(registeredData));
-
-            submitBtn.disabled = false;
-            msgBox.className = 'success';
-            msgBox.innerText = '¡Cuenta creada con éxito! Redirigiendo a tu perfil...';
-
-            setTimeout(() => {
-                toggleView('profile');
-            }, 1200);
+            checkSession();
         });
-
-        // Initialize view based on stored session
-        checkSession();
     </script>
 </body>
 </html>
