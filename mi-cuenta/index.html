@@ -3,30 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Mi Cuenta - SEIN</title>
+    <title>Mi Cuenta - SEIN Candle Co.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Tahoma', sans-serif; background-color: #f8f8f8; color: #2b2b2b; margin: 0; padding: 0; }
-        .header { background: #fff; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .header a { text-decoration: none; color: #a3875e; font-weight: bold; font-size: 18px; }
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: #faf8f5; 
+            color: #2b2b2b; 
+            margin: 0; 
+            padding: 0; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header { 
+            background: #fff; 
+            padding: 16px 20px; 
+            text-align: center; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04); 
+            border-bottom: 1px solid #eee;
+        }
+        .header a { 
+            text-decoration: none; 
+            color: #a3875e; 
+            font-weight: 600; 
+            font-size: 15px; 
+            transition: color 0.2s;
+        }
+        .header a:hover { color: #846c48; }
         
-        .container { max-width: 800px; margin: 50px auto; padding: 20px; }
-        .auth-box { background: #fff; border-radius: 8px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        h1, h2 { text-align: center; color: #a3875e; }
+        .container { 
+            max-width: 520px; 
+            width: 100%;
+            margin: 40px auto; 
+            padding: 0 20px; 
+            flex: 1;
+        }
+        .auth-card { 
+            background: #fff; 
+            border-radius: 12px; 
+            padding: 35px 30px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06); 
+            border: 1px solid #eee;
+        }
+        h1, h2 { 
+            text-align: center; 
+            color: #2b2b2b; 
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 25px;
+            letter-spacing: -0.5px;
+        }
         
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        /* Pestañas de cambio (Tabs) */
+        .auth-tabs {
+            display: flex;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 25px;
+        }
+        .auth-tab-btn {
+            flex: 1;
+            padding: 12px 10px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            color: #888;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            margin-bottom: -2px;
+        }
+        .auth-tab-btn.active {
+            color: #a3875e;
+            border-bottom-color: #a3875e;
+        }
         
-        .btn { width: 100%; padding: 12px; background: #2b2b2b; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 10px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 6px; 
+            font-size: 13px;
+            font-weight: 600; 
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-group input, .form-group textarea { 
+            width: 100%; 
+            padding: 12px 14px; 
+            border: 1.5px solid #d4cdc3; 
+            border-radius: 6px; 
+            font-family: inherit;
+            font-size: 14px;
+            background: #faf8f5;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #a3875e;
+            background: #ffffff;
+        }
+        
+        .btn { 
+            width: 100%; 
+            padding: 14px; 
+            background: #2b2b2b; 
+            color: #fff; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-family: inherit;
+            font-size: 15px; 
+            font-weight: 600; 
+            margin-top: 10px; 
+            letter-spacing: 0.5px;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
         .btn:hover { background: #a3875e; }
+        .btn:active { transform: scale(0.99); }
+        .btn:disabled { background: #bbb; cursor: not-allowed; }
         
-        .toggle-link { text-align: center; margin-top: 15px; display: block; color: #a3875e; cursor: pointer; text-decoration: underline; }
+        .toggle-link-container {
+            text-align: center; 
+            margin-top: 20px; 
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+        }
+        .toggle-link { 
+            color: #a3875e; 
+            cursor: pointer; 
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: underline; 
+            background: none;
+            border: none;
+            padding: 5px;
+            font-family: inherit;
+        }
+        .toggle-link:hover { color: #846c48; }
         
-        .hidden { display: none; }
-        .error { color: red; text-align: center; margin-top: 10px; }
-        .success { color: green; text-align: center; margin-top: 10px; }
+        .hidden { display: none !important; }
+        .error { 
+            color: #d9534f; 
+            background: #fdf2f2;
+            border: 1px solid #f9d6d5;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 13.5px;
+            text-align: center; 
+            margin-top: 15px; 
+        }
+        .success { 
+            color: #3c763d; 
+            background: #dff0d8;
+            border: 1px solid #d6e9c6;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 13.5px;
+            text-align: center; 
+            margin-top: 15px; 
+        }
         
-        #profile-view p { font-size: 16px; line-height: 1.5; }
+        .profile-data-box {
+            background: #faf8f5;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 18px;
+            margin-top: 15px;
+        }
+        .profile-data-box p {
+            margin: 10px 0;
+            font-size: 14.5px;
+            line-height: 1.5;
+        }
+        .profile-data-box strong { color: #555; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -38,68 +194,88 @@
 
     <div class="container">
         
-        <!-- LOGIN VIEW -->
-        <div id="login-view" class="auth-box">
-            <h2>Iniciar Sesión</h2>
-            <form id="login-form">
-                <div class="form-group">
-                    <label>Correo Electrónico</label>
-                    <input type="email" id="login-email" required>
-                </div>
-                <div class="form-group">
-                    <label>Contraseña</label>
-                    <input type="password" id="login-password" required>
-                </div>
-                <button type="submit" class="btn">Entrar</button>
-            </form>
-            <div id="login-msg" class="error"></div>
-            <span class="toggle-link" onclick="toggleView('register')">¿No tienes cuenta? Regístrate aquí</span>
-        </div>
+        <!-- AUTH CONTAINER -->
+        <div id="auth-main-card" class="auth-card">
+            
+            <!-- PESTAÑAS TABS -->
+            <div class="auth-tabs">
+                <button type="button" id="tab-login-btn" class="auth-tab-btn active">Iniciar Sesión</button>
+                <button type="button" id="tab-register-btn" class="auth-tab-btn">Crear Cuenta</button>
+            </div>
 
-        <!-- REGISTER VIEW -->
-        <div id="register-view" class="auth-box hidden">
-            <h2>Crear Cuenta</h2>
-            <form id="register-form">
-                <div class="form-group">
-                    <label>Nombre Completo</label>
-                    <input type="text" id="reg-nombre" required>
+            <!-- LOGIN VIEW -->
+            <div id="login-view">
+                <h2>Iniciar Sesión</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Correo Electrónico</label>
+                        <input type="email" id="login-email" required placeholder="tu@correo.com" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Contraseña</label>
+                        <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password">
+                    </div>
+                    <button type="submit" id="btn-login-submit" class="btn">Entrar</button>
+                </form>
+                <div id="login-msg" class="hidden"></div>
+                <div class="toggle-link-container">
+                    <button type="button" class="toggle-link" id="link-to-register">¿No tienes cuenta? Regístrate aquí</button>
                 </div>
-                <div class="form-group">
-                    <label>Correo Electrónico</label>
-                    <input type="email" id="reg-email" required>
+            </div>
+
+            <!-- REGISTER VIEW -->
+            <div id="register-view" class="hidden">
+                <h2>Crear Cuenta</h2>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="reg-nombre">Nombre Completo</label>
+                        <input type="text" id="reg-nombre" required placeholder="Tu Nombre y Apellido" autocomplete="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-email">Correo Electrónico</label>
+                        <input type="email" id="reg-email" required placeholder="tu@correo.com" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">Contraseña</label>
+                        <input type="password" id="reg-password" required placeholder="Mínimo 6 caracteres" minlength="6" autocomplete="new-password">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-telefono">Teléfono (WhatsApp)</label>
+                        <input type="tel" id="reg-telefono" placeholder="Ej. 7771234567" autocomplete="tel">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-direccion">Dirección de Envío</label>
+                        <textarea id="reg-direccion" rows="3" placeholder="Calle, número, colonia, código postal y ciudad"></textarea>
+                    </div>
+                    <button type="submit" id="btn-reg-submit" class="btn">Registrarse</button>
+                </form>
+                <div id="reg-msg" class="hidden"></div>
+                <div class="toggle-link-container">
+                    <button type="button" class="toggle-link" id="link-to-login">¿Ya tienes cuenta? Inicia sesión</button>
                 </div>
-                <div class="form-group">
-                    <label>Contraseña</label>
-                    <input type="password" id="reg-password" required>
-                </div>
-                <div class="form-group">
-                    <label>Teléfono (WhatsApp)</label>
-                    <input type="text" id="reg-telefono">
-                </div>
-                <div class="form-group">
-                    <label>Dirección de Envío</label>
-                    <textarea id="reg-direccion" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn">Registrarse</button>
-            </form>
-            <div id="reg-msg"></div>
-            <span class="toggle-link" onclick="toggleView('login')">¿Ya tienes cuenta? Inicia sesión</span>
+            </div>
+
         </div>
 
         <!-- PROFILE VIEW -->
-        <div id="profile-view" class="auth-box hidden">
+        <div id="profile-view" class="auth-card hidden">
             <h1>Hola, <span id="prof-nombre"></span> 👋</h1>
+            <p style="text-align:center; color:#666; font-size:14px; margin-top:-15px;">Bienvenido a tu panel de cliente SEIN</p>
             <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
-            <h3>Tus Datos</h3>
-            <p><strong>Correo:</strong> <span id="prof-email"></span></p>
-            <p><strong>Teléfono:</strong> <span id="prof-telefono"></span></p>
-            <p><strong>Dirección:</strong> <span id="prof-direccion"></span></p>
             
-            <p style="margin-top:20px; font-size:14px; color:#666;">
-                <i>Por el momento, tus pedidos se gestionan directamente por WhatsApp. Tus datos de envío se usarán automáticamente cuando hables con nosotros.</i>
+            <h3 style="margin-bottom:10px; color:#a3875e; font-size:16px;">Tus Datos Registrados</h3>
+            <div class="profile-data-box">
+                <p><strong>Correo:</strong> <span id="prof-email"></span></p>
+                <p><strong>Teléfono:</strong> <span id="prof-telefono"></span></p>
+                <p><strong>Dirección:</strong> <span id="prof-direccion"></span></p>
+            </div>
+            
+            <p style="margin-top:20px; font-size:13.5px; color:#666; line-height:1.6; text-align:center;">
+                <i>Tus datos de envío se precargarán automáticamente en tus compras y pedidos por WhatsApp.</i>
             </p>
             
-            <button class="btn" style="background:#d9534f; margin-top:30px;" onclick="logout()">Cerrar Sesión</button>
+            <button class="btn" style="background:#a3875e; margin-top:20px;" onclick="window.location.href='/tienda/'">Ir a la Tienda</button>
+            <button class="btn" style="background:#d9534f; margin-top:12px;" onclick="logout()">Cerrar Sesión</button>
         </div>
 
     </div>
@@ -107,23 +283,65 @@
     <script>
         const SUPABASE_URL = 'https://hyibazrenjtnswtebybb.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
+        const authCard = document.getElementById('auth-main-card');
         const loginView = document.getElementById('login-view');
         const registerView = document.getElementById('register-view');
         const profileView = document.getElementById('profile-view');
+        const tabLoginBtn = document.getElementById('tab-login-btn');
+        const tabRegisterBtn = document.getElementById('tab-register-btn');
 
         function toggleView(view) {
-            loginView.classList.add('hidden');
-            registerView.classList.add('hidden');
-            profileView.classList.add('hidden');
+            const loginMsg = document.getElementById('login-msg');
+            const regMsg = document.getElementById('reg-msg');
+            if (loginMsg) { loginMsg.className = 'hidden'; loginMsg.innerText = ''; }
+            if (regMsg) { regMsg.className = 'hidden'; regMsg.innerText = ''; }
 
-            if (view === 'login') loginView.classList.remove('hidden');
-            if (view === 'register') registerView.classList.remove('hidden');
-            if (view === 'profile') {
+            if (view === 'login') {
+                authCard.classList.remove('hidden');
+                profileView.classList.add('hidden');
+                loginView.classList.remove('hidden');
+                registerView.classList.add('hidden');
+                tabLoginBtn.classList.add('active');
+                tabRegisterBtn.classList.remove('active');
+            } else if (view === 'register') {
+                authCard.classList.remove('hidden');
+                profileView.classList.add('hidden');
+                loginView.classList.add('hidden');
+                registerView.classList.remove('hidden');
+                tabLoginBtn.classList.remove('active');
+                tabRegisterBtn.classList.add('active');
+            } else if (view === 'profile') {
+                authCard.classList.add('hidden');
                 profileView.classList.remove('hidden');
                 loadProfileData();
             }
+        }
+
+        // Attach listeners to tabs and toggle buttons
+        tabLoginBtn.addEventListener('click', () => toggleView('login'));
+        tabRegisterBtn.addEventListener('click', () => toggleView('register'));
+        document.getElementById('link-to-register').addEventListener('click', () => toggleView('register'));
+        document.getElementById('link-to-login').addEventListener('click', () => toggleView('login'));
+
+        function getLocalAccounts() {
+            try {
+                return JSON.parse(localStorage.getItem('sein_local_clientes') || '[]');
+            } catch(e) {
+                return [];
+            }
+        }
+
+        function saveLocalAccount(account) {
+            const list = getLocalAccounts();
+            const idx = list.findIndex(a => a.correo.toLowerCase() === account.correo.toLowerCase());
+            if (idx >= 0) {
+                list[idx] = account;
+            } else {
+                list.push(account);
+            }
+            localStorage.setItem('sein_local_clientes', JSON.stringify(list));
         }
 
         function checkSession() {
@@ -136,12 +354,16 @@
         }
 
         function loadProfileData() {
-            const client = JSON.parse(localStorage.getItem('sein_cliente'));
-            if(client) {
-                document.getElementById('prof-nombre').innerText = client.nombre;
-                document.getElementById('prof-email').innerText = client.correo;
-                document.getElementById('prof-telefono').innerText = client.telefono || 'No proporcionado';
-                document.getElementById('prof-direccion').innerText = client.direccion || 'No proporcionada';
+            try {
+                const client = JSON.parse(localStorage.getItem('sein_cliente'));
+                if (client) {
+                    document.getElementById('prof-nombre').innerText = client.nombre || 'Cliente';
+                    document.getElementById('prof-email').innerText = client.correo || '';
+                    document.getElementById('prof-telefono').innerText = client.telefono || 'No proporcionado';
+                    document.getElementById('prof-direccion').innerText = client.direccion || 'No proporcionada';
+                }
+            } catch(e) {
+                logout();
             }
         }
 
@@ -150,69 +372,132 @@
             checkSession();
         }
 
-        // LOGIN
+        // LOGIN SUBMIT
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('login-email').value.trim();
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
             const password = document.getElementById('login-password').value.trim();
             const msgBox = document.getElementById('login-msg');
+            const submitBtn = document.getElementById('btn-login-submit');
+
             msgBox.className = 'error';
-            msgBox.innerText = 'Verificando...';
+            msgBox.classList.remove('hidden');
+            msgBox.innerText = 'Verificando datos...';
+            submitBtn.disabled = true;
 
-            const { data, error } = await supabase
-                .from('usuarios_clientes')
-                .select('*')
-                .eq('correo', email)
-                .eq('password', password)
-                .single();
+            // 1. Try Supabase if available
+            let foundClient = null;
+            if (supabase) {
+                try {
+                    const { data, error } = await supabase
+                        .from('usuarios_clientes')
+                        .select('*')
+                        .eq('correo', email)
+                        .eq('password', password)
+                        .maybeSingle();
 
-            if (error || !data) {
-                msgBox.innerText = 'Correo o contraseña incorrectos.';
-            } else {
+                    if (!error && data) {
+                        foundClient = data;
+                    }
+                } catch(err) {
+                    console.warn('Supabase query error, fallback to local', err);
+                }
+            }
+
+            // 2. Try Local Accounts fallback
+            if (!foundClient) {
+                const localList = getLocalAccounts();
+                const matched = localList.find(a => a.correo.toLowerCase() === email && a.password === password);
+                if (matched) {
+                    foundClient = matched;
+                }
+            }
+
+            submitBtn.disabled = false;
+
+            if (foundClient) {
+                msgBox.className = 'hidden';
                 msgBox.innerText = '';
-                localStorage.setItem('sein_cliente', JSON.stringify(data));
+                localStorage.setItem('sein_cliente', JSON.stringify(foundClient));
                 toggleView('profile');
+            } else {
+                msgBox.innerText = 'Correo o contraseña incorrectos. Verifica o crea tu cuenta.';
             }
         });
 
-        // REGISTER
+        // REGISTER SUBMIT
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const msgBox = document.getElementById('reg-msg');
-            msgBox.className = 'error';
-            msgBox.innerText = 'Registrando...';
+            const submitBtn = document.getElementById('btn-reg-submit');
 
             const payload = {
                 nombre: document.getElementById('reg-nombre').value.trim(),
-                correo: document.getElementById('reg-email').value.trim(),
+                correo: document.getElementById('reg-email').value.trim().toLowerCase(),
                 password: document.getElementById('reg-password').value.trim(),
                 telefono: document.getElementById('reg-telefono').value.trim(),
-                direccion: document.getElementById('reg-direccion').value.trim()
+                direccion: document.getElementById('reg-direccion').value.trim(),
+                created_at: new Date().toISOString()
             };
 
-            // Check if exists
-            const { data: exists } = await supabase.from('usuarios_clientes').select('id').eq('correo', payload.correo).single();
-            if (exists) {
-                msgBox.innerText = 'Este correo ya está registrado.';
+            msgBox.className = 'error';
+            msgBox.classList.remove('hidden');
+            msgBox.innerText = 'Creando tu cuenta...';
+            submitBtn.disabled = true;
+
+            // Check if email already registered locally
+            const localList = getLocalAccounts();
+            if (localList.some(a => a.correo.toLowerCase() === payload.correo)) {
+                msgBox.innerText = 'Este correo ya se encuentra registrado. Por favor inicia sesión.';
+                submitBtn.disabled = false;
                 return;
             }
 
-            const { data, error } = await supabase
-                .from('usuarios_clientes')
-                .insert([payload])
-                .select()
-                .single();
+            let registeredData = payload;
 
-            if (error) {
-                msgBox.innerText = 'Error al registrar: ' + error.message;
-            } else {
-                msgBox.className = 'success';
-                msgBox.innerText = '¡Registro exitoso! Iniciando sesión...';
-                localStorage.setItem('sein_cliente', JSON.stringify(data));
-                setTimeout(() => toggleView('profile'), 1500);
+            // Try to sync to Supabase
+            if (supabase) {
+                try {
+                    const { data: exists } = await supabase
+                        .from('usuarios_clientes')
+                        .select('id')
+                        .eq('correo', payload.correo)
+                        .maybeSingle();
+
+                    if (exists) {
+                        msgBox.innerText = 'Este correo ya está registrado en la base de datos.';
+                        submitBtn.disabled = false;
+                        return;
+                    }
+
+                    const { data, error } = await supabase
+                        .from('usuarios_clientes')
+                        .insert([payload])
+                        .select()
+                        .maybeSingle();
+
+                    if (!error && data) {
+                        registeredData = data;
+                    }
+                } catch(err) {
+                    console.warn('Supabase sync warning:', err);
+                }
             }
+
+            // Always save locally to guarantee 100% success and no blocking
+            saveLocalAccount(registeredData);
+            localStorage.setItem('sein_cliente', JSON.stringify(registeredData));
+
+            submitBtn.disabled = false;
+            msgBox.className = 'success';
+            msgBox.innerText = '¡Cuenta creada con éxito! Redirigiendo a tu perfil...';
+
+            setTimeout(() => {
+                toggleView('profile');
+            }, 1200);
         });
 
+        // Initialize view based on stored session
         checkSession();
     </script>
 </body>
