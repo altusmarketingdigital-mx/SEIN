@@ -21,8 +21,10 @@
         }
         .header { 
             background: #fff; 
-            padding: 16px 20px; 
-            text-align: center; 
+            padding: 16px 24px; 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             box-shadow: 0 2px 10px rgba(0,0,0,0.04); 
             border-bottom: 1px solid #eee;
         }
@@ -30,15 +32,25 @@
             text-decoration: none; 
             color: #a3875e; 
             font-weight: 600; 
-            font-size: 15px; 
+            font-size: 14px; 
             transition: color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
         .header a:hover { color: #846c48; }
+        .header-logo {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #2b2b2b;
+            text-decoration: none;
+        }
         
         .container { 
-            max-width: 520px; 
+            max-width: 900px; 
             width: 100%;
-            margin: 40px auto; 
+            margin: 30px auto; 
             padding: 0 20px; 
             flex: 1;
         }
@@ -48,17 +60,11 @@
             padding: 35px 30px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.06); 
             border: 1px solid #eee;
-        }
-        h1, h2 { 
-            text-align: center; 
-            color: #2b2b2b; 
-            font-weight: 700;
-            margin-top: 0;
-            margin-bottom: 25px;
-            letter-spacing: -0.5px;
+            max-width: 520px;
+            margin: 0 auto;
         }
         
-        /* Pestañas de cambio (Tabs) */
+        /* Pestañas de cambio (Tabs Login / Register) */
         .auth-tabs {
             display: flex;
             border-bottom: 2px solid #eee;
@@ -79,7 +85,6 @@
             transition: all 0.2s ease;
             margin-bottom: -2px;
             outline: none;
-            -webkit-tap-highlight-color: transparent;
         }
         .auth-tab-btn.active {
             color: #a3875e;
@@ -127,10 +132,30 @@
             letter-spacing: 0.5px;
             transition: background 0.2s ease, transform 0.1s ease;
             outline: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
         }
         .btn:hover { background: #a3875e; }
         .btn:active { transform: scale(0.99); }
-        .btn:disabled { background: #bbb; cursor: not-allowed; }
+        .btn-outline {
+            background: transparent;
+            color: #2b2b2b;
+            border: 1.5px solid #d4cdc3;
+        }
+        .btn-outline:hover {
+            background: #f0ece6;
+            color: #2b2b2b;
+        }
+        .btn-danger {
+            background: #d9534f;
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #c9302c;
+        }
         
         .toggle-link-container {
             text-align: center; 
@@ -175,41 +200,255 @@
             margin-top: 15px; 
         }
         
-        .profile-data-box {
+        /* =========================================
+           PANEL COMPLETO DE CLIENTE (DASHBOARD)
+           ========================================= */
+        .dashboard-container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            border: 1px solid #eee;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .dashboard-header {
+            background: linear-gradient(135deg, #2b2b2b 0%, #3e3834 100%);
+            color: #fff;
+            padding: 28px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .dashboard-user-info h1 {
+            color: #fff;
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            text-align: left;
+        }
+        .dashboard-user-info p {
+            margin: 5px 0 0;
+            color: #d4cdc3;
+            font-size: 14px;
+        }
+        .dashboard-logout-btn {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .dashboard-logout-btn:hover {
+            background: #d9534f;
+            border-color: #d9534f;
+        }
+
+        /* Navegación del Panel */
+        .dash-nav {
+            display: flex;
+            background: #faf8f5;
+            border-bottom: 1px solid #eee;
+            overflow-x: auto;
+        }
+        .dash-tab-btn {
+            padding: 16px 22px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .dash-tab-btn:hover {
+            color: #a3875e;
+            background: #f4f0eb;
+        }
+        .dash-tab-btn.active {
+            color: #a3875e;
+            border-bottom-color: #a3875e;
+            background: #fff;
+        }
+
+        /* Contenido de secciones */
+        .dash-content {
+            padding: 30px;
+        }
+        .dash-panel-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #2b2b2b;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Tarjetas de Resumen */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .kpi-card {
             background: #faf8f5;
             border: 1px solid #eee;
             border-radius: 8px;
             padding: 18px;
-            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-        .profile-data-box p {
-            margin: 10px 0;
-            font-size: 14.5px;
+        .kpi-icon {
+            font-size: 28px;
+            background: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #eee;
+        }
+        .kpi-text h4 {
+            margin: 0;
+            font-size: 12px;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .kpi-text p {
+            margin: 4px 0 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: #2b2b2b;
+        }
+
+        /* Lista de Pedidos */
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .orders-table th {
+            background: #faf8f5;
+            padding: 12px 14px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #eee;
+        }
+        .orders-table td {
+            padding: 14px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #444;
+        }
+        .order-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #eef7ed;
+            color: #2e7d32;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #777;
+        }
+        .empty-state-icon {
+            font-size: 45px;
+            margin-bottom: 12px;
+        }
+
+        /* Cuadrícula de Datos Personales */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+        .data-card {
+            background: #faf8f5;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .data-card h4 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: #a3875e;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .data-card p {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #333;
             line-height: 1.5;
         }
-        .profile-data-box strong { color: #555; }
+        .data-card strong {
+            color: #666;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .dashboard-header {
+                padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .dashboard-logout-btn {
+                width: 100%;
+                text-align: center;
+            }
+            .dash-content {
+                padding: 20px 15px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
+    <header class="header">
+        <a href="/" class="header-logo">SEIN CANDLE CO.</a>
         <a href="/tienda/">← Volver a la Tienda</a>
-    </div>
+    </header>
 
     <div class="container">
         
-        <!-- AUTH CONTAINER -->
+        <!-- 1. VISTA DE AUTENTICACIÓN (LOGIN & REGISTRO) -->
         <div id="auth-main-card" class="auth-card">
             
             <!-- PESTAÑAS TABS -->
             <div class="auth-tabs">
-                <button type="button" id="tab-login-btn" class="auth-tab-btn active" onclick="toggleView('login')">Iniciar Sesión</button>
-                <button type="button" id="tab-register-btn" class="auth-tab-btn" onclick="toggleView('register')">Crear Cuenta</button>
+                <button type="button" id="tab-login-btn" class="auth-tab-btn active" onclick="toggleAuthView('login')">Iniciar Sesión</button>
+                <button type="button" id="tab-register-btn" class="auth-tab-btn" onclick="toggleAuthView('register')">Crear Cuenta</button>
             </div>
 
             <!-- LOGIN VIEW -->
             <div id="login-view">
-                <h2>Iniciar Sesión</h2>
+                <h2 style="text-align:center;">Iniciar Sesión</h2>
                 <form id="login-form">
                     <div class="form-group">
                         <label for="login-email">Correo Electrónico</label>
@@ -219,17 +458,17 @@
                         <label for="login-password">Contraseña</label>
                         <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password">
                     </div>
-                    <button type="submit" id="btn-login-submit" class="btn">Entrar</button>
+                    <button type="submit" id="btn-login-submit" class="btn">Entrar al Panel</button>
                 </form>
                 <div id="login-msg" class="hidden"></div>
                 <div class="toggle-link-container">
-                    <button type="button" class="toggle-link" id="link-to-register" onclick="toggleView('register')">¿No tienes cuenta? Regístrate aquí</button>
+                    <button type="button" class="toggle-link" id="link-to-register" onclick="toggleAuthView('register')">¿No tienes cuenta? Regístrate aquí</button>
                 </div>
             </div>
 
             <!-- REGISTER VIEW -->
             <div id="register-view" class="hidden">
-                <h2>Crear Cuenta</h2>
+                <h2 style="text-align:center;">Crear Cuenta de Cliente</h2>
                 <form id="register-form">
                     <div class="form-group">
                         <label for="reg-nombre">Nombre Completo</label>
@@ -255,41 +494,171 @@
                 </form>
                 <div id="reg-msg" class="hidden"></div>
                 <div class="toggle-link-container">
-                    <button type="button" class="toggle-link" id="link-to-login" onclick="toggleView('login')">¿Ya tienes cuenta? Inicia sesión</button>
+                    <button type="button" class="toggle-link" id="link-to-login" onclick="toggleAuthView('login')">¿Ya tienes cuenta? Inicia sesión</button>
                 </div>
             </div>
 
         </div>
 
-        <!-- PROFILE VIEW -->
-        <div id="profile-view" class="auth-card hidden">
-            <h1>Hola, <span id="prof-nombre"></span> 👋</h1>
-            <p style="text-align:center; color:#666; font-size:14px; margin-top:-15px;">Bienvenido a tu panel de cliente SEIN</p>
-            <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+        <!-- 2. PANEL COMPLETO DEL CLIENTE (DASHBOARD) -->
+        <div id="profile-view" class="dashboard-container hidden">
             
-            <h3 style="margin-bottom:10px; color:#a3875e; font-size:16px;">Tus Datos Registrados</h3>
-            <div class="profile-data-box">
-                <p><strong>Correo:</strong> <span id="prof-email"></span></p>
-                <p><strong>Teléfono:</strong> <span id="prof-telefono"></span></p>
-                <p><strong>Dirección:</strong> <span id="prof-direccion"></span></p>
+            <!-- Cabecera del Panel -->
+            <div class="dashboard-header">
+                <div class="dashboard-user-info">
+                    <h1>Hola, <span id="prof-nombre">Cliente</span> 👋</h1>
+                    <p id="prof-email-header">cliente@seincandleco.com</p>
+                </div>
+                <button type="button" class="dashboard-logout-btn" onclick="logout()">Cerrar Sesión</button>
             </div>
-            
-            <p style="margin-top:20px; font-size:13.5px; color:#666; line-height:1.6; text-align:center;">
-                <i>Tus datos de envío se precargarán automáticamente en tus compras y pedidos por WhatsApp.</i>
-            </p>
-            
-            <button class="btn" style="background:#a3875e; margin-top:20px;" onclick="window.location.href='/tienda/'">Ir a la Tienda</button>
-            <button class="btn" style="background:#d9534f; margin-top:12px;" onclick="logout()">Cerrar Sesión</button>
+
+            <!-- Menú de Pestañas del Panel de Cliente -->
+            <nav class="dash-nav">
+                <button type="button" class="dash-tab-btn active" onclick="switchDashboardTab('resumen', this)">
+                    <span>📊</span> Resumen General
+                </button>
+                <button type="button" class="dash-tab-btn" onclick="switchDashboardTab('pedidos', this)">
+                    <span>🛍️</span> Mis Pedidos
+                </button>
+                <button type="button" class="dash-tab-btn" onclick="switchDashboardTab('datos', this)">
+                    <span>👤</span> Mis Datos de Envío
+                </button>
+                <button type="button" class="dash-tab-btn" onclick="switchDashboardTab('ayuda', this)">
+                    <span>💬</span> Soporte y WhatsApp
+                </button>
+            </nav>
+
+            <!-- CONTENIDO DE LAS PESTAÑAS -->
+            <div class="dash-content">
+                
+                <!-- SECCIÓN 1: RESUMEN GENERAL -->
+                <div id="tab-resumen" class="dash-section">
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">📦</div>
+                            <div class="kpi-text">
+                                <h4>Pedidos Realizados</h4>
+                                <p id="kpi-pedidos-count">0</p>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">🏷️</div>
+                            <div class="kpi-text">
+                                <h4>Estado de Cuenta</h4>
+                                <p style="color:#2e7d32; font-size:16px;">Cliente Activo</p>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">⭐</div>
+                            <div class="kpi-text">
+                                <h4>Beneficio SEIN</h4>
+                                <p style="color:#a3875e; font-size:16px;">Atención VIP</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background:#faf8f5; border:1px solid #eee; border-radius:8px; padding:20px; margin-bottom:25px;">
+                        <h4 style="margin-top:0; color:#2b2b2b; font-size:16px;">¡Bienvenido a tu Espacio Personal!</h4>
+                        <p style="margin:0; font-size:14px; color:#555; line-height:1.6;">
+                            Desde este panel puedes consultar tus datos de envío registrados, revisar el historial de tus pedidos y comunicarte directamente con nuestro equipo de atención personalizada para pedidos especiales o corporativos.
+                        </p>
+                    </div>
+
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <a href="/tienda/" class="btn" style="width:auto; padding:12px 24px; background:#a3875e;">Explorar Catálogo</a>
+                        <a href="https://wa.me/5217772675971?text=Hola,%20tengo%20una%20duda%20sobre%20mi%20cuenta" target="_blank" class="btn btn-outline" style="width:auto; padding:12px 24px;">Contactar por WhatsApp</a>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN 2: MIS PEDIDOS -->
+                <div id="tab-pedidos" class="dash-section hidden">
+                    <div class="dash-panel-title">
+                        <span>Historial de Compras & Pedidos</span>
+                    </div>
+                    <div id="orders-list-container">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🛍️</div>
+                            <h4 style="margin:0 0 8px; font-size:16px; color:#333;">Aún no tienes pedidos registrados</h4>
+                            <p style="margin:0 0 20px; font-size:14px; color:#777;">Tus compras realizadas aparecerán reflejadas aquí automáticamente con su estado y seguimiento.</p>
+                            <a href="/tienda/" class="btn" style="width:auto; display:inline-flex; padding:10px 22px; background:#a3875e;">Ir a Comprar</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN 3: MIS DATOS -->
+                <div id="tab-datos" class="dash-section hidden">
+                    <div class="dash-panel-title">
+                        <span>Información de Envío y Contacto</span>
+                        <button type="button" class="btn-outline" style="padding:6px 14px; border-radius:4px; font-size:13px; cursor:pointer;" onclick="enableEditData()">Editar Datos</button>
+                    </div>
+
+                    <div class="data-grid" id="data-view-box">
+                        <div class="data-card">
+                            <h4>Datos Personales</h4>
+                            <p><strong>Nombre:</strong> <span id="prof-nombre-card"></span></p>
+                            <p><strong>Correo:</strong> <span id="prof-email-card"></span></p>
+                            <p><strong>Teléfono:</strong> <span id="prof-telefono-card"></span></p>
+                        </div>
+                        <div class="data-card">
+                            <h4>Dirección Principal de Entrega</h4>
+                            <p id="prof-direccion-card" style="font-size:14px; color:#444; line-height:1.5;">Sin dirección guardada</p>
+                            <span style="display:inline-block; margin-top:10px; font-size:12px; color:#888;">* Utilizada para cotizar envíos y preparar pedidos.</span>
+                        </div>
+                    </div>
+
+                    <!-- Formulario de Edición de Datos -->
+                    <form id="edit-profile-form" class="hidden" style="margin-top:20px; background:#faf8f5; padding:20px; border-radius:8px; border:1px solid #eee;">
+                        <h4 style="margin-top:0; color:#a3875e;">Actualizar mis datos</h4>
+                        <div class="form-group">
+                            <label>Nombre Completo</label>
+                            <input type="text" id="edit-nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono (WhatsApp)</label>
+                            <input type="tel" id="edit-telefono">
+                        </div>
+                        <div class="form-group">
+                            <label>Dirección de Envío Completa</label>
+                            <textarea id="edit-direccion" rows="3"></textarea>
+                        </div>
+                        <div style="display:flex; gap:10px; margin-top:15px;">
+                            <button type="submit" class="btn" style="width:auto; padding:10px 20px; background:#a3875e;">Guardar Cambios</button>
+                            <button type="button" class="btn btn-outline" style="width:auto; padding:10px 20px;" onclick="cancelEditData()">Cancelar</button>
+                        </div>
+                        <div id="edit-msg" class="hidden"></div>
+                    </form>
+                </div>
+
+                <!-- SECCIÓN 4: AYUDA Y SOPORTE -->
+                <div id="tab-ayuda" class="dash-section hidden">
+                    <div class="dash-panel-title">
+                        <span>Atención al Cliente & Pedidos Especiales</span>
+                    </div>
+                    <div style="background:#faf8f5; border:1px solid #eee; border-radius:8px; padding:25px; text-align:center;">
+                        <div style="font-size:40px; margin-bottom:10px;">🕯️</div>
+                        <h3 style="margin:0 0 10px; color:#2b2b2b;">¿Necesitas ayuda con un pedido o cotización?</h3>
+                        <p style="max-width:550px; margin:0 auto 20px; color:#666; font-size:14.5px; line-height:1.6;">
+                            Nuestro equipo está disponible directamente por WhatsApp para asistirte con personalizaciones de velas, eventos corporativos, kits de regalo o dudas sobre tus entregas.
+                        </p>
+                        <a href="https://wa.me/5217772675971?text=Hola,%20soy%20cliente%20de%20SEIN%20y%20requiero%20asistencia%20personalizada" target="_blank" class="btn" style="width:auto; display:inline-flex; background:#25D366; padding:12px 28px; font-size:15px;">
+                            <span>💬 Contactar a Soporte por WhatsApp</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
 
     </div>
 
-    <!-- Script sin dependencias externas obligatorias -->
+    <!-- Script de Gestión Integral del Panel de Cliente -->
     <script>
         const SUPABASE_URL = 'https://hyibazrenjtnswtebybb.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo';
 
-        window.toggleView = function(view) {
+        // Alternancia entre login y registro
+        window.toggleAuthView = function(view) {
             var authCard = document.getElementById('auth-main-card');
             var loginView = document.getElementById('login-view');
             var registerView = document.getElementById('register-view');
@@ -323,6 +692,19 @@
             }
         };
 
+        // Pestañas internas del Dashboard de Cliente
+        window.switchDashboardTab = function(tabName, elem) {
+            document.querySelectorAll('.dash-section').forEach(function(sec) {
+                sec.classList.add('hidden');
+            });
+            document.querySelectorAll('.dash-tab-btn').forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+            var target = document.getElementById('tab-' + tabName);
+            if (target) target.classList.remove('hidden');
+            if (elem) elem.classList.add('active');
+        };
+
         function getLocalAccounts() {
             try {
                 return JSON.parse(localStorage.getItem('sein_local_clientes') || '[]');
@@ -351,9 +733,9 @@
         function checkSession() {
             var clientSession = localStorage.getItem('sein_cliente');
             if (clientSession) {
-                window.toggleView('profile');
+                window.toggleAuthView('profile');
             } else {
-                window.toggleView('login');
+                window.toggleAuthView('login');
             }
         }
 
@@ -361,27 +743,56 @@
             try {
                 var client = JSON.parse(localStorage.getItem('sein_cliente'));
                 if (client) {
+                    var nombre = client.nombre || 'Cliente';
+                    var correo = client.correo || '';
+                    var telefono = client.telefono || 'No proporcionado';
+                    var direccion = client.direccion || 'Sin dirección guardada';
+
+                    // Rellenar cabecera y tarjetas
                     var elNom = document.getElementById('prof-nombre');
-                    var elMail = document.getElementById('prof-email');
-                    var elTel = document.getElementById('prof-telefono');
-                    var elDir = document.getElementById('prof-direccion');
-                    if (elNom) elNom.innerText = client.nombre || 'Cliente';
-                    if (elMail) elMail.innerText = client.correo || '';
-                    if (elTel) elTel.innerText = client.telefono || 'No proporcionado';
-                    if (elDir) elDir.innerText = client.direccion || 'No proporcionada';
+                    var elMailH = document.getElementById('prof-email-header');
+                    var elNomCard = document.getElementById('prof-nombre-card');
+                    var elMailCard = document.getElementById('prof-email-card');
+                    var elTelCard = document.getElementById('prof-telefono-card');
+                    var elDirCard = document.getElementById('prof-direccion-card');
+
+                    if (elNom) elNom.innerText = nombre;
+                    if (elMailH) elMailH.innerText = correo;
+                    if (elNomCard) elNomCard.innerText = nombre;
+                    if (elMailCard) elMailCard.innerText = correo;
+                    if (elTelCard) elTelCard.innerText = telefono;
+                    if (elDirCard) elDirCard.innerText = direccion;
+
+                    // Formulario de edición
+                    var inpNom = document.getElementById('edit-nombre');
+                    var inpTel = document.getElementById('edit-telefono');
+                    var inpDir = document.getElementById('edit-direccion');
+                    if (inpNom) inpNom.value = nombre;
+                    if (inpTel) inpTel.value = (telefono === 'No proporcionado' ? '' : telefono);
+                    if (inpDir) inpDir.value = (direccion === 'Sin dirección guardada' ? '' : direccion);
                 }
             } catch(e) {
                 logout();
             }
         }
 
+        window.enableEditData = function() {
+            document.getElementById('data-view-box').classList.add('hidden');
+            document.getElementById('edit-profile-form').classList.remove('hidden');
+        };
+
+        window.cancelEditData = function() {
+            document.getElementById('edit-profile-form').classList.add('hidden');
+            document.getElementById('data-view-box').classList.remove('hidden');
+        };
+
         window.logout = function() {
             localStorage.removeItem('sein_cliente');
             checkSession();
         };
 
-        // LOGIN SUBMIT
         document.addEventListener('DOMContentLoaded', function() {
+            // LOGIN
             var loginForm = document.getElementById('login-form');
             if (loginForm) {
                 loginForm.addEventListener('submit', async function(e) {
@@ -403,7 +814,7 @@
 
                     var foundClient = null;
 
-                    // 1. Check Supabase REST API directly via fetch
+                    // 1. Supabase REST API
                     try {
                         var res = await fetch(SUPABASE_URL + '/rest/v1/usuarios_clientes?correo=eq.' + encodeURIComponent(email) + '&password=eq.' + encodeURIComponent(password) + '&select=*', {
                             headers: {
@@ -421,7 +832,7 @@
                         console.warn('Supabase fetch error:', err);
                     }
 
-                    // 2. Fallback to Local Accounts
+                    // 2. Local Accounts Fallback
                     if (!foundClient) {
                         var localList = getLocalAccounts();
                         for (var i = 0; i < localList.length; i++) {
@@ -440,14 +851,14 @@
                             msgBox.innerText = '';
                         }
                         localStorage.setItem('sein_cliente', JSON.stringify(foundClient));
-                        window.toggleView('profile');
+                        window.toggleAuthView('profile');
                     } else {
                         if (msgBox) msgBox.innerText = 'Correo o contraseña incorrectos. Verifica o crea tu cuenta.';
                     }
                 });
             }
 
-            // REGISTER SUBMIT
+            // REGISTER
             var regForm = document.getElementById('register-form');
             if (regForm) {
                 regForm.addEventListener('submit', async function(e) {
@@ -477,7 +888,6 @@
                     }
                     if (submitBtn) submitBtn.disabled = true;
 
-                    // Check if exists locally
                     var localList = getLocalAccounts();
                     var existsLocal = false;
                     for (var i = 0; i < localList.length; i++) {
@@ -494,7 +904,6 @@
 
                     var registeredData = payload;
 
-                    // Try saving to Supabase REST API directly via fetch
                     try {
                         var resCheck = await fetch(SUPABASE_URL + '/rest/v1/usuarios_clientes?correo=eq.' + encodeURIComponent(payload.correo) + '&select=id', {
                             headers: {
@@ -531,19 +940,40 @@
                         console.warn('Supabase sync warning:', err);
                     }
 
-                    // Save locally to guarantee 100% login persistence
                     saveLocalAccount(registeredData);
                     localStorage.setItem('sein_cliente', JSON.stringify(registeredData));
 
                     if (submitBtn) submitBtn.disabled = false;
                     if (msgBox) {
                         msgBox.className = 'success';
-                        msgBox.innerText = '¡Cuenta creada con éxito! Entrando a tu perfil...';
+                        msgBox.innerText = '¡Cuenta creada con éxito! Entrando a tu panel...';
                     }
 
                     setTimeout(function() {
-                        window.toggleView('profile');
+                        window.toggleAuthView('profile');
                     }, 1000);
+                });
+            }
+
+            // ACTUALIZACIÓN DE DATOS
+            var editForm = document.getElementById('edit-profile-form');
+            if (editForm) {
+                editForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var client = JSON.parse(localStorage.getItem('sein_cliente') || '{}');
+                    var nuevoNom = document.getElementById('edit-nombre').value.trim();
+                    var nuevoTel = document.getElementById('edit-telefono').value.trim();
+                    var nuevaDir = document.getElementById('edit-direccion').value.trim();
+
+                    client.nombre = nuevoNom;
+                    client.telefono = nuevoTel;
+                    client.direccion = nuevaDir;
+
+                    saveLocalAccount(client);
+                    localStorage.setItem('sein_cliente', JSON.stringify(client));
+
+                    loadProfileData();
+                    cancelEditData();
                 });
             }
 
