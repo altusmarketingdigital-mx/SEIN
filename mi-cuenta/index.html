@@ -111,6 +111,42 @@
             background: #faf8f5;
             transition: border-color 0.2s, background-color 0.2s;
         }
+        
+        /* Contenedor relativo para campo de contraseña con botón de visualización */
+        .password-field-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-field-wrapper input {
+            padding-right: 46px !important;
+        }
+        .btn-toggle-eye {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            transition: color 0.2s ease;
+            outline: none;
+            border-radius: 4px;
+        }
+        .btn-toggle-eye:hover {
+            color: #2b2b2b;
+        }
+        .btn-toggle-eye svg {
+            width: 20px;
+            height: 20px;
+            display: block;
+        }
+
         .form-group input:focus, .form-group textarea:focus {
             outline: none;
             border-color: #a3875e;
@@ -456,7 +492,15 @@
                     </div>
                     <div class="form-group">
                         <label for="login-password">Contraseña</label>
-                        <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password">
+                        <div class="password-field-wrapper">
+                            <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password">
+                            <button type="button" class="btn-toggle-eye" onclick="togglePasswordVisibility('login-password', this)" aria-label="Mostrar u ocultar contraseña">
+                                <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" id="btn-login-submit" class="btn">Entrar al Panel</button>
                 </form>
@@ -480,7 +524,15 @@
                     </div>
                     <div class="form-group">
                         <label for="reg-password">Contraseña</label>
-                        <input type="password" id="reg-password" required placeholder="Mínimo 6 caracteres" minlength="6" autocomplete="new-password">
+                        <div class="password-field-wrapper">
+                            <input type="password" id="reg-password" required placeholder="Mínimo 6 caracteres" minlength="6" autocomplete="new-password">
+                            <button type="button" class="btn-toggle-eye" onclick="togglePasswordVisibility('reg-password', this)" aria-label="Mostrar u ocultar contraseña">
+                                <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="reg-telefono">Teléfono (WhatsApp)</label>
@@ -658,6 +710,29 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo';
 
         // Alternancia entre login y registro
+        
+        // Alternar visualización de contraseña con icono de ojito
+        window.togglePasswordVisibility = function(inputId, btn) {
+            var input = document.getElementById(inputId);
+            if (!input) return;
+
+            var isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+
+            // Actualizar SVG del ojito
+            if (btn) {
+                if (isPassword) {
+                    // Ojito tachado (ocultar)
+                    btn.innerHTML = '<svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+                    btn.setAttribute('aria-label', 'Ocultar contraseña');
+                } else {
+                    // Ojito normal (mostrar)
+                    btn.innerHTML = '<svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+                    btn.setAttribute('aria-label', 'Mostrar contraseña');
+                }
+            }
+        };
+
         window.toggleAuthView = function(view) {
             var authCard = document.getElementById('auth-main-card');
             var loginView = document.getElementById('login-view');
