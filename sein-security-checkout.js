@@ -975,144 +975,203 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
-// RESPONSIVE MENU HAMBURGER CONTROLLER (SEIN)
-(function() {
-    const hamburgerSvgOpen = '<svg class="elementor-menu-toggle__icon--open" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2b2b2b" stroke-width="2.5" stroke-linecap="round" style="display:block;width:24px;height:24px;"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>';
-    const hamburgerSvgClose = '<svg class="elementor-menu-toggle__icon--close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2b2b2b" stroke-width="2.5" stroke-linecap="round" style="display:none;width:24px;height:24px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
 
-    function updateToggleIcons(toggle, isActive) {
-        let openIcon = toggle.querySelector('.elementor-menu-toggle__icon--open');
-        let closeIcon = toggle.querySelector('.elementor-menu-toggle__icon--close');
-        if (!openIcon || !closeIcon) {
-            toggle.innerHTML = hamburgerSvgOpen + hamburgerSvgClose;
-            openIcon = toggle.querySelector('.elementor-menu-toggle__icon--open');
-            closeIcon = toggle.querySelector('.elementor-menu-toggle__icon--close');
-        }
-        if (openIcon) openIcon.style.display = isActive ? 'none' : 'block';
-        if (closeIcon) closeIcon.style.display = isActive ? 'block' : 'none';
+// ==========================================
+// SEIN BULLETPROOF MOBILE MENU CONTROLLER & MODAL
+// ==========================================
+(function() {
+    const MENU_ITEMS = [
+        { title: 'Inicio', url: '/' },
+        { title: 'Bienestar', url: '/aromas/', sub: [
+            { title: 'Velas de Soya', url: '/categoria-producto/velas-de-soja/' },
+            { title: 'Aromas', url: '/aromas/' }
+        ]},
+        { title: 'Regalos con Alma', url: '/categoria-producto/regalos-personalizados/', sub: [
+            { title: 'Detalles Personalizados', url: '/categoria-producto/detalles-personalizados/' },
+            { title: 'Organización y Estilo', url: '/categoria-producto/organizacion-y-estilo/' },
+            { title: 'Cajas y Empaques Personalizados', url: '/categoria-producto/cajas-y-empaques-personalizados/' }
+        ]},
+        { title: 'Eventos', url: '/categoria-producto/eventos/', sub: [
+            { title: 'Religiosos | Personalizados', url: '/categoria-producto/exclusivos-eventos-especiales/' },
+            { title: 'Corporativos | Kits', url: '/categoria-producto/kits-para-ocasiones-especiales/' }
+        ]},
+        { title: 'Extracto de Café', url: '/categoria-producto/extracto-de-cafe/' },
+        { title: 'Mi Cuenta', url: '/mi-cuenta/' },
+        { title: 'Administración', url: '/admin/' }
+    ];
+
+    function injectMobileMenuOverlay() {
+        if (document.getElementById('sein-mobile-drawer')) return;
+
+        const overlay = document.createElement('div');
+        overlay.id = 'sein-mobile-drawer';
+        overlay.innerHTML = `
+            <div id="sein-mobile-backdrop" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999998;opacity:0;pointer-events:none;transition:opacity 0.3s ease;"></div>
+            <div id="sein-mobile-panel" style="position:fixed;top:0;right:0;width:82%;max-width:320px;height:100%;background:#ffffff;z-index:999999;transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);box-shadow:-5px 0 25px rgba(0,0,0,0.15);display:flex;flex-direction:column;box-sizing:border-box;">
+                <div style="padding:18px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0ece6;">
+                    <span style="font-family:'Montserrat',sans-serif;font-size:16px;font-weight:700;letter-spacing:1px;color:#2b2b2b;text-transform:uppercase;">Menú</span>
+                    <button id="sein-mobile-close-btn" aria-label="Cerrar menú" style="background:transparent;border:none;cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;color:#2b2b2b;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                <div style="flex:1;overflow-y:auto;padding:15px 0;">
+                    <ul style="list-style:none;margin:0;padding:0;" id="sein-mobile-nav-list">
+                    </ul>
+                </div>
+                <div style="padding:16px 20px;border-top:1px solid #f0ece6;background:#faf8f5;text-align:center;">
+                    <a href="https://wa.me/5217772675971" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;color:#25D366;font-weight:600;text-decoration:none;font-size:14px;">
+                        <span>Atención por WhatsApp</span>
+                    </a>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        const list = document.getElementById('sein-mobile-nav-list');
+        MENU_ITEMS.forEach(item => {
+            const li = document.createElement('li');
+            li.style.borderBottom = '1px solid #f8f6f3';
+            if (item.sub) {
+                li.innerHTML = `
+                    <div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+                        <a href="${item.url}" style="font-family:'Montserrat',sans-serif;font-size:15px;color:#333;text-decoration:none;font-weight:500;flex:1;">${item.title}</a>
+                        <span class="sein-arrow" style="font-size:12px;color:#888;padding:4px 8px;">▼</span>
+                    </div>
+                    <ul style="list-style:none;margin:0;padding:0 0 10px 24px;display:none;background:#faf8f5;">
+                        ${item.sub.map(s => `<li style="padding:8px 0;"><a href="${s.url}" style="font-family:'Montserrat',sans-serif;font-size:14px;color:#666;text-decoration:none;display:block;">${s.title}</a></li>`).join('')}
+                    </ul>
+                `;
+                const div = li.querySelector('div');
+                const subUl = li.querySelector('ul');
+                const arrow = li.querySelector('.sein-arrow');
+                div.addEventListener('click', (e) => {
+                    if (e.target.tagName.toLowerCase() !== 'a') {
+                        const isOpen = subUl.style.display === 'block';
+                        subUl.style.display = isOpen ? 'none' : 'block';
+                        arrow.textContent = isOpen ? '▼' : '▲';
+                    }
+                });
+            } else {
+                li.innerHTML = `<a href="${item.url}" style="display:block;padding:14px 20px;font-family:'Montserrat',sans-serif;font-size:15px;color:#333;text-decoration:none;font-weight:500;">${item.title}</a>`;
+            }
+            list.appendChild(li);
+        });
+
+        // Close events
+        const backdrop = document.getElementById('sein-mobile-backdrop');
+        const closeBtn = document.getElementById('sein-mobile-close-btn');
+        const closeMenu = () => {
+            const panel = document.getElementById('sein-mobile-panel');
+            if (panel) panel.style.transform = 'translateX(100%)';
+            if (backdrop) {
+                backdrop.style.opacity = '0';
+                backdrop.style.pointerEvents = 'none';
+            }
+            document.body.style.overflow = '';
+        };
+
+        if (backdrop) backdrop.addEventListener('click', closeMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+
+        // Close on navigation click
+        list.querySelectorAll('a').forEach(a => {
+            a.addEventListener('click', closeMenu);
+        });
     }
 
-    function initMobileNavToggle() {
-        // Enforce visible styles on mobile header items
-        const bdfHeader = document.querySelector('.elementor-element-bdfa93e');
-        if (bdfHeader) {
-            bdfHeader.style.setProperty('display', 'flex', 'important');
-            bdfHeader.style.setProperty('flex-direction', 'row', 'important');
-            bdfHeader.style.setProperty('align-items', 'center', 'important');
-            bdfHeader.style.setProperty('justify-content', 'flex-start', 'important');
-            
-            const logoCont = bdfHeader.querySelector('.elementor-element-7ab1baa');
-            if (logoCont) {
-                logoCont.style.setProperty('order', '1', 'important');
-                logoCont.style.setProperty('margin-right', 'auto', 'important');
-                logoCont.style.setProperty('margin-left', '0', 'important');
-            }
-            const cartCont = bdfHeader.querySelector('.elementor-element-fa94a79');
-            if (cartCont) {
-                cartCont.style.setProperty('order', '2', 'important');
-                cartCont.style.setProperty('margin-left', '0', 'important');
-                cartCont.style.setProperty('margin-right', '12px', 'important');
-                cartCont.style.setProperty('display', 'flex', 'important');
-            }
-            const menuCont = bdfHeader.querySelector('.elementor-element-81d39d3');
-            if (menuCont) {
-                menuCont.style.setProperty('order', '3', 'important');
-                menuCont.style.setProperty('margin', '0', 'important');
-                menuCont.style.setProperty('display', 'flex', 'important');
-                menuCont.style.setProperty('visibility', 'visible', 'important');
-                menuCont.style.setProperty('opacity', '1', 'important');
-            }
+    function openMobileMenu() {
+        injectMobileMenuOverlay();
+        const panel = document.getElementById('sein-mobile-panel');
+        const backdrop = document.getElementById('sein-mobile-backdrop');
+        if (panel) panel.style.transform = 'translateX(0)';
+        if (backdrop) {
+            backdrop.style.opacity = '1';
+            backdrop.style.pointerEvents = 'auto';
         }
+        document.body.style.overflow = 'hidden';
+    }
 
-        document.querySelectorAll('.elementor-menu-toggle').forEach(function(toggle) {
-            if (!toggle.dataset.seinNavIconSet) {
-                toggle.dataset.seinNavIconSet = 'true';
-                toggle.innerHTML = hamburgerSvgOpen + hamburgerSvgClose;
+    // Floating guarantee button (visible only on mobile <= 1024px)
+    function ensureFloatingNavButton() {
+        if (document.getElementById('sein-guarantee-burger')) return;
+
+        const floatBtn = document.createElement('button');
+        floatBtn.id = 'sein-guarantee-burger';
+        floatBtn.setAttribute('aria-label', 'Abrir Menú');
+        floatBtn.innerHTML = `
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2b2b2b" stroke-width="2.5" stroke-linecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        `;
+        
+        // CSS Style for floating button
+        const style = document.createElement('style');
+        style.id = 'sein-guarantee-burger-style';
+        style.textContent = `
+            #sein-guarantee-burger {
+                position: fixed;
+                top: 14px;
+                right: 14px;
+                width: 44px;
+                height: 44px;
+                background: #ffffff;
+                border: 1.5px solid #d4cdc3;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 99999;
+                padding: 0;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
+            #sein-guarantee-burger:active {
+                transform: scale(0.95);
+            }
+            @media (min-width: 1025px) {
+                #sein-guarantee-burger {
+                    display: none !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        document.body.appendChild(floatBtn);
 
-            if (toggle.dataset.seinNavBound === 'true') return;
-            toggle.dataset.seinNavBound = 'true';
+        floatBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            openMobileMenu();
+        });
+    }
 
-            toggle.addEventListener('click', function(e) {
+    function bindExistingToggles() {
+        document.querySelectorAll('.elementor-menu-toggle').forEach(t => {
+            if (t.dataset.seinBoundDrawer === 'true') return;
+            t.dataset.seinBoundDrawer = 'true';
+            t.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-
-                const widget = toggle.closest('.elementor-widget-nav-menu');
-                if (!widget) return;
-
-                const navDropdown = widget.querySelector('nav.elementor-nav-menu--dropdown, nav.elementor-nav-menu__container');
-                const isCurrentlyActive = toggle.classList.contains('elementor-active') || (navDropdown && navDropdown.classList.contains('sein-menu-open'));
-
-                if (isCurrentlyActive) {
-                    toggle.classList.remove('elementor-active');
-                    toggle.setAttribute('aria-expanded', 'false');
-                    widget.classList.remove('sein-menu-active');
-                    updateToggleIcons(toggle, false);
-                    if (navDropdown) {
-                        navDropdown.classList.remove('sein-menu-open');
-                        navDropdown.style.setProperty('display', 'none', 'important');
-                        navDropdown.setAttribute('aria-hidden', 'true');
-                    }
-                } else {
-                    toggle.classList.add('elementor-active');
-                    toggle.setAttribute('aria-expanded', 'true');
-                    widget.classList.add('sein-menu-active');
-                    updateToggleIcons(toggle, true);
-                    if (navDropdown) {
-                        navDropdown.classList.add('sein-menu-open');
-                        navDropdown.style.setProperty('display', 'block', 'important');
-                        navDropdown.setAttribute('aria-hidden', 'false');
-                    }
-                }
+                openMobileMenu();
             });
         });
+    }
 
-        // Cerrar menú al hacer clic fuera de él
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.elementor-widget-nav-menu')) {
-                document.querySelectorAll('.elementor-menu-toggle.elementor-active').forEach(function(t) {
-                    t.classList.remove('elementor-active');
-                    t.setAttribute('aria-expanded', 'false');
-                    updateToggleIcons(t, false);
-                });
-                document.querySelectorAll('.elementor-widget-nav-menu.sein-menu-active').forEach(function(w) {
-                    w.classList.remove('sein-menu-active');
-                });
-                document.querySelectorAll('nav.elementor-nav-menu--dropdown, nav.elementor-nav-menu__container').forEach(function(d) {
-                    d.classList.remove('sein-menu-open');
-                    d.style.setProperty('display', 'none', 'important');
-                    d.setAttribute('aria-hidden', 'true');
-                });
-            }
-        });
-
-        // Cerrar menú al hacer clic en un enlace de navegación
-        document.querySelectorAll('nav.elementor-nav-menu--dropdown a').forEach(function(link) {
-            link.addEventListener('click', function() {
-                document.querySelectorAll('.elementor-menu-toggle.elementor-active').forEach(function(t) {
-                    t.classList.remove('elementor-active');
-                    t.setAttribute('aria-expanded', 'false');
-                    updateToggleIcons(t, false);
-                });
-                document.querySelectorAll('.elementor-widget-nav-menu.sein-menu-active').forEach(function(w) {
-                    w.classList.remove('sein-menu-active');
-                });
-                document.querySelectorAll('nav.elementor-nav-menu--dropdown, nav.elementor-nav-menu__container').forEach(function(d) {
-                    d.classList.remove('sein-menu-open');
-                    d.style.setProperty('display', 'none', 'important');
-                    d.setAttribute('aria-hidden', 'true');
-                });
-            });
-        });
+    function init() {
+        injectMobileMenuOverlay();
+        ensureFloatingNavButton();
+        bindExistingToggles();
     }
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initMobileNavToggle);
+        document.addEventListener('DOMContentLoaded', init);
     } else {
-        initMobileNavToggle();
+        init();
     }
-    setTimeout(initMobileNavToggle, 150);
-    setTimeout(initMobileNavToggle, 500);
-    setTimeout(initMobileNavToggle, 1500);
-    window.addEventListener('resize', initMobileNavToggle);
+    setTimeout(init, 100);
+    setTimeout(init, 500);
+    setTimeout(init, 1500);
+    window.addEventListener('resize', init);
 })();
