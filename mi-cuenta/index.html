@@ -780,6 +780,59 @@
             if (elem) elem.classList.add('active');
         };
 
+        
+        async function fetchCloudUser(email) {
+            try {
+                var cleanEmail = (email || '').trim().toLowerCase();
+                var slug = '__user__' + cleanEmail.replace(/[^a-z0-9]/g, '_');
+                var res = await fetch(SUPABASE_URL + '/rest/v1/productos?slug=eq.' + encodeURIComponent(slug) + '&categoria=eq.__system_user__&select=*', {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                });
+                if (res.ok) {
+                    var list = await res.json();
+                    if (list && list.length > 0 && list[0].descripcion) {
+                        try {
+                            return JSON.parse(list[0].descripcion);
+                        } catch(e) {}
+                    }
+                }
+            } catch(e) {
+                console.warn('Cloud fetch error:', e);
+            }
+            return null;
+        }
+
+        async function saveCloudUser(userObj) {
+            try {
+                var cleanEmail = (userObj.correo || '').trim().toLowerCase();
+                var slug = '__user__' + cleanEmail.replace(/[^a-z0-9]/g, '_');
+                await fetch(SUPABASE_URL + '/rest/v1/productos?slug=eq.' + encodeURIComponent(slug), {
+                    method: 'DELETE',
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                });
+                var res = await fetch(SUPABASE_URL + '/rest/v1/productos', {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nombre: userObj.nombre || cleanEmail,
+                        slug: slug,
+                        descripcion: JSON.stringify(userObj),
+                        precio: 0,
+                        categoria: '__system_user__',
+                        activo: false
+                    })
+                });
+                return res.ok;
+            } catch(e) {
+                console.warn('Cloud save error:', e);
+                return false;
+            }
+        }
+
         function getLocalAccounts() {
             try {
                 return JSON.parse(localStorage.getItem('sein_local_clientes') || '[]');
@@ -931,37 +984,36 @@
                     if (msgBox) {
                         msgBox.className = 'error';
                         msgBox.classList.remove('hidden');
-                        msgBox.innerText = 'Verificando datos...';
+                        msgBox.innerText = 'Verificando credenciales...';
                     }
                     if (submitBtn) submitBtn.disabled = true;
 
                     var foundClient = null;
 
-                    // 1. Supabase REST API
-                    try {
-                        var res = await fetch(SUPABASE_URL + '/rest/v1/usuarios_clientes?correo=eq.' + encodeURIComponent(email) + '&password=eq.' + encodeURIComponent(password) + '&select=*', {
-                            headers: {
-                                'apikey': SUPABASE_KEY,
-                                'Authorization': 'Bearer ' + SUPABASE_KEY
-                            }
-                        });
-                        if (res.ok) {
-                            var data = await res.json();
-                            if (data && data.length > 0) {
-                                foundClient = data[0];
-                            }
+                    // 1. Buscar en la Nube (Supabase Cloud Central)
+                    var cloudUser = await fetchCloudUser(email);
+                    if (cloudUser) {
+                        var passOk = (cloudUser.password === password) ||
+                                     (Array.isArray(cloudUser.passwords) && cloudUser.passwords.includes(password)) ||
+                                     (cloudUser.password && cloudUser.password.toLowerCase() === password.toLowerCase());
+                        if (passOk) {
+                            foundClient = cloudUser;
                         }
-                    } catch(err) {
-                        console.warn('Supabase fetch error:', err);
                     }
 
-                    // 2. Local Accounts Fallback
+                    // 2. Fallback: Buscar en cuentas guardadas localmente
                     if (!foundClient) {
                         var localList = getLocalAccounts();
                         for (var i = 0; i < localList.length; i++) {
-                            if (localList[i].correo && localList[i].correo.toLowerCase() === email && localList[i].password === password) {
-                                foundClient = localList[i];
-                                break;
+                            var u = localList[i];
+                            if (u.correo && u.correo.toLowerCase() === email) {
+                                var passMatches = (u.password === password) ||
+                                                  (u.password && u.password.toLowerCase() === password.toLowerCase()) ||
+                                                  (Array.isArray(u.passwords) && u.passwords.includes(password));
+                                if (passMatches) {
+                                    foundClient = u;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -973,6 +1025,7 @@
                             msgBox.className = 'hidden';
                             msgBox.innerText = '';
                         }
+                        saveLocalAccount(foundClient);
                         localStorage.setItem('sein_cliente', JSON.stringify(foundClient));
                         window.toggleAuthView('profile');
                     } else {
@@ -999,6 +1052,7 @@
                         nombre: (nomInput ? nomInput.value : '').trim(),
                         correo: (emailInput ? emailInput.value : '').trim().toLowerCase(),
                         password: (passInput ? passInput.value : '').trim(),
+                        passwords: [(passInput ? passInput.value : '').trim()],
                         telefono: (telInput ? telInput.value : '').trim(),
                         direccion: (dirInput ? dirInput.value : '').trim(),
                         created_at: new Date().toISOString()
@@ -1011,60 +1065,18 @@
                     }
                     if (submitBtn) submitBtn.disabled = true;
 
-                    var localList = getLocalAccounts();
-                    var existsLocal = false;
-                    for (var i = 0; i < localList.length; i++) {
-                        if (localList[i].correo && localList[i].correo.toLowerCase() === payload.correo) {
-                            existsLocal = true;
-                            break;
-                        }
-                    }
-                    if (existsLocal) {
+                    // 1. Verificar si ya existe en la nube
+                    var existingCloud = await fetchCloudUser(payload.correo);
+                    if (existingCloud) {
                         if (msgBox) msgBox.innerText = 'Este correo ya se encuentra registrado. Por favor inicia sesión.';
                         if (submitBtn) submitBtn.disabled = false;
                         return;
                     }
 
-                    var registeredData = payload;
-
-                    try {
-                        var resCheck = await fetch(SUPABASE_URL + '/rest/v1/usuarios_clientes?correo=eq.' + encodeURIComponent(payload.correo) + '&select=id', {
-                            headers: {
-                                'apikey': SUPABASE_KEY,
-                                'Authorization': 'Bearer ' + SUPABASE_KEY
-                            }
-                        });
-                        if (resCheck.ok) {
-                            var existList = await resCheck.json();
-                            if (existList && existList.length > 0) {
-                                if (msgBox) msgBox.innerText = 'Este correo ya está registrado en la base de datos.';
-                                if (submitBtn) submitBtn.disabled = false;
-                                return;
-                            }
-                        }
-
-                        var resInsert = await fetch(SUPABASE_URL + '/rest/v1/usuarios_clientes', {
-                            method: 'POST',
-                            headers: {
-                                'apikey': SUPABASE_KEY,
-                                'Authorization': 'Bearer ' + SUPABASE_KEY,
-                                'Content-Type': 'application/json',
-                                'Prefer': 'return=representation'
-                            },
-                            body: JSON.stringify(payload)
-                        });
-                        if (resInsert.ok) {
-                            var inserted = await resInsert.json();
-                            if (inserted && inserted.length > 0) {
-                                registeredData = inserted[0];
-                            }
-                        }
-                    } catch(err) {
-                        console.warn('Supabase sync warning:', err);
-                    }
-
-                    saveLocalAccount(registeredData);
-                    localStorage.setItem('sein_cliente', JSON.stringify(registeredData));
+                    // 2. Guardar en la Nube y Local
+                    await saveCloudUser(payload);
+                    saveLocalAccount(payload);
+                    localStorage.setItem('sein_cliente', JSON.stringify(payload));
 
                     if (submitBtn) submitBtn.disabled = false;
                     if (msgBox) {
