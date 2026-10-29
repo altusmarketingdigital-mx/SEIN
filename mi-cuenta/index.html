@@ -467,9 +467,7 @@
 <body>
 
     <header class="header">
-        <a href="/" class="header-logo" title="SEIN Candle Co.">
-            <img src="/wp-content/uploads/2024/09/Sin-titulo-1_Mesa-de-trabajo-1-2048x354-1-1024x177.png" alt="SEIN Candle Co." style="height: 40px; width: auto; max-width: 180px; object-fit: contain; display: block;">
-        </a>
+        <a href="/" class="header-logo" title="SEIN Candle Co."><img src="/wp-content/uploads/2024/09/Sin-titulo-1_Mesa-de-trabajo-1-2048x354-1-1024x177.png" alt="SEIN Candle Co." style="height: 40px; width: auto; max-width: 180px; object-fit: contain; display: block;"></a>
         <a href="/tienda/">← Volver a la Tienda</a>
     </header>
 
@@ -854,276 +852,50 @@
             }
         }
 
-        
-        function loadCustomerOrders(userEmail) {
+                function loadCustomerOrders(userEmail) {
             try {
-                let orders = [];
-                const savedCustOrders = JSON.parse(localStorage.getItem('sein_customer_orders') || '[]');
-                const savedAdminOrders = JSON.parse(localStorage.getItem('sein_admin_orders') || '[]');
-
-                const allOrdersMap = new Map();
-                savedCustOrders.concat(savedAdminOrders).forEach(function(o) {
-                    if (o && o.id) allOrdersMap.set(o.id, o);
+                var savedCust = JSON.parse(localStorage.getItem("sein_customer_orders") || "[]");
+                var savedAdm = JSON.parse(localStorage.getItem("sein_admin_orders") || "[]");
+                var combined = savedCust.concat(savedAdm);
+                var map = {};
+                var orders = [];
+                for (var i = 0; i < combined.length; i++) {
+                    var itm = combined[i];
+                    if (itm && itm.id && !map[itm.id]) {
+                        map[itm.id] = true;
+                        orders.push(itm);
+                    }
+                }
+                var myOrders = orders.filter(function(o) {
+                    return userEmail && o.email && o.email.toLowerCase() === userEmail.toLowerCase();
                 });
-
-                orders = Array.from(allOrdersMap.values());
-
-                const myOrders = orders.filter(function(o) {
-                    if (!userEmail) return false;
-                    return o.email && o.email.toLowerCase() === userEmail.toLowerCase();
-                });
-
-                const kpiCount = document.getElementById('kpi-pedidos-count');
+                var kpiCount = document.getElementById("kpi-pedidos-count");
                 if (kpiCount) kpiCount.innerText = myOrders.length;
-
-                const container = document.getElementById('orders-list-container');
+                var container = document.getElementById("orders-list-container");
                 if (!container) return;
-
                 if (myOrders.length === 0) {
-                    container.innerHTML = '<div class="empty-state">' +
-                        '<div class="empty-state-icon">🛍️</div>' +
-                        '<h4 style="margin:0 0 8px; font-size:16px; color:#333;">Aún no tienes pedidos registrados</h4>' +
-                        '<p style="margin:0 0 20px; font-size:14px; color:#777;">Tus compras realizadas en la tienda aparecerán reflejadas aquí automáticamente con su estado y seguimiento.</p>' +
-                        '<a href="/tienda/" class="btn" style="width:auto; display:inline-flex; padding:10px 22px; background:#a3875e;">Ir a Comprar</a>' +
-                    '</div>';
+                    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🛍️</div><h4 style="margin:0 0 8px; font-size:16px; color:#333;">Aún no tienes pedidos registrados</h4><p style="margin:0 0 20px; font-size:14px; color:#777;">Tus compras realizadas aparecerán reflejadas aquí automáticamente con su estado y seguimiento.</p><a href="/tienda/" class="btn" style="width:auto; display:inline-flex; padding:10px 22px; background:#a3875e;">Ir a Comprar</a></div>';
                 } else {
-                    var html = '<div style="overflow-x: auto;">' +
-                        '<table class="orders-table">' +
-                            '<thead>' +
-                                '<tr>' +
-                                    '<th># Pedido</th>' +
-                                    '<th>Fecha</th>' +
-                                    '<th>Productos</th>' +
-                                    '<th>Método</th>' +
-                                    '<th>Total</th>' +
-                                    '<th>Estado</th>' +
-                                '</tr>' +
-                            '</thead>' +
-                            '<tbody>';
-
-                    myOrders.forEach(function(o) {
-                        var statusClass = (o.status && o.status.indexOf('Entregado') !== -1) ? 'style="background:#eef7ed; color:#2e7d32;"' : 'style="background:#fef6e9; color:#b76e00;"';
-                        html += '<tr>' +
-                            '<td><strong>' + (o.id || 'SEIN-ORD') + '</strong></td>' +
-                            '<td>' + (o.date || 'Reciente') + '</td>' +
-                            '<td style="max-width: 250px; line-height: 1.4;">' + (o.items || 'Productos SEIN') + '</td>' +
-                            '<td><span style="font-size:12px; color:#666;">' + (o.payment_method || 'En Línea') + '</span></td>' +
-                            '<td><strong>
-            document.getElementById('data-view-box').classList.add('hidden');
-            document.getElementById('edit-profile-form').classList.remove('hidden');
-        };
-
-        window.cancelEditData = function() {
-            document.getElementById('edit-profile-form').classList.add('hidden');
-            document.getElementById('data-view-box').classList.remove('hidden');
-        };
-
-        window.logout = function() {
-            localStorage.removeItem('sein_cliente');
-            checkSession();
-        };
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // LOGIN
-            var loginForm = document.getElementById('login-form');
-            if (loginForm) {
-                loginForm.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    var emailInput = document.getElementById('login-email');
-                    var passInput = document.getElementById('login-password');
-                    var msgBox = document.getElementById('login-msg');
-                    var submitBtn = document.getElementById('btn-login-submit');
-
-                    var email = (emailInput ? emailInput.value : '').trim().toLowerCase();
-                    var password = (passInput ? passInput.value : '').trim();
-
-                    if (msgBox) {
-                        msgBox.className = 'error';
-                        msgBox.classList.remove('hidden');
-                        msgBox.innerText = 'Verificando datos...';
+                    var out = '<div style="overflow-x:auto;"><table class="orders-table"><thead><tr><th># Pedido</th><th>Fecha</th><th>Productos</th><th>Método</th><th>Total</th><th>Estado</th></tr></thead><tbody>';
+                    for (var j = 0; j < myOrders.length; j++) {
+                        var ord = myOrders[j];
+                        var isDelivered = ord.status && ord.status.indexOf("Entregado") !== -1;
+                        var badgeStyle = isDelivered ? "background:#eef7ed; color:#2e7d32;" : "background:#fef6e9; color:#b76e00;";
+                        var formattedPrice = String.fromCharCode(36) + Number(ord.total || 0).toLocaleString("es-MX", { minimumFractionDigits: 2 }) + " MXN";
+                        out += "<tr>" +
+                            "<td><strong>" + (ord.id || "SEIN-ORD") + "</strong></td>" +
+                            "<td>" + (ord.date || "Reciente") + "</td>" +
+                            "<td style=\"max-width:240px; line-height:1.4;\">" + (ord.items || "Productos SEIN") + "</td>" +
+                            "<td><span style=\"font-size:12px; color:#666;\">" + (ord.payment_method || "En Línea") + "</span></td>" +
+                            "<td><strong>" + formattedPrice + "</strong></td>" +
+                            "<td><span class=\"order-badge\" style=\"" + badgeStyle + "\">" + (ord.status || "Pendiente") + "</span></td>" +
+                        "</tr>";
                     }
-                    if (submitBtn) submitBtn.disabled = true;
-
-                    var foundClient = null;
-
-                    // 1. Supabase REST API
-                    try {
-                        var res = await fetch(SUPABASE_URL + '/rest/v1/usuarios_clientes?correo=eq.' + encodeURIComponent(email) + '&password=eq.' + encodeURIComponent(password) + '&select=*', {
-                            headers: {
-                                'apikey': SUPABASE_KEY,
-                                'Authorization': 'Bearer ' + SUPABASE_KEY
-                            }
-                        });
-                        if (res.ok) {
-                            var data = await res.json();
-                            if (data && data.length > 0) {
-                                foundClient = data[0];
-                            }
-                        }
-                    } catch(err) {
-                        console.warn('Supabase fetch error:', err);
-                    }
-
-                    // 2. Local Accounts Fallback
-                    if (!foundClient) {
-                        var localList = getLocalAccounts();
-                        for (var i = 0; i < localList.length; i++) {
-                            if (localList[i].correo && localList[i].correo.toLowerCase() === email && localList[i].password === password) {
-                                foundClient = localList[i];
-                                break;
-                            }
-                        }
-                    }
-
-                    if (submitBtn) submitBtn.disabled = false;
-
-                    if (foundClient) {
-                        if (msgBox) {
-                            msgBox.className = 'hidden';
-                            msgBox.innerText = '';
-                        }
-                        localStorage.setItem('sein_cliente', JSON.stringify(foundClient));
-                        window.toggleAuthView('profile');
-                    } else {
-                        if (msgBox) msgBox.innerText = 'Correo o contraseña incorrectos. Verifica o crea tu cuenta.';
-                    }
-                });
-            }
-
-            // REGISTER
-            var regForm = document.getElementById('register-form');
-            if (regForm) {
-                regForm.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    var msgBox = document.getElementById('reg-msg');
-                    var submitBtn = document.getElementById('btn-reg-submit');
-
-                    var nomInput = document.getElementById('reg-nombre');
-                    var emailInput = document.getElementById('reg-email');
-                    var passInput = document.getElementById('reg-password');
-                    var telInput = document.getElementById('reg-telefono');
-                    var dirInput = document.getElementById('reg-direccion');
-
-                    var payload = {
-                        nombre: (nomInput ? nomInput.value : '').trim(),
-                        correo: (emailInput ? emailInput.value : '').trim().toLowerCase(),
-                        password: (passInput ? passInput.value : '').trim(),
-                        telefono: (telInput ? telInput.value : '').trim(),
-                        direccion: (dirInput ? dirInput.value : '').trim(),
-                        created_at: new Date().toISOString()
-                    };
-
-                    if (msgBox) {
-                        msgBox.className = 'error';
-                        msgBox.classList.remove('hidden');
-                        msgBox.innerText = 'Creando tu cuenta...';
-                    }
-                    if (submitBtn) submitBtn.disabled = true;
-
-                    var localList = getLocalAccounts();
-                    var existsLocal = false;
-                    for (var i = 0; i < localList.length; i++) {
-                        if (localList[i].correo && localList[i].correo.toLowerCase() === payload.correo) {
-                            existsLocal = true;
-                            break;
-                        }
-                    }
-                    if (existsLocal) {
-                        if (msgBox) msgBox.innerText = 'Este correo ya se encuentra registrado. Por favor inicia sesión.';
-                        if (submitBtn) submitBtn.disabled = false;
-                        return;
-                    }
-
-                    var registeredData = payload;
-
-                    try {
-                        var resCheck = await fetch(SUPABASE_URL + '/rest/v1/usuarios_clientes?correo=eq.' + encodeURIComponent(payload.correo) + '&select=id', {
-                            headers: {
-                                'apikey': SUPABASE_KEY,
-                                'Authorization': 'Bearer ' + SUPABASE_KEY
-                            }
-                        });
-                        if (resCheck.ok) {
-                            var existList = await resCheck.json();
-                            if (existList && existList.length > 0) {
-                                if (msgBox) msgBox.innerText = 'Este correo ya está registrado en la base de datos.';
-                                if (submitBtn) submitBtn.disabled = false;
-                                return;
-                            }
-                        }
-
-                        var resInsert = await fetch(SUPABASE_URL + '/rest/v1/usuarios_clientes', {
-                            method: 'POST',
-                            headers: {
-                                'apikey': SUPABASE_KEY,
-                                'Authorization': 'Bearer ' + SUPABASE_KEY,
-                                'Content-Type': 'application/json',
-                                'Prefer': 'return=representation'
-                            },
-                            body: JSON.stringify(payload)
-                        });
-                        if (resInsert.ok) {
-                            var inserted = await resInsert.json();
-                            if (inserted && inserted.length > 0) {
-                                registeredData = inserted[0];
-                            }
-                        }
-                    } catch(err) {
-                        console.warn('Supabase sync warning:', err);
-                    }
-
-                    saveLocalAccount(registeredData);
-                    localStorage.setItem('sein_cliente', JSON.stringify(registeredData));
-
-                    if (submitBtn) submitBtn.disabled = false;
-                    if (msgBox) {
-                        msgBox.className = 'success';
-                        msgBox.innerText = '¡Cuenta creada con éxito! Entrando a tu panel...';
-                    }
-
-                    setTimeout(function() {
-                        window.toggleAuthView('profile');
-                    }, 1000);
-                });
-            }
-
-            // ACTUALIZACIÓN DE DATOS
-            var editForm = document.getElementById('edit-profile-form');
-            if (editForm) {
-                editForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    var client = JSON.parse(localStorage.getItem('sein_cliente') || '{}');
-                    var nuevoNom = document.getElementById('edit-nombre').value.trim();
-                    var nuevoTel = document.getElementById('edit-telefono').value.trim();
-                    var nuevaDir = document.getElementById('edit-direccion').value.trim();
-
-                    client.nombre = nuevoNom;
-                    client.telefono = nuevoTel;
-                    client.direccion = nuevaDir;
-
-                    saveLocalAccount(client);
-                    localStorage.setItem('sein_cliente', JSON.stringify(client));
-
-                    loadProfileData();
-                    cancelEditData();
-                });
-            }
-
-            checkSession();
-        });
-    </script>
-</body>
-</html>
- + Number(o.total || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 }) + ' MXN</strong></td>' +
-                            '<td><span class="order-badge" ' + statusClass + '>' + (o.status || 'Pendiente') + '</span></td>' +
-                        '</tr>';
-                    });
-
-                    html += '</tbody></table></div>';
-                    container.innerHTML = html;
+                    out += "</tbody></table></div>";
+                    container.innerHTML = out;
                 }
             } catch(e) {
-                console.warn('Error al cargar pedidos del cliente:', e);
+                console.warn("Error cargando pedidos:", e);
             }
         }
 
