@@ -1035,7 +1035,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </ul>
                 </div>
                 <div style="padding:16px 20px;border-top:1px solid #f0ece6;background:#faf8f5;text-align:center;">
-                    <a href="https://wa.me/5217772675971" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;color:#25D366;font-weight:600;text-decoration:none;font-size:14px;">
+                    <a href="https://wa.me/5213334636538" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;color:#25D366;font-weight:600;text-decoration:none;font-size:14px;">
                         <span>Atención por WhatsApp</span>
                     </a>
                 </div>

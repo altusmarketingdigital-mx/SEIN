@@ -917,6 +917,22 @@
                 <!-- Se llena según el método de pago -->
             </div>
 
+            <!-- Caja Informativa de Envíos de Confirmación -->
+            <div style="background:#fdfcf9; border:1px solid #ebdcc8; border-radius:10px; padding:18px 20px; margin:20px 0; text-align:left;">
+                <div style="font-weight:700; color:var(--primary); font-size:14px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+                    <span>📬 Confirmación y Notificaciones enviadas:</span>
+                </div>
+                <div style="font-size:13px; color:#555; line-height:1.6;">
+                    • <strong>Correo Electrónico:</strong> Se envió un resumen detallado a <strong>seincandleco@gmail.com</strong> y a tu correo registrado (<span id="notif-customer-email" style="color:var(--accent); font-weight:600;"></span>).<br>
+                    • <strong>WhatsApp de la Empresa:</strong> Se vinculó directamente al <strong>+52 33 3463 6538</strong>.
+                </div>
+                <div style="margin-top:14px;">
+                    <a id="notif-wa-action" href="#" target="_blank" style="display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#fff; text-decoration:none; padding:10px 18px; border-radius:8px; font-size:13px; font-weight:700;">
+                        <span>💬 Notificar o Enviar Comprobante por WhatsApp</span>
+                    </a>
+                </div>
+            </div>
+
             <p style="font-size: 13.5px; color: #777; line-height: 1.5;">
                 Hemos registrado esta orden en tu historial. Puedes darle seguimiento desde tu panel de cliente en cualquier momento.
             </p>
@@ -928,7 +944,7 @@
 
             <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border);">
                 <span style="font-size: 13px; color: var(--text-muted);">¿Tienes dudas sobre tu pedido? </span>
-                <a id="success-wa-contact" href="https://wa.me/5217772675971?text=Hola,%20acabo%20de%20realizar%20mi%20pedido%20en%20la%20tienda%20web" target="_blank" style="font-size: 13px; color: #25d366; font-weight: 700; text-decoration: none;">
+                <a id="success-wa-contact" href="https://wa.me/5213334636538?text=Hola,%20acabo%20de%20realizar%20mi%20pedido%20en%20la%20tienda%20web" target="_blank" style="font-size: 13px; color: #25d366; font-weight: 700; text-decoration: none;">
                     💬 Contactar Soporte por WhatsApp
                 </a>
             </div>
@@ -939,6 +955,13 @@
     <script>
         const SUPABASE_URL = 'https://hyibazrenjtnswtebybb.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo';
+
+        // Canales oficiales configurados para recepción de pedidos
+        const NOTIF_CONFIG = {
+            storeEmail: 'seincandleco@gmail.com',
+            adminPhone: '5213334636538',
+            storeName: 'SEIN Candle Co.'
+        };
 
         let cart = [];
         let currentShippingCost = 149;
@@ -1119,6 +1142,80 @@
             });
         };
 
+        
+        // Envío automatizado de confirmación por Correo y WhatsApp
+        function sendOrderNotification(order) {
+            try {
+                // A) Construir mensaje completo y detallado para WhatsApp del administrador
+                let waText = '🕯️ *¡NUEVO PEDIDO EN SEIN CANDLE CO.!*\n';
+                waText += '=================================\n';
+                waText += '📦 *Orden:* #' + order.id + '\n';
+                waText += '📅 *Fecha:* ' + order.date + '\n\n';
+                waText += '👤 *DATOS DEL CLIENTE:*\n';
+                waText += '• Nombre: ' + order.customer + '\n';
+                waText += '• Correo: ' + order.email + '\n';
+                waText += '• Teléfono: ' + order.phone + '\n';
+                waText += '• Dirección: ' + order.address + '\n\n';
+                waText += '🛍️ *PRODUCTOS COMPRADOS:*\n';
+                if (Array.isArray(order.items_detail)) {
+                    order.items_detail.forEach(function(it, i) {
+                        waText += (i + 1) + '. ' + it.qty + 'x ' + it.title + ' (' + formatCurrency(parsePrice(it.price)) + ' c/u)\n';
+                    });
+                } else {
+                    waText += '• ' + order.items + '\n';
+                }
+                waText += '\n🚚 *PAQUETERÍA:* ' + (order.shipping_method || 'Envío') + '\n';
+                waText += '💳 *FORMA DE PAGO:* ' + order.payment_method + '\n';
+                waText += '---------------------------------\n';
+                waText += '💵 *Subtotal:* ' + formatCurrency(order.subtotal) + '\n';
+                waText += '📦 *Envío:* ' + (order.shipping === 0 ? 'GRATIS' : formatCurrency(order.shipping)) + '\n';
+                waText += '💰 *TOTAL:* ' + formatCurrency(order.total) + '\n';
+                waText += '=================================';
+
+                const waUrl = 'https://wa.me/' + NOTIF_CONFIG.adminPhone + '?text=' + encodeURIComponent(waText);
+
+                // Configurar enlace del botón de confirmación en pantalla
+                const waNotifyBtn = document.getElementById('notif-wa-action');
+                if (waNotifyBtn) {
+                    waNotifyBtn.href = waUrl;
+                }
+
+                // B) Despachar notificación vía FormSubmit hacia el correo de la empresa y con copia al cliente
+                fetch('https://formsubmit.co/ajax/' + encodeURIComponent(NOTIF_CONFIG.storeEmail), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        _subject: '🕯️ Nuevo Pedido #' + order.id + ' - ' + order.customer + ' (' + formatCurrency(order.total) + ')',
+                        _replyto: order.email,
+                        _cc: order.email,
+                        _template: 'table',
+                        'Número de Pedido': '#' + order.id,
+                        'Fecha': order.date,
+                        'Cliente': order.customer,
+                        'Correo Cliente': order.email,
+                        'Teléfono / WhatsApp': order.phone,
+                        'Dirección de Entrega': order.address,
+                        'Paquetería Elegida': order.shipping_method || 'Estándar',
+                        'Método de Pago': order.payment_method,
+                        'Productos': order.items,
+                        'Subtotal': formatCurrency(order.subtotal),
+                        'Costo de Envío': order.shipping === 0 ? 'GRATIS' : formatCurrency(order.shipping),
+                        'TOTAL A PAGAR': formatCurrency(order.total)
+                    })
+                }).then(function(res) {
+                    console.log('Notificación de pedido enviada a correo:', res.status);
+                }).catch(function(err) {
+                    console.warn('Envío de correo asíncrono completado con nota:', err);
+                });
+
+            } catch(e) {
+                console.warn('Error en notificación de pedido:', e);
+            }
+        }
+
         // GENERAR PEDIDO
         window.handlePlaceOrder = async function(e) {
             e.preventDefault();
@@ -1234,6 +1331,7 @@
             localStorage.setItem('sein_cart', '[]');
 
             // 6. Mostrar Pantalla de Confirmación
+            sendOrderNotification(newOrder);
             showSuccessScreen(newOrder);
         };
 
@@ -1243,6 +1341,8 @@
             successScreen.style.display = 'block';
 
             document.getElementById('confirmed-order-id').textContent = order.id;
+            const notifEmailElem = document.getElementById('notif-customer-email');
+            if (notifEmailElem) notifEmailElem.textContent = order.email;
 
             const instructionsBox = document.getElementById('success-instructions-content');
             if (order.payment_method.includes('SPEI')) {
@@ -1276,7 +1376,7 @@
             // Enlace de soporte WhatsApp con ID de pedido precargado (SOPORTE, no para venta)
             const waLink = document.getElementById('success-wa-contact');
             if (waLink) {
-                waLink.href = `https://wa.me/5217772675971?text=Hola,%20acabo%20de%20realizar%20el%20pedido%20${order.id}%20en%20la%20tienda%20web%20y%20tengo%20una%20consulta`;
+                waLink.href = `https://wa.me/5213334636538?text=Hola,%20acabo%20de%20realizar%20el%20pedido%20${order.id}%20en%20la%20tienda%20web%20y%20tengo%20una%20consulta`;
             }
 
             // Scroll arriba suave
