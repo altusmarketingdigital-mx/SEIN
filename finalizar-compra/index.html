@@ -702,33 +702,62 @@
                     </div>
                 </div>
 
-                <!-- PASO 2: MÉTODO DE ENVÍO -->
+                <!-- PASO 2: MÉTODO DE ENVÍO Y PAQUETERÍAS -->
                 <div class="step-card">
                     <div class="step-header">
                         <div class="step-number">2</div>
-                        <div class="step-title">Método de Envío</div>
+                        <div class="step-title">Método de Envío y Paquetería</div>
                     </div>
 
+                    <!-- Opción 1: Envío Gratis (Visible condicionalmente si subtotal >= $999) -->
+                    <div class="shipping-option" id="shipping-opt-free" style="display:none;" onclick="selectShipping('free')">
+                        <div class="shipping-left">
+                            <input type="radio" name="shipping" id="radio-free" class="shipping-radio">
+                            <div>
+                                <div class="shipping-title" style="color: var(--success); display:flex; align-items:center; gap:6px;">
+                                    <span>🎉 ¡Envío Nacional Gratis!</span>
+                                    <span style="font-size:11px; background:#eef7ed; color:#2e7d32; padding:2px 8px; border-radius:12px; font-weight:700;">Promoción SEIN</span>
+                                </div>
+                                <div class="shipping-subtitle">Aplica automáticamente en compras a partir de $999.00 MXN (Entrega 3 a 5 días)</div>
+                            </div>
+                        </div>
+                        <div class="shipping-price" style="color: var(--success); font-weight:800;">GRATIS</div>
+                    </div>
+
+                    <!-- Opción 2: Envío Local ZMG -->
+                    <div class="shipping-option" id="shipping-opt-local" onclick="selectShipping('local')">
+                        <div class="shipping-left">
+                            <input type="radio" name="shipping" id="radio-local" class="shipping-radio">
+                            <div>
+                                <div class="shipping-title">🛵 Envío Local Guadalajara / Zapopan (ZMG)</div>
+                                <div class="shipping-subtitle">Entrega directa en 1 a 2 días hábiles en zona metropolitana de Guadalajara</div>
+                            </div>
+                        </div>
+                        <div class="shipping-price">$95.00 MXN</div>
+                    </div>
+
+                    <!-- Opción 3: Envío Estándar Nacional (Predeterminado) -->
                     <div class="shipping-option selected" id="shipping-opt-std" onclick="selectShipping('std')">
                         <div class="shipping-left">
                             <input type="radio" name="shipping" id="radio-std" class="shipping-radio" checked>
                             <div>
-                                <div class="shipping-title">Envío Estándar Nacional (3 a 5 días hábiles)</div>
-                                <div class="shipping-subtitle">Entrega garantizada por paquetería express con número de rastreo</div>
+                                <div class="shipping-title">📦 Envío Estándar Nacional (FedEx / Estafeta / Redpack)</div>
+                                <div class="shipping-subtitle">Cobertura a toda la República Mexicana con guía de rastreo (3 a 5 días hábiles)</div>
                             </div>
                         </div>
                         <div class="shipping-price" id="shipping-std-price">$149.00 MXN</div>
                     </div>
 
-                    <div class="shipping-option" id="shipping-opt-free" style="display:none;" onclick="selectShipping('free')">
+                    <!-- Opción 4: Envío Express Urgente -->
+                    <div class="shipping-option" id="shipping-opt-express" onclick="selectShipping('express')">
                         <div class="shipping-left">
-                            <input type="radio" name="shipping" id="radio-free" class="shipping-radio">
+                            <input type="radio" name="shipping" id="radio-express" class="shipping-radio">
                             <div>
-                                <div class="shipping-title" style="color: var(--success);">¡Envío Gratis! 🎉</div>
-                                <div class="shipping-subtitle">Aplica por compras superiores a $999.00 MXN</div>
+                                <div class="shipping-title">⚡ Envío Express Nacional Prioritario (DHL / FedEx Express)</div>
+                                <div class="shipping-subtitle">Servicio aéreo prioritario con entrega rápida en 24 a 48 horas hábiles</div>
                             </div>
                         </div>
-                        <div class="shipping-price" style="color: var(--success);">GRATIS</div>
+                        <div class="shipping-price">$220.00 MXN</div>
                     </div>
                 </div>
 
@@ -913,8 +942,17 @@
 
         let cart = [];
         let currentShippingCost = 149;
+        let selectedShippingKey = 'std';
+        let selectedShippingName = 'Envío Estándar Nacional ($149 MXN)';
         let selectedPayment = 'spei';
         let generatedOrderId = '';
+
+        const SHIPPING_RATES = {
+            free: { cost: 0, name: 'Envío Nacional Gratis ($0 MXN)' },
+            local: { cost: 95, name: 'Envío Local Guadalajara / Zapopan ($95 MXN)' },
+            std: { cost: 149, name: 'Envío Estándar Nacional ($149 MXN)' },
+            express: { cost: 220, name: 'Envío Express Prioritario ($220 MXN)' }
+        };
 
         function parsePrice(val) {
             if (typeof val === 'number') return val;
@@ -996,14 +1034,22 @@
 
             document.getElementById('summary-items-count').textContent = `(${totalQty} ${totalQty === 1 ? 'pieza' : 'piezas'})`;
 
-            // Lógica de Envío Gratis sobre $999
+            // Lógica de Paqueterías y Envío Gratis sobre $999
             const freeShippingCard = document.getElementById('shipping-opt-free');
             if (subtotal >= 999) {
                 freeShippingCard.style.display = 'flex';
-                selectShipping('free');
+                if (selectedShippingKey !== 'express' && selectedShippingKey !== 'local') {
+                    selectShipping('free');
+                } else {
+                    selectShipping(selectedShippingKey);
+                }
             } else {
                 freeShippingCard.style.display = 'none';
-                selectShipping('std');
+                if (selectedShippingKey === 'free') {
+                    selectShipping('std');
+                } else {
+                    selectShipping(selectedShippingKey);
+                }
             }
 
             updateTotals(subtotal);
@@ -1018,28 +1064,29 @@
             document.getElementById('summary-total').textContent = formatCurrency(grandTotal);
         }
 
-        // Selección de Envío
+        // Selección de Envío y Paquetería
         window.selectShipping = function(type) {
-            const stdCard = document.getElementById('shipping-opt-std');
-            const freeCard = document.getElementById('shipping-opt-free');
-            const radioStd = document.getElementById('radio-std');
-            const radioFree = document.getElementById('radio-free');
+            if (!SHIPPING_RATES[type]) type = 'std';
 
-            if (type === 'free') {
-                currentShippingCost = 0;
-                freeCard.classList.add('selected');
-                stdCard.classList.remove('selected');
-                radioFree.checked = true;
-                radioStd.checked = false;
-            } else {
-                currentShippingCost = 149;
-                stdCard.classList.add('selected');
-                freeCard.classList.remove('selected');
-                radioStd.checked = true;
-                radioFree.checked = false;
-            }
+            selectedShippingKey = type;
+            currentShippingCost = SHIPPING_RATES[type].cost;
+            selectedShippingName = SHIPPING_RATES[type].name;
 
-            let subtotal = cart.reduce((sum, item) => sum + (parsePrice(item.price) * item.qty), 0);
+            // Desmarcar todas las opciones
+            ['free', 'local', 'std', 'express'].forEach(key => {
+                const card = document.getElementById('shipping-opt-' + key);
+                const radio = document.getElementById('radio-' + key);
+                if (card) card.classList.remove('selected');
+                if (radio) radio.checked = false;
+            });
+
+            // Activar la seleccionada
+            const targetCard = document.getElementById('shipping-opt-' + type);
+            const targetRadio = document.getElementById('radio-' + type);
+            if (targetCard) targetCard.classList.add('selected');
+            if (targetRadio) targetRadio.checked = true;
+
+            let subtotal = cart.reduce((sum, item) => sum + (parsePrice(item.price) * (item.qty || 1)), 0);
             updateTotals(subtotal);
         };
 
@@ -1123,6 +1170,7 @@
                 items_detail: cart,
                 subtotal: subtotal,
                 shipping: currentShippingCost,
+                shipping_method: selectedShippingName,
                 total: total,
                 payment_method: selectedPayment === 'spei' ? 'Transferencia SPEI' : 'Tarjeta de Crédito / Débito',
                 status: 'Pendiente de Pago'
