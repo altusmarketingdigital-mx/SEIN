@@ -670,7 +670,7 @@
                         </div>
                         <div class="form-group">
                             <label for="cust-zip">Código Postal *</label>
-                            <input type="text" id="cust-zip" required placeholder="Ej. 44100" maxlength="10">
+                            <input type="text" id="cust-zip" required placeholder="Ej. 44100" maxlength="5" oninput="handleZipInput(this.value)">
                         </div>
                     </div>
 
@@ -917,22 +917,6 @@
                 <!-- Se llena según el método de pago -->
             </div>
 
-            <!-- Caja Informativa de Envíos de Confirmación -->
-            <div style="background:#fdfcf9; border:1px solid #ebdcc8; border-radius:10px; padding:18px 20px; margin:20px 0; text-align:left;">
-                <div style="font-weight:700; color:var(--primary); font-size:14px; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
-                    <span>📬 Confirmación y Notificaciones enviadas:</span>
-                </div>
-                <div style="font-size:13px; color:#555; line-height:1.6;">
-                    • <strong>Correo Electrónico:</strong> Se envió un resumen detallado a <strong>seincandleco@gmail.com</strong> y a tu correo registrado (<span id="notif-customer-email" style="color:var(--accent); font-weight:600;"></span>).<br>
-                    • <strong>WhatsApp de la Empresa:</strong> Se vinculó directamente al <strong>+52 33 3463 6538</strong>.
-                </div>
-                <div style="margin-top:14px;">
-                    <a id="notif-wa-action" href="#" target="_blank" style="display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#fff; text-decoration:none; padding:10px 18px; border-radius:8px; font-size:13px; font-weight:700;">
-                        <span>💬 Notificar o Enviar Comprobante por WhatsApp</span>
-                    </a>
-                </div>
-            </div>
-
             <p style="font-size: 13.5px; color: #777; line-height: 1.5;">
                 Hemos registrado esta orden en tu historial. Puedes darle seguimiento desde tu panel de cliente en cualquier momento.
             </p>
@@ -955,13 +939,6 @@
     <script>
         const SUPABASE_URL = 'https://hyibazrenjtnswtebybb.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo';
-
-        // Canales oficiales configurados para recepción de pedidos
-        const NOTIF_CONFIG = {
-            storeEmail: 'seincandleco@gmail.com',
-            adminPhone: '5213334636538',
-            storeName: 'SEIN Candle Co.'
-        };
 
         let cart = [];
         let currentShippingCost = 149;
@@ -1087,6 +1064,129 @@
             document.getElementById('summary-total').textContent = formatCurrency(grandTotal);
         }
 
+        // --- MOTOR OFICIAL SKYDROPX API ---
+        let zipDebounceTimer = null;
+        let lastQuotedZip = "";
+
+        async function quoteWithSkydropx(destZip) {
+            var banner = document.getElementById("skydropx-status-banner");
+            var container = document.getElementById("skydropx-rates-container");
+
+            if (!destZip || destZip.length !== 5 || !/^\d{5}$/.test(destZip)) return;
+            if (destZip === lastQuotedZip) return;
+            lastQuotedZip = destZip;
+
+            if (banner) {
+                banner.style.display = "block";
+                banner.style.background = "#f0f9ff";
+                banner.style.color = "#0369a1";
+                banner.style.border = "1px solid #bae6fd";
+                banner.innerHTML = "🔄 <strong>Cotizando con Skydropx...</strong> Consultando paqueterías en tiempo real para el C.P. " + destZip;
+            }
+
+            try {
+                var totalPieces = cart.reduce(function(sum, it) { return sum + (it.qty || 1); }, 0);
+                var weight = Math.max(1.0, Math.min(8.0, totalPieces * 0.45));
+
+                var res = await fetch("/api/skydropx-quote", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ zip: destZip, weight: weight })
+                });
+
+                if (!res.ok) throw new Error("Respuesta no exitosa");
+                var data = await res.json();
+
+                if (data.success && Array.isArray(data.rates) && data.rates.length > 0) {
+                    renderSkydropxCards(data.rates, destZip);
+                    if (banner) {
+                        banner.style.background = "#f0fdf4";
+                        banner.style.color = "#15803d";
+                        banner.style.border = "1px solid #bbf7d0";
+                        banner.innerHTML = "✓ <strong>Tarifas oficiales de Skydropx actualizadas</strong> (" + data.rates.length + " paqueterías disponibles para C.P. " + destZip + ")";
+                    }
+                }
+            } catch(e) {
+                console.warn("Fallo temporal de cotización Skydropx:", e);
+                if (banner) {
+                    banner.style.background = "#fffbeb";
+                    banner.style.color = "#92400e";
+                    banner.style.border = "1px solid #fde68a";
+                    banner.innerHTML = "ℹ️ Mostrando tarifas base de convenio para el C.P. " + destZip;
+                }
+            }
+        }
+
+        function renderSkydropxCards(rates, zip) {
+            var container = document.getElementById("skydropx-rates-container");
+            if (!container) return;
+            container.innerHTML = "";
+            container.style.display = "block";
+
+            var topRates = [];
+            var seenCarriers = {};
+            for (var i = 0; i < rates.length; i++) {
+                var cKey = (rates[i].carrier || "").toLowerCase();
+                if (!seenCarriers[cKey] && topRates.length < 5) {
+                    seenCarriers[cKey] = true;
+                    topRates.push(rates[i]);
+                }
+            }
+
+            for (var j = 0; j < topRates.length; j++) {
+                (function(rate, idx) {
+                    var rKey = "skydrop_" + idx;
+                    SHIPPING_RATES[rKey] = {
+                        cost: rate.price,
+                        name: rate.carrier + " - " + rate.service + " (" + String.fromCharCode(36) + rate.price + " MXN)"
+                    };
+
+                    var opt = document.createElement("div");
+                    opt.className = "shipping-option";
+                    opt.id = "shipping-opt-" + rKey;
+                    opt.onclick = function() { selectShipping(rKey); };
+
+                    var icon = "📦";
+                    var cLower = (rate.carrier || "").toLowerCase();
+                    if (cLower.indexOf("dhl") !== -1) icon = "🟡";
+                    else if (cLower.indexOf("fedex") !== -1) icon = "🟣";
+                    else if (cLower.indexOf("estafeta") !== -1) icon = "🔴";
+                    else if (cLower.indexOf("paquetexpress") !== -1) icon = "🚚";
+
+                    var daysLabel = rate.days === 1 ? "1 día hábil" : rate.days + " días hábiles";
+
+                    opt.innerHTML = '<div class="shipping-left">' +
+                        '<input type="radio" name="shipping" id="radio-' + rKey + '" class="shipping-radio">' +
+                        '<div>' +
+                            '<div class="shipping-title" style="display:flex;align-items:center;gap:6px;">' +
+                                '<span>' + icon + ' ' + rate.carrier + ' (' + rate.service + ')</span>' +
+                                '<span style="font-size:11px;background:#eff6ff;color:#1d4ed8;padding:2px 8px;border-radius:12px;font-weight:700;">Skydropx</span>' +
+                            '</div>' +
+                            '<div class="shipping-subtitle">Entrega estimada: ' + daysLabel + ' a C.P. ' + zip + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="shipping-price">' + String.fromCharCode(36) + rate.price + '.00 MXN</div>';
+
+                    container.appendChild(opt);
+                })(topRates[j], j);
+            }
+
+            var subtotal = cart.reduce(function(sum, it) { return sum + (parsePrice(it.price) * (it.qty || 1)); }, 0);
+            if (subtotal < 999 && topRates.length > 0) {
+                selectShipping("skydrop_0");
+            }
+        }
+
+        window.handleZipInput = function(val) {
+            clearTimeout(zipDebounceTimer);
+            var clean = String(val || "").trim();
+            if (clean.length === 5) {
+                zipDebounceTimer = setTimeout(function() {
+                    quoteWithSkydropx(clean);
+                }, 400);
+            }
+        };
+
         // Selección de Envío y Paquetería
         window.selectShipping = function(type) {
             if (!SHIPPING_RATES[type]) type = 'std';
@@ -1142,78 +1242,54 @@
             });
         };
 
-        
-        // Envío automatizado de confirmación por Correo y WhatsApp
-        function sendOrderNotification(order) {
+        function notifyStoreAndCustomer(order) {
             try {
-                // A) Construir mensaje completo y detallado para WhatsApp del administrador
-                let waText = '🕯️ *¡NUEVO PEDIDO EN SEIN CANDLE CO.!*\n';
-                waText += '=================================\n';
-                waText += '📦 *Orden:* #' + order.id + '\n';
-                waText += '📅 *Fecha:* ' + order.date + '\n\n';
-                waText += '👤 *DATOS DEL CLIENTE:*\n';
-                waText += '• Nombre: ' + order.customer + '\n';
-                waText += '• Correo: ' + order.email + '\n';
-                waText += '• Teléfono: ' + order.phone + '\n';
-                waText += '• Dirección: ' + order.address + '\n\n';
-                waText += '🛍️ *PRODUCTOS COMPRADOS:*\n';
-                if (Array.isArray(order.items_detail)) {
-                    order.items_detail.forEach(function(it, i) {
-                        waText += (i + 1) + '. ' + it.qty + 'x ' + it.title + ' (' + formatCurrency(parsePrice(it.price)) + ' c/u)\n';
-                    });
-                } else {
-                    waText += '• ' + order.items + '\n';
-                }
-                waText += '\n🚚 *PAQUETERÍA:* ' + (order.shipping_method || 'Envío') + '\n';
-                waText += '💳 *FORMA DE PAGO:* ' + order.payment_method + '\n';
-                waText += '---------------------------------\n';
-                waText += '💵 *Subtotal:* ' + formatCurrency(order.subtotal) + '\n';
-                waText += '📦 *Envío:* ' + (order.shipping === 0 ? 'GRATIS' : formatCurrency(order.shipping)) + '\n';
-                waText += '💰 *TOTAL:* ' + formatCurrency(order.total) + '\n';
-                waText += '=================================';
+                let waMsg = "🕯️ *¡NUEVO PEDIDO EN SEIN CANDLE CO.!*\n";
+                waMsg += "=================================\n";
+                waMsg += "📦 *Orden:* #" + order.id + "\n";
+                waMsg += "📅 *Fecha:* " + order.date + "\n\n";
+                waMsg += "👤 *DATOS DEL CLIENTE:*\n";
+                waMsg += "• Nombre: " + order.customer + "\n";
+                waMsg += "• Correo: " + order.email + "\n";
+                waMsg += "• Teléfono: " + order.phone + "\n";
+                waMsg += "• Dirección: " + order.address + "\n\n";
+                waMsg += "🛍️ *PRODUCTOS:* " + order.items + "\n";
+                waMsg += "🚚 *PAQUETERÍA:* " + (order.shipping_method || "Estándar") + "\n";
+                waMsg += "💳 *PAGO:* " + order.payment_method + "\n";
+                waMsg += "---------------------------------\n";
+                waMsg += "💵 *Subtotal:* " + formatCurrency(order.subtotal) + "\n";
+                waMsg += "📦 *Envío:* " + (order.shipping === 0 ? "GRATIS" : formatCurrency(order.shipping)) + "\n";
+                waMsg += "💰 *TOTAL:* " + formatCurrency(order.total) + "\n";
+                waMsg += "=================================";
 
-                const waUrl = 'https://wa.me/' + NOTIF_CONFIG.adminPhone + '?text=' + encodeURIComponent(waText);
-
-                // Configurar enlace del botón de confirmación en pantalla
-                const waNotifyBtn = document.getElementById('notif-wa-action');
-                if (waNotifyBtn) {
-                    waNotifyBtn.href = waUrl;
+                const waBtn = document.getElementById("notif-wa-action");
+                if (waBtn) {
+                    waBtn.href = "https://wa.me/5213334636538?text=" + encodeURIComponent(waMsg);
                 }
 
-                // B) Despachar notificación vía FormSubmit hacia el correo de la empresa y con copia al cliente
-                fetch('https://formsubmit.co/ajax/' + encodeURIComponent(NOTIF_CONFIG.storeEmail), {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
+                fetch("https://formsubmit.co/ajax/seincandleco@gmail.com", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
                     body: JSON.stringify({
-                        _subject: '🕯️ Nuevo Pedido #' + order.id + ' - ' + order.customer + ' (' + formatCurrency(order.total) + ')',
+                        _subject: "🕯️ Nuevo Pedido #" + order.id + " - " + order.customer + " (" + formatCurrency(order.total) + ")",
                         _replyto: order.email,
                         _cc: order.email,
-                        _template: 'table',
-                        'Número de Pedido': '#' + order.id,
-                        'Fecha': order.date,
-                        'Cliente': order.customer,
-                        'Correo Cliente': order.email,
-                        'Teléfono / WhatsApp': order.phone,
-                        'Dirección de Entrega': order.address,
-                        'Paquetería Elegida': order.shipping_method || 'Estándar',
-                        'Método de Pago': order.payment_method,
-                        'Productos': order.items,
-                        'Subtotal': formatCurrency(order.subtotal),
-                        'Costo de Envío': order.shipping === 0 ? 'GRATIS' : formatCurrency(order.shipping),
-                        'TOTAL A PAGAR': formatCurrency(order.total)
+                        _template: "table",
+                        "Pedido": "#" + order.id,
+                        "Fecha": order.date,
+                        "Cliente": order.customer,
+                        "Correo": order.email,
+                        "Teléfono": order.phone,
+                        "Dirección": order.address,
+                        "Paquetería": order.shipping_method || "Skydropx",
+                        "Forma de Pago": order.payment_method,
+                        "Productos": order.items,
+                        "Subtotal": formatCurrency(order.subtotal),
+                        "Envío": order.shipping === 0 ? "GRATIS" : formatCurrency(order.shipping),
+                        "TOTAL": formatCurrency(order.total)
                     })
-                }).then(function(res) {
-                    console.log('Notificación de pedido enviada a correo:', res.status);
-                }).catch(function(err) {
-                    console.warn('Envío de correo asíncrono completado con nota:', err);
-                });
-
-            } catch(e) {
-                console.warn('Error en notificación de pedido:', e);
-            }
+                }).catch(function(e) {});
+            } catch(err) { console.warn("Notif error:", err); }
         }
 
         // GENERAR PEDIDO
@@ -1331,7 +1407,6 @@
             localStorage.setItem('sein_cart', '[]');
 
             // 6. Mostrar Pantalla de Confirmación
-            sendOrderNotification(newOrder);
             showSuccessScreen(newOrder);
         };
 
