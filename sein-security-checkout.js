@@ -470,6 +470,23 @@
         const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
         cartBadge.textContent = totalCount;
         cartBadge.style.transform = totalCount > 0 ? 'scale(1.15)' : 'scale(1)';
+        // SINCRONIZAR CARRITO FLOTANTE Y HEADER SUPERIOR DE ELEMENTOR / WOOCOMMERCE
+        let currentGrandTotal = 0;
+        cart.forEach(item => {
+            currentGrandTotal += parsePrice(item.price) * (item.qty || 1);
+        });
+
+        // 1. Sincronizar todos los badges de cantidad del header (ej: .elementor-button-icon-qty, .cart-contents-count)
+        document.querySelectorAll('.elementor-button-icon-qty, .cart-count, .cart-contents-count, [data-counter]').forEach(el => {
+            el.textContent = totalCount;
+            el.setAttribute('data-counter', totalCount);
+        });
+
+        // 2. Sincronizar montos de dinero mostrados en el header (ej: $0.00 -> $758.00)
+        document.querySelectorAll('.elementor-menu-cart__toggle .elementor-button-text .woocommerce-Price-amount, .header-cart-total').forEach(el => {
+            el.innerHTML = '<bdi><span class="woocommerce-Price-currencySymbol">$</span>' + currentGrandTotal.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</bdi>';
+        });
+
 
         if (cart.length === 0) {
             itemsContainer.innerHTML = `
@@ -623,6 +640,17 @@
         }
         window.location.href = '/finalizar-compra/';
     });
+
+
+    // Interceptar el botón del carrito del header para abrir el carrito lateral oficial de SEIN
+    document.addEventListener('click', function(e) {
+        const headerCartBtn = e.target.closest('.elementor-menu-cart__toggle_button, .elementor-menu-cart__toggle, #elementor-menu-cart__toggle_button, a[href*="cart"], a[href*="carrito"]');
+        if (headerCartBtn && !headerCartBtn.closest('#sein-cart-drawer') && !headerCartBtn.closest('#main-checkout-screen')) {
+            e.preventDefault();
+            e.stopPropagation();
+            openCart();
+        }
+    }, true);
 
     // Inicializar estado del Carrito al cargar la página
     updateCartUI();
