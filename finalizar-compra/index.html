@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --primary: #2b2b2b;
@@ -606,6 +607,50 @@
             border-radius: 12px;
             border: 1px solid var(--border);
             display: none;
+        }
+    
+        /* Botón de descarga de recibo PDF */
+        .btn-pdf-download {
+            background: #ffffff;
+            color: var(--primary);
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(163, 135, 94, 0.15);
+            font-family: inherit;
+        }
+
+        .btn-pdf-download:hover {
+            background: var(--accent);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(163, 135, 94, 0.25);
+        }
+
+        /* Estilos de impresión para cuando el usuario quiera imprimir directamente */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-order-receipt, #printable-order-receipt * {
+                visibility: visible;
+            }
+            #printable-order-receipt {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 20px;
+                background: #ffffff !important;
+            }
         }
     </style>
 </head>
@@ -1481,12 +1526,91 @@
             showSuccessScreen(newOrder);
         };
 
+        
+        // Variable global con el último pedido creado para generar PDF
+        let currentCompletedOrder = null;
+
+        function fillReceiptData(order) {
+            currentCompletedOrder = order;
+
+            document.getElementById('pdf-order-id').innerText = '#' + order.id;
+            document.getElementById('pdf-order-date').innerText = 'Fecha: ' + order.date;
+            document.getElementById('pdf-cust-name').innerText = order.customer;
+            document.getElementById('pdf-cust-email').innerText = order.email;
+            document.getElementById('pdf-cust-phone').innerText = order.phone;
+            document.getElementById('pdf-cust-address').innerText = order.address;
+            document.getElementById('pdf-cust-shipping').innerText = 'Método: ' + (order.shipping_method || 'Envío');
+            document.getElementById('pdf-spei-concept').innerText = order.id;
+
+            document.getElementById('pdf-subtotal-val').innerText = formatCurrency(order.subtotal);
+            document.getElementById('pdf-shipping-val').innerText = order.shipping === 0 ? 'GRATIS' : formatCurrency(order.shipping);
+            document.getElementById('pdf-total-val').innerText = formatCurrency(order.total);
+
+            const tbody = document.getElementById('pdf-items-tbody');
+            tbody.innerHTML = '';
+
+            if (Array.isArray(order.items_detail) && order.items_detail.length > 0) {
+                order.items_detail.forEach(it => {
+                    const price = parsePrice(it.price);
+                    const totalIt = price * (it.qty || 1);
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = '1px solid #eee';
+                    tr.innerHTML = `
+                        <td style="padding:8px 10px; font-weight:600;">${it.title}</td>
+                        <td style="padding:8px 10px; text-align:center;">${it.qty || 1}</td>
+                        <td style="padding:8px 10px; text-align:right;">${formatCurrency(price)}</td>
+                        <td style="padding:8px 10px; text-align:right; font-weight:700;">${formatCurrency(totalIt)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td colspan="4" style="padding:8px 10px;">${order.items}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+        }
+
+        window.downloadOrderPDF = function() {
+            if (!currentCompletedOrder) {
+                alert('No se encontró información del pedido para generar el PDF.');
+                return;
+            }
+
+            const element = document.getElementById('printable-order-receipt');
+            element.style.display = 'block';
+
+            // Si la librería html2pdf está disponible
+            if (typeof html2pdf !== 'undefined') {
+                const opt = {
+                    margin:       [10, 10, 10, 10],
+                    filename:     'Recibo-Pedido-' + currentCompletedOrder.id + '.pdf',
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opt).from(element).save().then(() => {
+                    // Mantener visible o volver a estado normal
+                }).catch(err => {
+                    console.warn('Error al guardar con html2pdf, abriendo impresión estándar:', err);
+                    window.print();
+                });
+            } else {
+                // Fallback nativo: abrir diálogo de impresión para Guardar como PDF
+                window.print();
+            }
+        };
+
         function showSuccessScreen(order) {
             document.getElementById('main-checkout-screen').style.display = 'none';
             const successScreen = document.getElementById('order-success-screen');
             successScreen.style.display = 'block';
 
             document.getElementById('confirmed-order-id').textContent = order.id;
+            fillReceiptData(order);
+            notifyStoreAndCustomer(order);
             const notifEmailElem = document.getElementById('notif-customer-email');
             if (notifEmailElem) notifEmailElem.textContent = order.email;
 
