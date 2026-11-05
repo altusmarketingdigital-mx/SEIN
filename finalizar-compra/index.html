@@ -969,6 +969,21 @@
                 Hemos registrado esta orden en tu historial. Puedes darle seguimiento desde tu panel de cliente en cualquier momento.
             </p>
 
+            
+            <!-- BOTÓN DE DESCARGA DE RECIBO OFICIAL EN PDF -->
+            <div style="margin: 22px 0 15px 0;">
+                <button type="button" class="btn-pdf-download" onclick="downloadOrderPDF()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    <span>📄 Descargar Recibo Oficial en PDF</span>
+                </button>
+            </div>
+
             <div class="success-actions">
                 <a href="/mi-cuenta/" class="btn-primary-link">Ir a Mi Cuenta / Mis Pedidos</a>
                 <a href="/tienda/" class="btn-secondary">Seguir Comprando</a>
@@ -982,6 +997,89 @@
             </div>
         </div>
     </div>
+
+    
+    <!-- PLANTILLA DE RECIBO OFICIAL PARA DESCARGA EN PDF (Oculta en vista web normal, activa en PDF/Print) -->
+    <div id="printable-order-receipt" style="display: none; background: #ffffff; color: #2b2b2b; font-family: 'Montserrat', Arial, sans-serif; padding: 30px; max-width: 800px; margin: 0 auto; border: 1px solid #e0ded8;">
+        <!-- Encabezado del Recibo -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #a3875e; padding-bottom: 20px; margin-bottom: 25px;">
+            <div>
+                <img src="/wp-content/uploads/2024/09/Sin-titulo-1_Mesa-de-trabajo-1-2048x354-1-1024x177.png" alt="SEIN Candle Co." style="height: 48px; width: auto; max-width: 210px; display: block; margin-bottom: 6px;">
+                <div style="font-size: 11px; color: #777; letter-spacing: 1px; text-transform: uppercase;">Aromaterapia & Velas Artesanales</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 18px; font-weight: 700; color: #2b2b2b; letter-spacing: 1px;">RECIBO DE PEDIDO</div>
+                <div id="pdf-order-id" style="font-size: 15px; font-weight: 700; color: #a3875e; margin-top: 3px;">#SEIN-00000</div>
+                <div id="pdf-order-date" style="font-size: 12px; color: #666; margin-top: 2px;">Fecha: 05/11/2026</div>
+            </div>
+        </div>
+
+        <!-- Información de Cliente y Entrega -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; background: #faf8f5; padding: 18px; border-radius: 8px;">
+            <div>
+                <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #a3875e; letter-spacing: 1px; margin-bottom: 6px;">Datos del Cliente</div>
+                <div id="pdf-cust-name" style="font-weight: 600; font-size: 14px; color: #2b2b2b;">Cliente</div>
+                <div id="pdf-cust-email" style="font-size: 12.5px; color: #555; margin-top: 2px;">cliente@correo.com</div>
+                <div id="pdf-cust-phone" style="font-size: 12.5px; color: #555; margin-top: 2px;">Tel: -</div>
+            </div>
+            <div>
+                <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #a3875e; letter-spacing: 1px; margin-bottom: 6px;">Destino de Envío</div>
+                <div id="pdf-cust-address" style="font-size: 13px; color: #333; line-height: 1.4;">Dirección</div>
+                <div id="pdf-cust-shipping" style="font-size: 12px; color: #666; margin-top: 4px; font-weight: 500;">Método: -</div>
+            </div>
+        </div>
+
+        <!-- Tabla de Productos -->
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+            <thead>
+                <tr style="background: #2b2b2b; color: #ffffff; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <th style="padding: 10px 12px; text-align: left;">Producto</th>
+                    <th style="padding: 10px 12px; text-align: center; width: 70px;">Cant.</th>
+                    <th style="padding: 10px 12px; text-align: right; width: 110px;">P. Unitario</th>
+                    <th style="padding: 10px 12px; text-align: right; width: 110px;">Importe</th>
+                </tr>
+            </thead>
+            <tbody id="pdf-items-tbody" style="font-size: 13px; color: #333;">
+                <!-- Dinámico -->
+            </tbody>
+        </table>
+
+        <!-- Totales -->
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
+            <div style="width: 280px; font-size: 13px;">
+                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee;">
+                    <span style="color: #666;">Subtotal:</span>
+                    <strong id="pdf-subtotal-val">$0.00 MXN</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee;">
+                    <span style="color: #666;">Costo de Envío:</span>
+                    <strong id="pdf-shipping-val">$0.00 MXN</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 16px; color: #2b2b2b; border-top: 2px solid #2b2b2b; margin-top: 4px;">
+                    <strong>Total:</strong>
+                    <strong id="pdf-total-val" style="color: #a3875e;">$0.00 MXN</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Datos para Transferencia SPEI si corresponde -->
+        <div id="pdf-spei-instructions" style="background: #fdfbf7; border: 1px dashed #d5c3a5; padding: 16px; border-radius: 6px; margin-bottom: 25px; font-size: 12.5px; line-height: 1.5;">
+            <strong style="color: #a3875e; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px;">Instrucciones para Transferencia Interbancaria (SPEI):</strong>
+            <div><strong>Banco:</strong> BBVA México</div>
+            <div><strong>Beneficiario:</strong> SEIN Candle Co.</div>
+            <div><strong>CLABE Interbancaria:</strong> 012320015489765432</div>
+            <div><strong>Concepto / Referencia:</strong> <span id="pdf-spei-concept" style="font-weight: 700; color: #2b2b2b;">-</span></div>
+            <div style="margin-top: 6px; font-size: 11.5px; color: #777;">* Al realizar tu transferencia con tu número de orden en el concepto, tu pedido pasará a estatus de preparación.</div>
+        </div>
+
+        <!-- Pie de página del Recibo -->
+        <div style="border-top: 1px solid #e9e4dc; padding-top: 15px; font-size: 11px; color: #888; text-align: center; line-height: 1.6;">
+            <div><strong>SEIN Candle Co.</strong> — Aromas que transforman tus espacios.</div>
+            <div>Atención al cliente: seincandleco@gmail.com | WhatsApp Oficial: +52 33 3463 6538 | Guadalajara, Jalisco.</div>
+            <div>Este documento es un comprobante de orden de compra generado por la tienda oficial en línea www.seincandleco.com.</div>
+        </div>
+    </div>
+
 
     <!-- Script de Lógica del Checkout -->
     <script>
