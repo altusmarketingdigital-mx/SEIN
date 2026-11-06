@@ -769,16 +769,16 @@
                         <div class="shipping-price" style="color: var(--success); font-weight:800;">GRATIS</div>
                     </div>
 
-                    <!-- Opción 2: Envío Zona Metropolitana de Guadalajara (Precio Fijo $87 MXN) -->
+                    <!-- Opción 2: Envío Local Wepaak ZMG (Precio Fijo $87 MXN) -->
                     <div class="shipping-option" id="shipping-opt-local" onclick="selectShipping('local')">
                         <div class="shipping-left">
                             <input type="radio" name="shipping" id="radio-local" class="shipping-radio">
                             <div>
                                 <div class="shipping-title" style="display:flex; align-items:center; gap:6px;">
-                                    <span>🛵 Envío Zona Metropolitana de Guadalajara</span>
-                                    <span style="font-size:11px; background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:12px; font-weight:700;">Precio Fijo Local</span>
+                                    <span>🛵 Envío Local Wepaak (Zona Metropolitana de GDL)</span>
+                                    <span style="font-size:11px; background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:12px; font-weight:700;">⚡ Wepaak Express</span>
                                 </div>
-                                <div class="shipping-subtitle">Entrega directa en 1 a 2 días hábiles en Guadalajara, Zapopan, Tlaquepaque, Tonalá y Tlajomulco</div>
+                                <div class="shipping-subtitle">Entrega garantizada día siguiente (Guadalajara, Zapopan, Tlaquepaque, Tonalá y Tlajomulco) con rastreo directo</div>
                             </div>
                         </div>
                         <div class="shipping-price">$87.00 MXN</div>
@@ -1129,7 +1129,7 @@
 
         const SHIPPING_RATES = {
             free: { cost: 0, name: 'Envío Nacional Gratis ($0 MXN)' },
-            local: { cost: 87, name: 'Envío Zona Metropolitana de Guadalajara ($87 MXN)' },
+            local: { cost: 87, name: 'Envío Local ZMG - Wepaak ($87.00 MXN)' },
             std: { cost: 149, name: 'Envío Estándar Nacional ($149 MXN)' },
             express: { cost: 220, name: 'Envío Express Prioritario ($220 MXN)' }
         };
@@ -1281,10 +1281,10 @@
                 }
                 if (badge) {
                     badge.style.display = "flex";
-                    badge.innerHTML = '<span>🛵</span><span>Envío Local ZMG Fijo</span>';
-                    badge.style.color = '#92400e';
-                    badge.style.background = '#fef3c7';
-                    badge.style.border = '1px solid #fde68a';
+                    badge.innerHTML = '<span>📦</span><span>Wepaak Local ZMG</span>';
+                    badge.style.color = '#0284c7';
+                    badge.style.background = '#f0f9ff';
+                    badge.style.border = '1px solid #bae6fd';
                 }
                 if (localCard) localCard.style.display = "flex";
                 if (stdCard) stdCard.style.display = "none";
@@ -1292,10 +1292,10 @@
 
                 if (banner) {
                     banner.style.display = "block";
-                    banner.style.background = "#fefce8";
-                    banner.style.color = "#854d0e";
-                    banner.style.border = "1px solid #fef08a";
-                    banner.innerHTML = '📍 <strong>Zona Metropolitana de Guadalajara detectada (C.P. ' + destZip + '):</strong> Aplica tarifa fija local de $87.00 MXN para entrega directa.';
+                    banner.style.background = "#f0f9ff";
+                    banner.style.color = "#0369a1";
+                    banner.style.border = "1px solid #bae6fd";
+                    banner.innerHTML = '📍 <strong>Zona Metropolitana de Guadalajara detectada (C.P. ' + destZip + '):</strong> Asignado a paquetería <strong>Wepaak</strong> con tarifa plana de $87.00 MXN (Día siguiente).';
                 }
 
                 var subtotalZMG = cart.reduce(function(sum, it) { return sum + (parsePrice(it.price) * (it.qty || 1)); }, 0);
