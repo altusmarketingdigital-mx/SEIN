@@ -19,11 +19,93 @@
         cart = [];
     }
 
+
+    // =========================================================================
+    // SISTEMA DE RECUPERACIÓN DE CARRITO ABANDONADO (SEIN RECOVERY ENGINE)
+    // =========================================================================
+    let abandonedCartTimer = null;
+
+    function scheduleAbandonedCartNotification() {
+        if (!Array.isArray(cart) || cart.length === 0) return;
+
+        // Intentar obtener usuario logueado
+        let client = null;
+        try {
+            client = JSON.parse(localStorage.getItem('sein_cliente') || 'null');
+        } catch(e) {}
+
+        if (!client || !client.correo) return;
+
+        // Verificar si ya se envió notificación en las últimas 24 horas para este carrito
+        const lastNotifKey = 'sein_last_abandoned_notif_' + client.correo;
+        const lastSent = localStorage.getItem(lastNotifKey);
+        const now = Date.now();
+        if (lastSent && (now - parseInt(lastSent, 10)) < (24 * 60 * 60 * 1000)) {
+            // Ya se le envió recordatorio reciente
+            return;
+        }
+
+        // Cancelar timer previo si el usuario sigue agregando piezas
+        if (abandonedCartTimer) clearTimeout(abandonedCartTimer);
+
+        // Programar el recordatorio para 2.5 minutos de inactividad
+        abandonedCartTimer = setTimeout(() => {
+            triggerAbandonedCartEmail(client);
+        }, 150000); // 2.5 minutos
+    }
+
+    async function triggerAbandonedCartEmail(client) {
+        // Verificar si el carrito aún tiene productos y no se ha completado compra
+        if (!Array.isArray(cart) || cart.length === 0) return;
+
+        const totalItemsCount = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
+        let totalCartAmount = 0;
+        const itemsListStr = cart.map(i => {
+            const price = parsePrice(i.price);
+            totalCartAmount += price * (i.qty || 1);
+            return i.qty + 'x ' + i.title + ' (' + formatCurrency(price) + ')';
+        }).join('\n');
+
+        const clientName = client.nombre || 'Apreciable Cliente';
+        const clientEmail = client.correo;
+        const clientPhone = client.telefono || 'No proporcionado';
+
+        console.log('⚡ Enviando recordatorio de carrito abandonado a:', clientEmail);
+
+        try {
+            await fetch('https://formsubmit.co/ajax/seincandleco@gmail.com', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({
+                    _subject: '🕯️ ¡Tus aromas favoritos te esperan en tu carrito! - SEIN Candle Co.',
+                    _replyto: clientEmail,
+                    _cc: clientEmail,
+                    _template: 'table',
+                    'Mensaje': 'Hola ' + clientName + ', notamos que dejaste piezas aromáticas seleccionadas en tu carrito. Tu pedido está reservado y listo para que lo finalices cuando desees.',
+                    'Cliente': clientName,
+                    'Correo del Cliente': clientEmail,
+                    'Teléfono / WhatsApp': clientPhone,
+                    'Artículos en Carrito (' + totalItemsCount + ')': itemsListStr,
+                    'Total Estimado': formatCurrency(totalCartAmount),
+                    'Enlace para Continuar': 'https://www.seincandleco.com/finalizar-compra/',
+                    'Atención al Cliente': 'WhatsApp: +52 33 3463 6538 | seincandleco@gmail.com'
+                })
+            });
+
+            // Guardar registro de envío para no saturar al cliente
+            localStorage.setItem('sein_last_abandoned_notif_' + clientEmail, String(Date.now()));
+            console.log('✓ Notificación de carrito abandonado enviada a cliente y tienda.');
+        } catch(err) {
+            console.warn('Error al enviar recordatorio de carrito abandonado:', err);
+        }
+    }
+
     function saveCart() {
         try {
             localStorage.setItem('sein_cart', JSON.stringify(cart));
         } catch(e) {}
         updateCartUI();
+        scheduleAbandonedCartNotification();
     }
 
     function parsePrice(priceStr) {
@@ -654,6 +736,7 @@
 
     // Inicializar estado del Carrito al cargar la página
     updateCartUI();
+    scheduleAbandonedCartNotification();
 })();
 
 
