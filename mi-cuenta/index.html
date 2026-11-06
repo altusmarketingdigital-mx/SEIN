@@ -468,7 +468,7 @@
 
     <header class="header">
         <a href="/" class="header-logo" title="SEIN Candle Co."><img src="/wp-content/uploads/2024/09/Sin-titulo-1_Mesa-de-trabajo-1-2048x354-1-1024x177.png" alt="SEIN Candle Co." style="height: 40px; width: auto; max-width: 180px; object-fit: contain; display: block;"></a>
-        <a href="/tienda/">← Volver a la Tienda</a>
+        <a href="/">← Volver al Inicio</a>
     </header>
 
     <div class="container">
@@ -617,7 +617,7 @@
                     </div>
 
                     <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                        <a href="/tienda/" class="btn" style="width:auto; padding:12px 24px; background:#a3875e;">Explorar Catálogo</a>
+                        <a href="/" class="btn" style="width:auto; padding:12px 24px; background:#a3875e;">Explorar Catálogo</a>
                         <a href="https://wa.me/5213334636538?text=Hola,%20tengo%20una%20duda%20sobre%20mi%20cuenta" target="_blank" class="btn btn-outline" style="width:auto; padding:12px 24px;">Contactar por WhatsApp</a>
                     </div>
                 </div>
@@ -632,7 +632,7 @@
                             <div class="empty-state-icon">🛍️</div>
                             <h4 style="margin:0 0 8px; font-size:16px; color:#333;">Aún no tienes pedidos registrados</h4>
                             <p style="margin:0 0 20px; font-size:14px; color:#777;">Tus compras realizadas aparecerán reflejadas aquí automáticamente con su estado y seguimiento.</p>
-                            <a href="/tienda/" class="btn" style="width:auto; display:inline-flex; padding:10px 22px; background:#a3875e;">Ir a Comprar</a>
+                            <a href="/" class="btn" style="width:auto; display:inline-flex; padding:10px 22px; background:#a3875e;">Ir a Comprar</a>
                         </div>
                     </div>
                 </div>
@@ -927,7 +927,7 @@
                 var container = document.getElementById("orders-list-container");
                 if (!container) return;
                 if (myOrders.length === 0) {
-                    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🛍️</div><h4 style="margin:0 0 8px; font-size:16px; color:#333;">Aún no tienes pedidos registrados</h4><p style="margin:0 0 20px; font-size:14px; color:#777;">Tus compras realizadas aparecerán reflejadas aquí automáticamente con su estado y seguimiento.</p><a href="/tienda/" class="btn" style="width:auto; display:inline-flex; padding:10px 22px; background:#a3875e;">Ir a Comprar</a></div>';
+                    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🛍️</div><h4 style="margin:0 0 8px; font-size:16px; color:#333;">Aún no tienes pedidos registrados</h4><p style="margin:0 0 20px; font-size:14px; color:#777;">Tus compras realizadas aparecerán reflejadas aquí automáticamente con su estado y seguimiento.</p><a href="/" class="btn" style="width:auto; display:inline-flex; padding:10px 22px; background:#a3875e;">Ir a Comprar</a></div>';
                 } else {
                     var out = '<div style="overflow-x:auto;"><table class="orders-table"><thead><tr><th># Pedido</th><th>Fecha</th><th>Productos</th><th>Método</th><th>Total</th><th>Estado</th></tr></thead><tbody>';
                     for (var j = 0; j < myOrders.length; j++) {
