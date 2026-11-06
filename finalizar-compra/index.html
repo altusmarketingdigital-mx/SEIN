@@ -998,10 +998,17 @@
                 <p style="font-size: 13.5px; color: #444; margin-bottom: 15px;">
                     Tu orden ha sido registrada. Pulsa abajo para enviar o consultar la confirmación oficial en WhatsApp:
                 </p>
-                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                    <a id="btn-wa-notify-provider" href="#" target="_blank" style="background: #25d366; color: #fff; padding: 12px 22px; border-radius: 8px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(37,211,102,0.35);">
-                        📲 Enviar Notificación al Proveedor por WhatsApp
+                <p style="font-size: 13.5px; color: #444; margin-bottom: 12px;">
+                    ¿Realizaste tu transferencia o necesitas enviar tu comprobante de pago para validación inmediata?
+                </p>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <a id="btn-wa-send-receipt" href="#" target="_blank" style="background: #25d366; color: #ffffff; padding: 13px 24px; border-radius: 8px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(37,211,102,0.4); transition: transform 0.15s ease;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z"/></svg>
+                        <span>📲 Enviar Comprobante de Pago por WhatsApp</span>
                     </a>
+                </div>
+                <div style="font-size: 11.5px; color: #666; margin-top: 8px;">
+                    * Al pulsar el botón se abrirá WhatsApp con el número de pedido listo para adjuntar tu foto o captura del comprobante.
                 </div>
             </div>
         </div>
@@ -1508,8 +1515,17 @@
                     waBtn.href = "https://wa.me/5213334636538?text=" + encodeURIComponent(waMsg);
                 }
 
-                // Guardar enlace de notificación directa para apertura automática
-                window.lastOrderAdminWa = "https://wa.me/5213334636538?text=" + encodeURIComponent(waMsg);
+                // Enlace especial para enviar comprobante de pago por WhatsApp
+                let receiptMsg = "Hola SEIN Candle Co. 🕯️✨\n\n";
+                receiptMsg += "Adjunto mi comprobante de pago para mi pedido:\n";
+                receiptMsg += "📋 *Folio de Orden:* #" + order.id + "\n";
+                receiptMsg += "👤 *Cliente:* " + order.customer + "\n";
+                receiptMsg += "💰 *Monto a Validar:* " + formatCurrency(order.total) + "\n";
+                receiptMsg += "💳 *Método:* " + order.payment_method + "\n\n";
+                receiptMsg += "Quedo en espera de su confirmación para comenzar con la preparación de mi pedido. ¡Gracias!";
+
+                window.lastOrderReceiptWa = "https://wa.me/5213334636538?text=" + encodeURIComponent(receiptMsg);
+                window.lastOrderAdminWa = window.lastOrderReceiptWa;
 
                 // Enlace de notificación directa para enviar al WhatsApp del cliente
                 let rawPhone = String(order.phone || '').replace(/[^0-9]/g, '');
@@ -1799,7 +1815,11 @@
                 waLink.href = `https://wa.me/5213334636538?text=Hola,%20acabo%20de%20realizar%20el%20pedido%20${order.id}%20en%20la%20tienda%20web%20y%20tengo%20una%20consulta`;
             }
 
-            // Asignar enlaces en los botones de WhatsApp
+            // Asignar enlaces en el botón de Comprobante de WhatsApp
+            const btnSendReceipt = document.getElementById('btn-wa-send-receipt');
+            if (btnSendReceipt && window.lastOrderReceiptWa) {
+                btnSendReceipt.href = window.lastOrderReceiptWa;
+            }
             const btnNotifyProvider = document.getElementById('btn-wa-notify-provider');
             if (btnNotifyProvider && window.lastOrderAdminWa) {
                 btnNotifyProvider.href = window.lastOrderAdminWa;
