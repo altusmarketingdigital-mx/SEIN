@@ -1098,6 +1098,37 @@
                 </div>
             </section>
 
+            
+            <!-- 8. SECCIÓN: RECUPERACIÓN DE CARRITOS ABANDONADOS -->
+            <section id="sec-abandoned" class="tab-section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h3>Carritos Abandonados en Tiempo Real</h3>
+                            <p style="font-size: 0.85rem; color: #718096; margin-top: 3px;">Clientes que agregaron productos pero no completaron su compra. Contáctalos directamente por WhatsApp con un clic.</p>
+                        </div>
+                        <button class="btn-primary" onclick="fetchAbandonedCarts()">🔄 Actualizar Lista</button>
+                    </div>
+                    <div class="panel-body" style="padding: 0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Contacto (Email / Tel)</th>
+                                    <th>Productos en Carrito</th>
+                                    <th>Total</th>
+                                    <th>Última Actividad</th>
+                                    <th>Acción de Recuperación</th>
+                                </tr>
+                            </thead>
+                            <tbody id="abandoned-carts-tbody">
+                                <tr><td colspan="6" style="text-align: center; padding: 25px;">Cargando carritos pendientes...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
             <!-- 5. GESTIÓN Y ACTIVACIÓN DE MÉTODOS DE PAGO -->
             <section id="sec-payments" class="tab-section">
                 <div class="panel">
@@ -1256,6 +1287,2036 @@
             renderAll();
         }
 
+        
+        // =========================================================================
+        // GESTIÓN DE CARRITOS ABANDONADOS EN EL PANEL
+        // =========================================================================
+        async function fetchAbandonedCarts() {
+            const tbody = document.getElementById('abandoned-carts-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 25px;">Consultando carritos en la nube...</td></tr>';
+
+            try {
+                const res = await fetch(SUPABASE_URL + '/rest/v1/productos?categoria=eq.__system_abandoned_cart__&order=created_at.desc', {
+                    headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY }
+                });
+                const carts = await res.json();
+
+                if (!Array.isArray(carts) || carts.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 35px; color: #718096;">✨ ¡Excelente! No hay carritos abandonados pendientes en este momento.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                carts.forEach(c => {
+                    let data = {};
+                    try { data = JSON.parse(c.descripcion || '{}'); } catch(e) {}
+
+                    const itemsList = Array.isArray(data.items) 
+                        ? data.items.map(it => (it.qty || 1) + 'x ' + (it.title || 'Producto')).join(', ')
+                        : 'Piezas seleccionadas';
+
+                    const cleanPhone = String(data.phone || '').replace(/[^0-9]/g, '');
+                    let intlPhone = cleanPhone;
+                    if (cleanPhone.length === 10) intlPhone = '521' + cleanPhone;
+                    else if (cleanPhone.length === 12 && cleanPhone.startsWith('52')) intlPhone = '521' + cleanPhone.slice(2);
+
+                    const clientName = c.nombre || 'Cliente';
+                    const totalFormatted = '
+            document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            
+            const target = document.getElementById('sec-' + secId);
+            if (target) target.classList.add('active');
+            if (elem) elem.classList.add('active');
+
+            const titles = {
+                dashboard: "Resumen Ejecutivo",
+                orders: "Historial y Seguimiento de Pedidos",
+                products: "Inventario y Catálogo de Productos",
+                carousel: "Carrusel de Inicio",
+                favoritos: "Configuración de Productos Favoritos",
+                popup: "Ventana Pop-up Promocional",
+                customers: "Directorio de Clientes",
+                abandoned: "Recuperación de Carritos Abandonados",
+                payments: "Métodos de Pago",
+                reports: "Reportes Financieros de Ventas",
+                users: "Gestión de Usuarios del Panel"
+            };
+            document.getElementById('page-title').textContent = titles[secId] || "Panel de Administración";
+
+            if (secId === 'popup') {
+                if (typeof fetchPopupConfig === 'function') {
+                    fetchPopupConfig();
+                }
+            }
+
+            if (secId === 'favoritos') {
+                if (typeof fetchFavoritosConfig === 'function') {
+                    fetchFavoritosConfig();
+                }
+            }
+
+            if (secId === 'products') {
+                if (typeof filterAdminProducts === 'function') {
+                    filterAdminProducts();
+                } else if (typeof fetchAdminProducts === 'function') {
+                    fetchAdminProducts();
+                }
+            }
+        }
+
+        function getStatusBadge(status) {
+            if (status === "Entregado") return '<span class="status-badge status-completed">✅ Entregado</span>';
+            if (status === "En Tránsito") return '<span class="status-badge status-shipping">🚚 En Tránsito</span>';
+            if (status === "Preparando Envío") return '<span class="status-badge status-pending">📦 Preparando Envío</span>';
+            return '<span class="status-badge status-cancelled">❌ Cancelado</span>';
+        }
+
+        function renderAll() {
+            // Render Pedidos Recientes
+            const recentTbody = document.getElementById('recent-orders-tbody');
+            recentTbody.innerHTML = '';
+            orders.slice(0, 4).forEach(o => {
+                recentTbody.innerHTML += `
+                    <tr>
+                        <td><strong>${o.id}</strong></td>
+                        <td>${o.customer}</td>
+                        <td>${o.items}</td>
+                        <td><strong>$${o.total.toFixed(2)} MXN</strong></td>
+                        <td>${getStatusBadge(o.status)}</td>
+                        <td><a href="https://wa.me/521${o.phone}?text=Hola%20${encodeURIComponent(o.customer)},%20te%20escribimos%20de%20SEIN%20respecto%20a%20tu%20orden%20${o.id}" target="_blank" class="btn-sm">💬 WhatsApp</a></td>
+                    </tr>
+                `;
+            });
+
+            // Render Todos los Pedidos
+            const allTbody = document.getElementById('all-orders-tbody');
+            allTbody.innerHTML = '';
+            orders.forEach((o, index) => {
+                allTbody.innerHTML += `
+                    <tr>
+                        <td><strong>${o.id}</strong></td>
+                        <td>${o.date}</td>
+                        <td>${o.customer}<br><small style="color:#718096;">+52 ${o.phone}</small></td>
+                        <td>${o.items}</td>
+                        <td><strong>$${o.total.toFixed(2)} MXN</strong></td>
+                        <td>${getStatusBadge(o.status)}</td>
+                        <td>
+                            <select onchange="updateOrderStatus(${index}, this.value)" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); font-size: 0.82rem;">
+                                <option value="Preparando Envío" ${o.status === 'Preparando Envío' ? 'selected' : ''}>Preparando Envío</option>
+                                <option value="En Tránsito" ${o.status === 'En Tránsito' ? 'selected' : ''}>En Tránsito</option>
+                                <option value="Entregado" ${o.status === 'Entregado' ? 'selected' : ''}>Entregado</option>
+                                <option value="Cancelado" ${o.status === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Render Productos
+            const prodTbody = document.getElementById('products-tbody');
+            prodTbody.innerHTML = '';
+            // products rendered via Supabase now
+
+            // Render Clientes
+            const users = JSON.parse(localStorage.getItem('sein_users') || '[]');
+            const custTbody = document.getElementById('customers-tbody');
+            custTbody.innerHTML = '';
+            
+            // Combinar clientes demostrativos y registrados
+            const allCust = [
+                { name: "Miriam Castro", email: "miriam@ejemplo.com", phone: "33 3463 6538", address: "Av. Vallarta 1234, Guadalajara, Jal." },
+                { name: "Carlos Mendoza", email: "carlos@ejemplo.com", phone: "33 1234 5678", address: "Col. Americana, Guadalajara, Jal." },
+                { name: "Sofía Navarro", email: "sofia@ejemplo.com", phone: "33 9876 5432", address: "Zapopan, Jal." },
+                ...users
+            ];
+
+            allCust.forEach(c => {
+                custTbody.innerHTML += `
+                    <tr>
+                        <td><strong>${c.name}</strong></td>
+                        <td>${c.email}</td>
+                        <td>${c.phone || 'N/A'}</td>
+                        <td>${c.address || 'Pendiente de registrar'}</td>
+                        <td><a href="https://wa.me/521${(c.phone||'').replace(/[^0-9]/g,'')}?text=Hola%20${encodeURIComponent(c.name)},%20te%20saludamos%20de%20SEIN%20🕯️" target="_blank" class="btn-sm">Contactar</a></td>
+                    </tr>
+                `;
+            });
+
+            // Actualizar Métricas
+            const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+            document.getElementById('metric-sales').textContent = '$' + totalRevenue.toLocaleString('es-MX', {minimumFractionDigits: 2}) + ' MXN';
+            document.getElementById('metric-orders').textContent = orders.length;
+            document.getElementById('metric-customers').textContent = allCust.length;
+            document.getElementById('metric-products').textContent = products.length;
+        }
+
+        function updateOrderStatus(idx, newStatus) {
+            orders[idx].status = newStatus;
+            saveAll();
+            alert('Estatus del pedido #' + orders[idx].id + ' actualizado a: ' + newStatus);
+        }
+
+        function openNewOrderModal() {
+            const client = prompt("Nombre del Cliente:");
+            if (!client) return;
+            const items = prompt("Productos y detalles del pedido:");
+            const total = parseFloat(prompt("Total en MXN:", "500")) || 0;
+            const newOrd = {
+                id: "SN-" + Math.floor(10000 + Math.random() * 90000),
+                date: new Date().toISOString().split('T')[0],
+                customer: client,
+                phone: "3334636538",
+                items: items || "Velas de Soja Artesanales",
+                total: total,
+                status: "Preparando Envío"
+            };
+            orders.unshift(newOrd);
+            saveAll();
+            alert("Pedido " + newOrd.id + " creado exitosamente.");
+        }
+
+        function addProductPrompt() {
+            // Abrir el modal de nuevo producto (definido en la seccion Supabase)
+            if (typeof openNewProductModal === 'function') {
+                openNewProductModal();
+            } else {
+                alert('Cargando... intenta de nuevo en un momento.');
+            }
+        }
+
+        function editStock(idx) {
+            const newStock = prompt("Nuevo inventario para " + products[idx].name + ":", products[idx].stock);
+            if (newStock !== null) {
+                products[idx].stock = parseInt(newStock) || 0;
+                saveAll();
+            }
+        }
+
+        function deleteProduct(idx) {
+            if (confirm("¿Seguro que deseas eliminar " + products[idx].name + "?")) {
+                products.splice(idx, 1);
+                saveAll();
+            }
+        }
+
+        function filterOrders() {
+            const query = document.getElementById('order-search').value.toLowerCase();
+            document.querySelectorAll('#all-orders-tbody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+            });
+        }
+
+        function checkAdminAuth() {
+            const isAuth = sessionStorage.getItem('sein_admin_authenticated');
+            const overlay = document.getElementById('admin-auth-overlay');
+            if (isAuth === 'true') {
+                overlay.style.display = 'none';
+            } else {
+                overlay.style.display = 'flex';
+            }
+        }
+
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('admin-user-input').value.trim();
+            const pass = document.getElementById('admin-pass-input').value;
+            const btn = e.submitter || document.querySelector('#login-form button[type=submit]') || document.querySelector('.login-btn');
+            if (btn) { btn.textContent = 'Verificando...'; btn.disabled = true; }
+
+            // Verificar contra Supabase primero
+            const dbUser = await loginConSupabase(user, pass);
+
+            if (btn) { btn.textContent = 'Ingresar'; btn.disabled = false; }
+
+            if (dbUser) {
+                sessionStorage.setItem('sein_admin_authenticated', 'true');
+                sessionStorage.setItem('sein_admin_user', JSON.stringify(dbUser));
+                checkAdminAuth();
+                renderAll();
+            } else {
+                alert('Credenciales incorrectas. Por favor verifica tu usuario y contraseña.');
+            }
+        }
+
+        // Control de Métodos de Pago
+        let paymentMethods = JSON.parse(localStorage.getItem('sein_payment_settings') || 'null') || {
+            whatsapp: true,
+            spei: true,
+            card: true,
+            oxxo: true
+        };
+
+        function renderPaymentSettings() {
+            document.getElementById('pay-toggle-whatsapp').checked = paymentMethods.whatsapp !== false;
+            document.getElementById('pay-toggle-spei').checked = paymentMethods.spei !== false;
+            document.getElementById('pay-toggle-card').checked = paymentMethods.card !== false;
+            document.getElementById('pay-toggle-oxxo').checked = paymentMethods.oxxo !== false;
+        }
+
+        function togglePaymentMethod(methodKey, isEnabled) {
+            paymentMethods[methodKey] = isEnabled;
+            localStorage.setItem('sein_payment_settings', JSON.stringify(paymentMethods));
+        }
+
+        function savePaymentSettings() {
+            localStorage.setItem('sein_payment_settings', JSON.stringify(paymentMethods));
+            alert('¡Configuración de pasarelas y métodos de pago guardada exitosamente! 💳');
+        }
+
+        function handleAdminLogout() {
+            sessionStorage.removeItem('sein_admin_authenticated');
+            checkAdminAuth();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAdminAuth();
+            renderPaymentSettings();
+            renderAll();
+        });
+        checkAdminAuth();
+        renderPaymentSettings();
+        renderAll();
+    </script>
+
+<!-- SECCION SUPABASE ADMIN -->
+<style>
+.admin-filter-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+.admin-filter-bar select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+.modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5); display: none;
+    align-items: center; justify-content: center; z-index: 1000;
+}
+.modal-content {
+    background: #fff; padding: 20px; border-radius: 8px; width: 400px;
+    max-width: 90%;
+}
+.modal-content h3 { margin-top: 0; margin-bottom: 15px; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+.form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+</style>
+
+<div id="editProductModal" class="modal-overlay">
+    <div class="modal-content" style="max-height:90vh; overflow-y:auto;">
+        <h3>Editar Producto</h3>
+        <input type="hidden" id="edit-id">
+        <div class="form-group">
+            <label>Nombre</label>
+            <input type="text" id="edit-nombre">
+        </div>
+        <div class="form-group">
+            <label>Precio (ej. $149.00)</label>
+            <input type="text" id="edit-precio">
+        </div>
+        
+          <div class="form-group" style="background:#fcfcfc; border:1px dashed #dcdcdc; padding:12px; border-radius:6px; margin-top:5px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <label style="margin:0; font-weight:600; color:#333;">Categorías / Menús donde aparecerá <span style="color:red">*</span></label>
+                <button type="button" onclick="addCategoryRow('edit')" class="btn-sm" style="background:#DB572E; color:#fff; border:none; padding:4px 10px; border-radius:4px; font-size:12px; cursor:pointer;">+ Agregar otro menú</button>
+            </div>
+            <div id="edit-categories-container"></div>
+        </div>
+
+        <div class="form-group" style="position:relative; padding-top: 10px;">
+              <button type="button" style="position:absolute; top: -5px; right: 0; font-size:11px; padding:3px 8px; border:1px solid #ddd; background:#f5f5f5; border-radius:4px; cursor:pointer;" onclick="document.getElementById('edit-dimensiones').value='No aplica'; document.getElementById('edit-peso').value='No aplica';">No aplica</button>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                  <div>
+                      <label style="margin-top:0;">Dimensiones</label>
+                      <input type="text" id="edit-dimensiones" placeholder="Ej. 10x15x5 cm">
+                  </div>
+                  <div>
+                      <label style="margin-top:0;">Peso</label>
+                      <input type="text" id="edit-peso" placeholder="Ej. 500 gr">
+                  </div>
+              </div>
+          </div>
+        <div class="form-group">
+            <label>Descripción</label>
+            <textarea id="edit-descripcion" rows="4" placeholder="Descripción del producto..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Contenido del Producto</label>
+            <textarea id="edit-contenido" rows="4" placeholder="Detalla las especificaciones, aromas, medidas, qué incluye el kit, materiales..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Imágenes del Producto (hasta 5 imágenes)</label>
+            <input type="file" id="edit-imagen-file" accept="image/*" multiple onchange="handleMultiImageSelect(this, 'edit')">
+            <input type="hidden" id="edit-imagen-url">
+            <div id="edit-imagen-status" style="font-size:12px; color:#666; margin-top:5px;">Puedes seleccionar hasta 5 imágenes (la primera es la principal).</div>
+            <div id="edit-images-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;"></div>
+        </div>
+        <div class="form-group">
+            <label>Estado</label>
+            <select id="edit-activo">
+                <option value="true">Activo (Visible)</option>
+                <option value="false">Inactivo (Oculto)</option>
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-sm" style="background:#ccc; color:#333;" onclick="closeEditModal()">Cancelar</button>
+            <button class="btn-primary" id="edit-save-btn" onclick="saveProductChanges()">Guardar Cambios</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SUPABASE_URL = "https://hyibazrenjtnswtebybb.supabase.co";
+    
+const menuMap = {
+    "Bienestar": ["Velas de Soja", "Aromas"],
+    "Regalos con Alma": ["Detalles Personalizados", "Corporativos | Kits", "Organización y Estilo", "Cajas y Empaques Personalizados", "Agendas y Libretas", "Organizador de Gastos", "Post its"],
+    "Organización y Estilo": ["Organización y Estilo", "Agendas y Libretas", "Organizador de Gastos", "Post its", "Planners", "Libretas"],
+    "Extracto de Café": [],
+    "Eventos": ["Religiosos | Personalizados", "Corporativos | Kits"]
+};
+
+window.updateSubmenu = function(menuId, submenuId, selectedSubmenu = "") {
+    const menu = document.getElementById(menuId).value;
+    const submenuSelect = document.getElementById(submenuId);
+    submenuSelect.innerHTML = '<option value="">-- Selecciona Sub-menú --</option>';
+    
+    if (menuMap[menu]) {
+        menuMap[menu].forEach(sub => {
+            const opt = document.createElement('option');
+            opt.value = sub;
+            opt.textContent = sub;
+            if (sub === selectedSubmenu) opt.selected = true;
+            submenuSelect.appendChild(opt);
+        });
+    }
+};
+
+
+window.addCategoryRow = function(prefix, selectedMenu = "", selectedSubmenu = "") {
+    const container = document.getElementById(prefix + '-categories-container');
+    if (!container) return;
+
+    const rowId = 'cat-row-' + prefix + '-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+    const row = document.createElement('div');
+    row.id = rowId;
+    row.className = 'cat-select-row';
+    row.style = 'display:flex; gap:10px; align-items:center; margin-bottom:8px;';
+
+    const menuOptions = Object.keys(menuMap).map(m => 
+        `<option value="${m}" ${m === selectedMenu ? 'selected' : ''}>${m}</option>`
+    ).join('');
+
+    row.innerHTML = `
+        <select class="cat-menu-select" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;" onchange="handleRowMenuChange('${rowId}')">
+            <option value="">-- Selecciona Menú --</option>
+            ${menuOptions}
+        </select>
+        <select class="cat-submenu-select" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            <option value="">-- Selecciona Sub-menú --</option>
+        </select>
+        <button type="button" onclick="removeCategoryRow('${rowId}', '${prefix}')" style="background:#dc3545; color:#fff; border:none; border-radius:4px; padding:6px 10px; cursor:pointer; font-weight:bold;" title="Eliminar fila">&times;</button>
+    `;
+
+    container.appendChild(row);
+
+    // Si ya viene con submenú, poblar y seleccionar
+    if (selectedMenu) {
+        populateRowSubmenu(row, selectedMenu, selectedSubmenu);
+    }
+};
+
+window.handleRowMenuChange = function(rowId) {
+    const row = document.getElementById(rowId);
+    if (!row) return;
+    const menuSelect = row.querySelector('.cat-menu-select');
+    populateRowSubmenu(row, menuSelect.value, '');
+};
+
+function populateRowSubmenu(row, menu, selectedSubmenu) {
+    const subSelect = row.querySelector('.cat-submenu-select');
+    subSelect.innerHTML = '<option value="">-- Selecciona Sub-menú --</option>';
+    if (menuMap[menu]) {
+        menuMap[menu].forEach(sub => {
+            const opt = document.createElement('option');
+            opt.value = sub;
+            opt.textContent = sub;
+            if (sub === selectedSubmenu) opt.selected = true;
+            subSelect.appendChild(opt);
+        });
+    }
+}
+
+window.removeCategoryRow = function(rowId, prefix) {
+    const row = document.getElementById(rowId);
+    if (row) row.remove();
+    const container = document.getElementById(prefix + '-categories-container');
+    if (container && container.children.length === 0) {
+        window.addCategoryRow(prefix);
+    }
+};
+
+window.getSelectedCategories = function(prefix) {
+    const container = document.getElementById(prefix + '-categories-container');
+    if (!container) return [];
+    const subSelects = container.querySelectorAll('.cat-submenu-select');
+    const cats = [];
+    subSelects.forEach(sel => {
+        const val = sel.value ? sel.value.trim() : '';
+        if (val && !cats.includes(val)) {
+            cats.push(val);
+        }
+    });
+    return cats;
+};
+
+window.reverseLookupMenu = function(submenu) {
+    for (const [menu, subs] of Object.entries(menuMap)) {
+        if (subs.includes(submenu)) return menu;
+    }
+    return "";
+};
+
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo";
+
+    // Función reutilizable para subir imagen a Supabase Storage
+    async function uploadImageToSupabase(file) {
+        const fileExt = file.name.split('.').pop();
+        const cleanName = file.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+        const fileName = `${Date.now()}_${cleanName}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const res = await fetch(`${SUPABASE_URL}/storage/v1/object/productos/${filePath}`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': file.type || 'application/octet-stream'
+            },
+            body: file
+        });
+
+        if (!res.ok) {
+            const err = await res.text();
+            throw new Error(`Error al subir imagen: ${err}`);
+        }
+
+        // URL pública de Supabase Storage
+        return `${SUPABASE_URL}/storage/v1/object/public/productos/${filePath}`;
+    }
+
+    window.handleImageFileSelect = async function(input, previewId, hiddenInputId) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        const preview = document.getElementById(previewId);
+        const statusSpan = input.parentElement.querySelector('span');
+        
+        // Disable save buttons while uploading
+        const saveBtns = document.querySelectorAll('.btn-primary');
+        saveBtns.forEach(btn => btn.disabled = true);
+
+        // Mostrar vista previa local instantánea
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+
+        if (statusSpan) statusSpan.textContent = 'Subiendo imagen a la nube...';
+
+        try {
+            const publicUrl = await uploadImageToSupabase(file);
+            document.getElementById(hiddenInputId).value = publicUrl;
+            if (statusSpan) statusSpan.textContent = '✅ Imagen subida con éxito';
+        } catch (err) {
+            alert(err.message);
+            if (statusSpan) statusSpan.textContent = '❌ Error al subir imagen';
+        } finally {
+            const saveBtns = document.querySelectorAll('.btn-primary');
+            saveBtns.forEach(btn => btn.disabled = false);
+        }
+    };
+
+    // --- MANEJO DE MULTIPLES IMAGENES (HASTA 5) ---
+    window.productImagesState = {
+        edit: [],
+        np: []
+    };
+
+    window.renderImagesPreview = function(prefix) {
+        const container = document.getElementById(prefix + '-images-container');
+        const hiddenInput = document.getElementById(prefix === 'edit' ? 'edit-imagen-url' : 'np-imagen');
+        const statusSpan = document.getElementById(prefix + '-imagen-status');
+        if (!container) return;
+
+        const list = window.productImagesState[prefix] || [];
+        hiddenInput.value = list.join(',');
+
+        if (list.length === 0) {
+            container.innerHTML = '';
+            if (statusSpan) statusSpan.textContent = 'Selecciona hasta 5 imágenes (la primera será la principal).';
+            return;
+        }
+
+        if (statusSpan) {
+            statusSpan.textContent = `${list.length} de 5 imágenes seleccionadas (la #1 es la principal).`;
+        }
+
+        container.innerHTML = list.map((url, idx) => `
+            <div style="position:relative; width:75px; height:75px; border-radius:6px; overflow:hidden; border:2px solid ${idx === 0 ? '#DB572E' : '#ddd'}; box-shadow:0 2px 5px rgba(0,0,0,0.1); background:#f9f9f9;">
+                <img src="${url}" style="width:100%; height:100%; object-fit:cover;" title="${idx === 0 ? 'Imagen Principal' : 'Imagen ' + (idx + 1)}">
+                ${idx === 0 ? '<span style="position:absolute; bottom:0; left:0; right:0; background:rgba(219,87,46,0.9); color:#fff; font-size:9px; text-align:center; padding:1px 0; font-weight:600;">PRINCIPAL</span>' : ''}
+                <button type="button" onclick="removeProductImage('${prefix}', ${idx})" style="position:absolute; top:2px; right:2px; background:rgba(220,53,69,0.9); color:#fff; border:none; border-radius:50%; width:18px; height:18px; font-size:11px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center;" title="Eliminar imagen">&times;</button>
+            </div>
+        `).join('');
+    };
+
+    window.removeProductImage = function(prefix, index) {
+        if (!window.productImagesState[prefix]) return;
+        window.productImagesState[prefix].splice(index, 1);
+        window.renderImagesPreview(prefix);
+    };
+
+    window.handleMultiImageSelect = async function(input, prefix) {
+        if (!input.files || input.files.length === 0) return;
+        const statusSpan = document.getElementById(prefix + '-imagen-status');
+        if (!window.productImagesState[prefix]) window.productImagesState[prefix] = [];
+        const currentList = window.productImagesState[prefix];
+
+        const filesToUpload = Array.from(input.files);
+        if (currentList.length + filesToUpload.length > 5) {
+            alert(`Solo puedes tener un máximo de 5 imágenes por producto. Actualmente tienes ${currentList.length} y seleccionaste ${filesToUpload.length}.`);
+            input.value = '';
+            return;
+        }
+
+        const saveBtns = document.querySelectorAll('.btn-primary');
+        saveBtns.forEach(btn => btn.disabled = true);
+        if (statusSpan) statusSpan.textContent = `Subiendo ${filesToUpload.length} imagen(es) a la nube...`;
+
+        try {
+            for (let i = 0; i < filesToUpload.length; i++) {
+                if (statusSpan) statusSpan.textContent = `Subiendo imagen ${i + 1} de ${filesToUpload.length}...`;
+                const file = filesToUpload[i];
+                const publicUrl = await uploadImageToSupabase(file);
+                currentList.push(publicUrl);
+                window.renderImagesPreview(prefix);
+            }
+            if (statusSpan) statusSpan.textContent = `✅ Imágenes subidas con éxito (${currentList.length}/5)`;
+        } catch (err) {
+            alert(err.message);
+            if (statusSpan) statusSpan.textContent = '❌ Error al subir una de las imágenes';
+        } finally {
+            input.value = '';
+            saveBtns.forEach(btn => btn.disabled = false);
+        }
+    };
+    let allSupabaseProducts = [];
+
+    async function fetchAdminProducts() {
+        const res = await fetch(SUPABASE_URL + "/rest/v1/productos?order=categoria,nombre", {
+            headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization": "Bearer " + SUPABASE_KEY
+            }
+        });
+        allSupabaseProducts = await res.json();
+        renderAdminProducts(allSupabaseProducts);
+        updateCategoryFilter();
+    }
+
+    function updateCategoryFilter() {
+        const catSet = new Set();
+        // Collect categories from actual products
+        allSupabaseProducts.forEach(p => {
+            if (p.categoria && p.categoria.trim()) {
+                catSet.add(p.categoria.trim());
+            }
+        });
+        // Also add standard categories from menuMap
+        for (const [menu, subs] of Object.entries(menuMap)) {
+            subs.forEach(s => catSet.add(s.trim()));
+        }
+        const cats = Array.from(catSet).sort((a, b) => a.localeCompare(b, 'es'));
+
+        let select = document.getElementById('admin-cat-filter');
+        if(!select) {
+            const filterHTML = `
+                <div class="admin-filter-bar" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <label style="margin:0;">Filtrar por Categoría:</label>
+                        <select id="admin-cat-filter" onchange="filterAdminProducts()">
+                            <option value="todos">Todas las categorías</option>
+                            ${cats.map(c => `<option value="${c}">${c}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px; flex: 1;">
+                        <label style="margin:0;">Buscar Producto:</label>
+                        <input type="text" id="admin-search-filter" onkeyup="filterAdminProducts()" placeholder="Escribe el nombre del producto..." style="padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc; flex: 1; max-width: 400px;">
+                    </div>
+                </div>
+            `;
+            const header = document.querySelector('#sec-products .panel-header');
+            if (header) header.insertAdjacentHTML('afterend', filterHTML);
+        } else {
+            const currentVal = select.value;
+            select.innerHTML = '<option value="todos">Todas las categorías</option>' +
+                cats.map(c => `<option value="${c}" ${c === currentVal ? 'selected' : ''}>${c}</option>`).join('');
+        }
+    }
+
+    function normalizeCat(str) {
+        return (str || '').toString().trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/y/g, 'i');
+    }
+
+    window.filterAdminProducts = function() {
+        const select = document.getElementById('admin-cat-filter');
+        const cat = select ? select.value : 'todos';
+        const searchInput = document.getElementById('admin-search-filter');
+        const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        
+        let filtered = allSupabaseProducts;
+        
+        if(cat && cat !== 'todos') {
+            const catNorm = normalizeCat(cat);
+            filtered = filtered.filter(p => {
+                const cats = (p.categoria || '').split(',').map(c => normalizeCat(c)).filter(Boolean);
+                return cats.some(pCatNorm => pCatNorm === catNorm || pCatNorm.includes(catNorm) || catNorm.includes(pCatNorm));
+            });
+        }
+        
+        if(searchTerm !== '') {
+            filtered = filtered.filter(p => (p.nombre || '').toLowerCase().includes(searchTerm));
+        }
+        
+        renderAdminProducts(filtered);
+    }
+
+    function renderAdminProducts(productsToRender) {
+        const tbody = document.getElementById('products-tbody');
+        if(!tbody) return;
+        tbody.innerHTML = '';
+        document.getElementById('metric-products').textContent = allSupabaseProducts.length;
+
+        // Group by category to display nicer
+        let currentCat = '';
+
+        productsToRender.forEach(p => {
+            if(p.categoria !== currentCat && document.getElementById('admin-cat-filter')?.value === 'todos') {
+                currentCat = p.categoria;
+                tbody.innerHTML += `
+                    <tr style="background-color: #f1f3f5;">
+                        <td colspan="6" style="font-weight: bold; color: #a37243; text-transform: uppercase;">📦 Categoría: ${currentCat}</td>
+                    </tr>
+                `;
+            }
+
+            const statusClass = p.activo ? 'status-completed' : 'status-cancelled';
+            const statusText = p.activo ? 'Activo' : 'Inactivo';
+            
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${p.nombre}</strong></td>
+                    <td>${p.categoria}</td>
+                    <td>${p.precio}</td>
+                    <td>--</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <div class="acciones-grupo">
+                            <button class="btn-sm" onclick="openEditModal(${p.id})">✏️ Editar</button>
+                            <button class="btn-sm" style="background:${p.activo ? '#ffc107' : '#28a745'}; color:${p.activo ? '#333' : 'white'};" onclick="toggleProductoActivo(${p.id}, ${p.activo})">${p.activo ? '⏸ Desactivar' : '▶ Activar'}</button>
+                            <button class="btn-sm" style="background:#dc3545; color:white;" onclick="deleteSupabaseProduct(${p.id}, '${p.nombre.replace("'", "\\'")}')">🗑️ Eliminar</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    window.openEditModal = function(id) {
+        const p = allSupabaseProducts.find(x => x.id === id);
+        if(!p) return;
+        document.getElementById('edit-id').value = p.id;
+        document.getElementById('edit-nombre').value = p.nombre;
+        document.getElementById('edit-precio').value = p.precio;
+        document.getElementById('edit-dimensiones').value = p.dimensiones || '';
+        document.getElementById('edit-peso').value = p.peso || '';
+        
+        // Poblar categorías múltiples
+        const editCatContainer = document.getElementById('edit-categories-container');
+        if (editCatContainer) {
+            editCatContainer.innerHTML = '';
+            const cats = (p.categoria || '').split(',').map(s => s.trim()).filter(Boolean);
+            if (cats.length === 0) {
+                window.addCategoryRow('edit');
+            } else {
+                cats.forEach(c => {
+                    const m = reverseLookupMenu(c);
+                    window.addCategoryRow('edit', m, c);
+                });
+            }
+        }
+
+        document.getElementById('edit-descripcion').value = p.descripcion || '';
+        document.getElementById('edit-contenido').value = p.contenido || '';
+        document.getElementById('edit-activo').value = p.activo ? 'true' : 'false';
+        
+        // Imagen
+        // Manejo de multiples imagenes
+        const rawImgs = p.imagen_url ? p.imagen_url.split(',').map(s => s.trim()).filter(Boolean) : [];
+        window.productImagesState.edit = [...rawImgs];
+        window.renderImagesPreview('edit');
+        document.getElementById('editProductModal').style.display = 'flex';
+    }
+
+    window.closeEditModal = function() {
+        document.getElementById('editProductModal').style.display = 'none';
+    }
+
+    window.saveProductChanges = async function() {
+        const id = document.getElementById('edit-id').value;
+        const nombre = document.getElementById('edit-nombre').value;
+        const precio = document.getElementById('edit-precio').value;
+        const dimensiones = document.getElementById('edit-dimensiones').value.trim();
+        const peso = document.getElementById('edit-peso').value.trim();
+        const selectedCats = window.getSelectedCategories('edit');
+        if (selectedCats.length === 0) {
+            alert('Debes seleccionar al menos un menú / sub-menú para el producto.');
+            return;
+        }
+        const categoria = selectedCats.join(', ');
+        const descripcion = document.getElementById('edit-descripcion').value.trim();
+        const contenido = document.getElementById('edit-contenido').value.trim();
+        const activo = document.getElementById('edit-activo').value === 'true';
+        const imagen_url = document.getElementById('edit-imagen-url').value;
+
+        const btn = document.getElementById('edit-save-btn') || document.querySelector('#editProductModal .btn-primary');
+        btn.textContent = 'Guardando...';
+        btn.disabled = true;
+
+        try {
+            const updatePayload = { nombre, precio, dimensiones, peso, categoria, descripcion, contenido, activo };
+            if (imagen_url) updatePayload.imagen_url = imagen_url;
+
+            await fetch(SUPABASE_URL + "/rest/v1/productos?id=eq." + id, {
+                method: 'PATCH',
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": "Bearer " + SUPABASE_KEY,
+                    "Content-Type": "application/json",
+                    "Prefer": "return=minimal"
+                },
+                body: JSON.stringify(updatePayload)
+            });
+            
+            alert('Producto actualizado con éxito!');
+            // Invalidar cache de producto
+            const currentProd = allSupabaseProducts.find(x => x.id == id);
+            if (currentProd && currentProd.slug) {
+                try { sessionStorage.removeItem('sein_prod_' + currentProd.slug); localStorage.removeItem('sein_prod_' + currentProd.slug); } catch(e) {}
+            }
+            closeEditModal();
+            fetchAdminProducts(); // recargar
+        } catch (e) {
+            alert('Error al guardar: ' + e.message);
+        } finally {
+            btn.textContent = 'Guardar Cambios';
+            btn.disabled = false;
+        }
+    }
+
+
+    window.toggleProductoActivo = async function(id, estadoActual) {
+        const nuevoEstado = !estadoActual;
+        const accion = nuevoEstado ? 'activar' : 'desactivar';
+        if (!confirm(`¿Deseas ${accion} este producto? ${nuevoEstado ? 'Será visible en la tienda.' : 'Quedará oculto en la tienda.'}`)) return;
+
+        try {
+            await fetch(SUPABASE_URL + "/rest/v1/productos?id=eq." + id, {
+                method: 'PATCH',
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": "Bearer " + SUPABASE_KEY,
+                    "Content-Type": "application/json",
+                    "Prefer": "return=minimal"
+                },
+                body: JSON.stringify({ activo: nuevoEstado })
+            });
+            fetchAdminProducts(); // recargar tabla
+        } catch(e) {
+            alert('Error: ' + e.message);
+        }
+    }
+
+    window.deleteSupabaseProduct = async function(id, nombre) {
+        if(!confirm(`¿Estás seguro de que deseas eliminar permanentemente el producto "${nombre}"?`)) {
+            return;
+        }
+
+        try {
+            const res = await fetch(SUPABASE_URL + "/rest/v1/productos?id=eq." + id, {
+                method: 'DELETE',
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": "Bearer " + SUPABASE_KEY
+                }
+            });
+            
+            if(!res.ok) throw new Error("Error HTTP " + res.status);
+            
+            alert('Producto eliminado exitosamente.');
+            fetchAdminProducts(); // recargar
+        } catch (e) {
+            alert('Error al eliminar: ' + e.message);
+        }
+    }
+
+    // Hook into existing init
+    document.addEventListener("DOMContentLoaded", () => {
+        fetchAdminProducts();
+    });
+    fetchAdminProducts();
+</script>
+<!-- FIN SECCION SUPABASE ADMIN -->
+
+
+<!-- Modal Usuario Admin -->
+<div id="editUserModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="user-modal-title">Nuevo Usuario</h3>
+        <input type="hidden" id="user-edit-id">
+        <div class="form-group">
+            <label>Nombre Completo</label>
+            <input type="text" id="user-nombre" placeholder="Ej. María González">
+        </div>
+        <div class="form-group">
+            <label>Nombre de Usuario (para login)</label>
+            <input type="text" id="user-usuario" placeholder="Ej. maria.gonzalez">
+        </div>
+        <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" id="user-password" placeholder="Mínimo 8 caracteres">
+        </div>
+        <div class="form-group">
+            <label>Rol</label>
+            <select id="user-rol">
+                <option value="superadmin">Super Admin (acceso total)</option>
+                <option value="editor" selected>Editor (gestión de productos)</option>
+                <option value="viewer">Visor (solo lectura)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Estado</label>
+            <select id="user-activo">
+                <option value="true">Activo</option>
+                <option value="false">Inactivo</option>
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-sm" style="background:#ccc; color:#333;" onclick="closeUserModal()">Cancelar</button>
+            <button class="btn-primary" id="user-save-btn" onclick="saveUserChanges()">Guardar Usuario</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ─── MÓDULO USUARIOS ADMIN ────────────────────────────────────────────────────
+let allAdminUsers = [];
+
+async function fetchAdminUsers() {
+    const res = await fetch(SUPABASE_URL + "/rest/v1/usuarios_admin?order=created_at", {
+        headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": "Bearer " + SUPABASE_KEY
+        }
+    });
+    allAdminUsers = await res.json();
+    renderAdminUsers(allAdminUsers);
+}
+
+function renderAdminUsers(users) {
+    const tbody = document.getElementById('users-admin-tbody');
+    if (!tbody) return;
+    if (!users || users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No hay usuarios registrados.</td></tr>';
+        return;
+    }
+    const rolLabels = { superadmin: '🔑 Super Admin', editor: '✏️ Editor', viewer: '👁️ Visor' };
+    tbody.innerHTML = users.map(u => `
+        <tr>
+            <td><strong>${u.nombre}</strong></td>
+            <td><code>${u.usuario}</code></td>
+            <td>${rolLabels[u.rol] || u.rol}</td>
+            <td><span class="status-badge ${u.activo ? 'status-completed' : 'status-cancelled'}">${u.activo ? 'Activo' : 'Inactivo'}</span></td>
+            <td>
+                <button class="btn-sm" onclick="openUserModal(${u.id})">✏️ Editar</button>
+                <button class="btn-sm" style="background:#dc3545; color:white; margin-left:5px;" onclick="deleteAdminUser(${u.id}, '${u.nombre.replace("'", "\'")}')">🗑️ Eliminar</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+window.openUserModal = function(id) {
+    document.getElementById('user-edit-id').value = '';
+    document.getElementById('user-nombre').value = '';
+    document.getElementById('user-usuario').value = '';
+    document.getElementById('user-password').value = '';
+    document.getElementById('user-rol').value = 'editor';
+    document.getElementById('user-activo').value = 'true';
+    document.getElementById('user-modal-title').textContent = 'Nuevo Usuario';
+    document.getElementById('user-password').required = true;
+
+    if (id) {
+        const u = allAdminUsers.find(x => x.id === id);
+        if (!u) return;
+        document.getElementById('user-edit-id').value = u.id;
+        document.getElementById('user-nombre').value = u.nombre;
+        document.getElementById('user-usuario').value = u.usuario;
+        document.getElementById('user-password').placeholder = 'Dejar vacío para mantener la actual';
+        document.getElementById('user-password').required = false;
+        document.getElementById('user-rol').value = u.rol;
+        document.getElementById('user-activo').value = u.activo ? 'true' : 'false';
+        document.getElementById('user-modal-title').textContent = 'Editar Usuario';
+    }
+
+    document.getElementById('editUserModal').style.display = 'flex';
+}
+
+window.closeUserModal = function() {
+    document.getElementById('editUserModal').style.display = 'none';
+}
+
+window.saveUserChanges = async function() {
+    const id = document.getElementById('user-edit-id').value;
+    const nombre = document.getElementById('user-nombre').value.trim();
+    const usuario = document.getElementById('user-usuario').value.trim();
+    const password = document.getElementById('user-password').value;
+    const rol = document.getElementById('user-rol').value;
+    const activo = document.getElementById('user-activo').value === 'true';
+
+    if (!nombre || !usuario) { alert('El nombre y el usuario son obligatorios.'); return; }
+    if (!id && !password) { alert('La contraseña es obligatoria para usuarios nuevos.'); return; }
+
+    const btn = document.getElementById('user-save-btn');
+    btn.textContent = 'Guardando...';
+    btn.disabled = true;
+
+    try {
+        const body = { nombre, usuario, rol, activo };
+        if (password) body.password = password;
+
+        if (id) {
+            // Actualizar
+            await fetch(SUPABASE_URL + "/rest/v1/usuarios_admin?id=eq." + id, {
+                method: 'PATCH',
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": "Bearer " + SUPABASE_KEY,
+                    "Content-Type": "application/json",
+                    "Prefer": "return=minimal"
+                },
+                body: JSON.stringify(body)
+            });
+            alert('Usuario actualizado con exito.');
+        } else {
+            // Crear nuevo
+            await fetch(SUPABASE_URL + "/rest/v1/usuarios_admin", {
+                method: 'POST',
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": "Bearer " + SUPABASE_KEY,
+                    "Content-Type": "application/json",
+                    "Prefer": "return=minimal"
+                },
+                body: JSON.stringify(body)
+            });
+            alert('Usuario creado con exito.');
+        }
+        closeUserModal();
+        fetchAdminUsers();
+    } catch (e) {
+        alert('Error: ' + e.message);
+    } finally {
+        btn.textContent = 'Guardar Usuario';
+        btn.disabled = false;
+    }
+}
+
+window.deleteAdminUser = async function(id, nombre) {
+    if (!confirm('¿Eliminar al usuario "' + nombre + '"? Esta accion no se puede deshacer.')) return;
+    try {
+        await fetch(SUPABASE_URL + "/rest/v1/usuarios_admin?id=eq." + id, {
+            method: 'DELETE',
+            headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization": "Bearer " + SUPABASE_KEY
+            }
+        });
+        alert('Usuario eliminado.');
+        fetchAdminUsers();
+    } catch(e) {
+        alert('Error al eliminar: ' + e.message);
+    }
+}
+
+// Cargar usuarios cuando se muestre la sección
+const origShowSection = window.showSection;
+window.showSection = function(id) {
+    if (typeof origShowSection === 'function') origShowSection(id);
+    if (id === 'sec-users') fetchAdminUsers();
+}
+
+// ─── LOGIN CONTRA SUPABASE ────────────────────────────────────────────────────
+async function loginConSupabase(usuario, password) {
+    try {
+        const url = SUPABASE_URL + "/rest/v1/usuarios_admin?usuario=eq." + encodeURIComponent(usuario) + "&activo=eq.true&select=id,nombre,usuario,rol,password";
+        const res = await fetch(url, {
+            headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization": "Bearer " + SUPABASE_KEY
+            }
+        });
+        const users = await res.json();
+        if (users && users.length > 0 && users[0].password === password) {
+            return users[0];
+        }
+        return null;
+    } catch(e) {
+        return null;
+    }
+}
+</script>
+
+<!-- Modal Nuevo Producto -->
+<div id="newProductModal" class="modal-overlay" style="display:none;">
+  <div class="modal-content" style="width:520px; max-width:95%; max-height:90vh; overflow-y:auto;">
+    <h3 style="margin-bottom:18px; font-size:1.2rem;">➕ Registrar Nuevo Producto</h3>
+
+    <div class="form-group">
+      <label>Nombre del Producto <span style="color:red">*</span></label>
+      <input type="text" id="np-nombre" placeholder="Ej. Vela Alta | Lavanda" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+    </div>
+
+    <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div>
+        <label>Precio <span style="color:red">*</span></label>
+        <input type="text" id="np-precio" placeholder="Ej. $249.00" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      
+        </div>
+      <div class="form-group" style="background:#fcfcfc; border:1px dashed #dcdcdc; padding:12px; border-radius:6px; margin-top:5px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <label style="margin:0; font-weight:600; color:#333;">Categorías / Menús donde aparecerá <span style="color:red">*</span></label>
+          <button type="button" onclick="addCategoryRow('np')" class="btn-sm" style="background:#DB572E; color:#fff; border:none; padding:4px 10px; border-radius:4px; font-size:12px; cursor:pointer;">+ Agregar otro menú</button>
+        </div>
+        <div id="np-categories-container"></div>
+      </div>
+
+    </div>
+
+    <div class="form-group" style="position:relative; padding-top: 10px;">
+        <button type="button" style="position:absolute; top: -5px; right: 0; font-size:11px; padding:3px 8px; border:1px solid #ddd; background:#f5f5f5; border-radius:4px; cursor:pointer;" onclick="document.getElementById('np-dimensiones').value='No aplica'; document.getElementById('np-peso').value='No aplica';">No aplica</button>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+                <label style="margin-top:0;">Dimensiones</label>
+                <input type="text" id="np-dimensiones" placeholder="Ej. 10x15x5 cm" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            </div>
+            <div>
+                <label style="margin-top:0;">Peso</label>
+                <input type="text" id="np-peso" placeholder="Ej. 500 gr" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            </div>
+        </div>
+      </div>
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea id="np-descripcion" rows="4" placeholder="Descripción del producto..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Contenido del Producto</label>
+      <textarea id="np-contenido" rows="4" placeholder="Detalla las especificaciones, aromas, medidas, qué incluye el kit, materiales..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Imágenes del Producto (hasta 5 imágenes)</label>
+      <input type="file" id="np-imagen-file" accept="image/*" multiple onchange="handleMultiImageSelect(this, 'np')">
+      <input type="hidden" id="np-imagen">
+      <div id="np-imagen-status" style="font-size:12px; color:#666; margin-top:5px;">Puedes seleccionar hasta 5 imágenes (la primera es la principal).</div>
+      <div id="np-images-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Slug (URL del producto) <span style="color:red">*</span></label>
+      <input type="text" id="np-slug" placeholder="Ej. vela-alta-lavanda" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      <small style="color:#888; font-size:12px;">Solo letras minúsculas, números y guiones. Sin espacios ni acentos.</small>
+    </div>
+
+    <div class="form-group">
+      <label>Estado</label>
+      <select id="np-activo" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        <option value="true">Activo (Visible en tienda)</option>
+        <option value="false">Inactivo (Oculto)</option>
+      </select>
+    </div>
+
+    <div id="np-error" style="color:red; font-size:13px; margin-bottom:10px; display:none;"></div>
+
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn-sm" style="background:#ccc; color:#333;" onclick="closeNewProductModal()">Cancelar</button>
+      <button class="btn-primary" id="np-save-btn" onclick="saveNewProduct()">✅ Guardar Producto</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── AUTO SLUG desde el nombre ────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  const nombreInput = document.getElementById('np-nombre');
+  const slugInput   = document.getElementById('np-slug');
+  if (nombreInput && slugInput) {
+    nombreInput.addEventListener('input', function() {
+      if (!slugInput.dataset.manual) {
+        slugInput.value = nombreInput.value
+          .toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9\s-]/g, '')
+          .trim()
+          .replace(/\s+/g, '-');
+      }
+    });
+    slugInput.addEventListener('input', function() {
+      slugInput.dataset.manual = 'true';
+    });
+  }
+});
+
+window.openNewProductModal = function() {
+  // Limpiar campos
+  ['np-nombre','np-precio','np-dimensiones','np-peso','np-descripcion','np-contenido','np-imagen','np-slug'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = ''; if (el.dataset) delete el.dataset.manual; }
+  });
+  const fileInp = document.getElementById('np-imagen-file');
+  if (fileInp) fileInp.value = '';
+  window.productImagesState.np = [];
+  window.renderImagesPreview('np');
+  const npCatContainer = document.getElementById('np-categories-container');
+  if (npCatContainer) {
+      npCatContainer.innerHTML = '';
+      window.addCategoryRow('np');
+  }
+  document.getElementById('np-activo').value = 'true';
+  document.getElementById('np-error').style.display = 'none';
+  document.getElementById('newProductModal').style.display = 'flex';
+}
+
+window.closeNewProductModal = function() {
+  document.getElementById('newProductModal').style.display = 'none';
+}
+
+window.saveNewProduct = async function() {
+  const nombre    = document.getElementById('np-nombre').value.trim();
+  const precio    = document.getElementById('np-precio').value.trim();
+  const dimensiones = document.getElementById('np-dimensiones').value.trim();
+  const peso      = document.getElementById('np-peso').value.trim();
+  const selectedCats = window.getSelectedCategories('np');
+  const categoria = selectedCats.join(', ');
+  const descripcion = document.getElementById('np-descripcion').value.trim();
+  const contenido   = document.getElementById('np-contenido').value.trim();
+  const imagen_url  = document.getElementById('np-imagen').value.trim();
+  const slug      = document.getElementById('np-slug').value.trim();
+  const activo    = document.getElementById('np-activo').value === 'true';
+  const errDiv    = document.getElementById('np-error');
+
+  // Validar campos obligatorios
+  if (!nombre || !precio || !document.getElementById('np-menu').value || !categoria || !slug) {
+    errDiv.textContent = 'Los campos Nombre, Precio, Categoría y Slug son obligatorios.';
+    errDiv.style.display = 'block';
+    return;
+  }
+  if (!/^[a-z0-9-]+$/.test(slug)) {
+    errDiv.textContent = 'El slug solo puede contener letras minúsculas, números y guiones.';
+    errDiv.style.display = 'block';
+    return;
+  }
+
+  errDiv.style.display = 'none';
+  const btn = document.getElementById('np-save-btn');
+  btn.textContent = 'Guardando...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/productos', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ nombre, precio, dimensiones, peso, categoria, descripcion, contenido, imagen_url, slug, activo })
+    });
+
+    if (res.status === 409) {
+      errDiv.textContent = 'Ya existe un producto con ese slug. Usa uno diferente.';
+      errDiv.style.display = 'block';
+      return;
+    }
+    if (!res.ok) {
+      const errBody = await res.text();
+      errDiv.textContent = 'Error al guardar: ' + errBody;
+      errDiv.style.display = 'block';
+      return;
+    }
+
+    alert('✅ Producto registrado exitosamente en Supabase.');
+    closeNewProductModal();
+    fetchAdminProducts(); // Recargar la tabla
+  } catch(e) {
+    errDiv.textContent = 'Error de conexión: ' + e.message;
+    errDiv.style.display = 'block';
+  } finally {
+    btn.textContent = '✅ Guardar Producto';
+    btn.disabled = false;
+  }
+}
+</script>
+<!-- FIN Modal Nuevo Producto -->
+
+    <!-- Modal Carrusel -->
+    <div id="slideModal" class="modal-overlay">
+        <div class="modal-content" style="max-height:90vh; overflow-y:auto; max-width: 500px;">
+            <h3 id="slideModalTitle">Nueva Diapositiva</h3>
+            <input type="hidden" id="slideId">
+            <div class="form-group">
+                <label>Título (opcional)</label>
+                <input type="text" id="slideTitulo" placeholder="Ej. Velas de Soja">
+            </div>
+            <div class="form-group">
+                <label>Subtítulo (opcional)</label>
+                <input type="text" id="slideSubtitulo" placeholder="Ej. 100% Artesanales">
+            </div>
+            <div class="form-group">
+                <label>Texto del Botón</label>
+                <input type="text" id="slideBotonTexto" placeholder="Ej. Comprar Ahora" value="Ver Más">
+            </div>
+            <div class="form-group" style="display: flex; gap: 15px;">
+                <div style="flex: 1;">
+                    <label>Color Fondo del Botón</label>
+                    <input type="color" id="slideBotonColor" value="#c58d58" style="height: 44px; width: 100%; padding: 2px; border: 1px solid #e3e6eb; border-radius: 8px; cursor: pointer; box-sizing: border-box;">
+                </div>
+                <div style="flex: 1;">
+                    <label>Color de los Textos</label>
+                    <input type="color" id="slideTextColor" value="#ffffff" style="height: 44px; width: 100%; padding: 2px; border: 1px solid #e3e6eb; border-radius: 8px; cursor: pointer; box-sizing: border-box;">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Enlace del Botón (Ej. /tienda/)</label>
+                <input type="text" id="slideEnlace" placeholder="/tienda/">
+            </div>
+            <div class="form-group">
+                <label>Imagen *</label>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <input type="text" id="slideImageUrl" placeholder="URL de la imagen" required style="flex:1;">
+                    <button class="btn-sm" style="background:#17a2b8; color:#fff; border:none; padding:8px 12px; cursor:pointer; border-radius:4px;" type="button" onclick="document.getElementById('slideImageUpload').click()">Subir Foto</button>
+                </div>
+                <input type="file" id="slideImageUpload" style="display:none" accept="image/*" onchange="handleImageFileSelect(this, 'slideImagePreview', 'slideImageUrl')">
+                <div style="margin-top:8px; display:flex; align-items:center; gap:10px;">
+                    <img id="slideImagePreview" style="max-width:100px; height:auto; display:none; border-radius:4px;" />
+                    <span style="font-size:12px; color:#666;"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Orden (0, 1, 2...)</label>
+                <input type="number" id="slideOrden" value="0">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-sm" style="background:#ccc; color:#333; padding:8px 16px; border:none; border-radius:4px; cursor:pointer;" onclick="closeSlideModal()">Cancelar</button>
+                <button class="btn-primary" id="saveSlideBtn" onclick="saveSlide()" style="padding:8px 16px; border:none; border-radius:4px; cursor:pointer;">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGICA DE CARRUSEL ---
+        let slideList = [];
+        
+        async function fetchCarousel() {
+            const tbody = document.getElementById('carousel-tbody');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px;">Cargando...</td></tr>';
+            
+            try {
+                const res = await fetch(SUPABASE_URL + '/rest/v1/carrusel?select=*&order=orden.asc', {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                });
+                const data = await res.json();
+                
+                if (data.error) throw new Error(data.error.message);
+                
+                // Excluir registros internos como la configuración de favoritos
+                slideList = (data || []).filter(s => s.enlace !== '__FAVORITOS_CONFIG__' && s.orden !== 9999);
+                
+                if (slideList.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:#666;">No hay diapositivas configuradas. Haz clic en Nueva Diapositiva.</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = data.map(slide => `
+                    <tr>
+                        <td><img src="${slide.imagen_url}" style="width:50px; height:50px; object-fit:cover; border-radius:4px; border:1px solid #ddd;"></td>
+                        <td style="font-weight:600;">${slide.titulo || '-'}</td>
+                        <td>${slide.subtitulo || '-'}</td>
+                        <td>${slide.enlace || '-'}</td>
+                        <td>${slide.orden}</td>
+                        <td style="text-align:center;">
+                            <button class="btn-secondary" onclick="editSlide('${slide.id}')" style="padding:4px 8px;">✏️</button>
+                            <button class="btn-danger" onclick="deleteSlide('${slide.id}')" style="padding:4px 8px; background:#dc3545; color:white; border:none; border-radius:4px;">🗑️</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch(e) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:red;">Error: ${e.message}</td></tr>`;
+            }
+        }
+
+        function openNewSlideModal() {
+            document.getElementById('slideModalTitle').innerText = 'Nueva Diapositiva';
+            document.getElementById('slideId').value = '';
+            document.getElementById('slideTitulo').value = '';
+            document.getElementById('slideSubtitulo').value = '';
+            document.getElementById('slideImageUrl').value = '';
+            document.getElementById('slideEnlace').value = '/tienda/';
+            document.getElementById('slideBotonTexto').value = 'Ver Más';
+            document.getElementById('slideBotonColor').value = '#c58d58';
+            document.getElementById('slideTextColor').value = '#ffffff';
+            document.getElementById('slideOrden').value = '0';
+            
+            document.getElementById('slideImagePreview').style.display = 'none';
+            document.getElementById('slideImagePreview').src = '';
+            
+            document.getElementById('slideModal').style.display = 'flex';
+        }
+
+        function closeSlideModal() {
+            document.getElementById('slideModal').style.display = 'none';
+        }
+
+        function editSlide(id) {
+            const slide = slideList.find(s => s.id === id);
+            if(!slide) return;
+            
+            document.getElementById('slideModalTitle').innerText = 'Editar Diapositiva';
+            document.getElementById('slideId').value = slide.id;
+            document.getElementById('slideTitulo').value = slide.titulo || '';
+            document.getElementById('slideSubtitulo').value = slide.subtitulo || '';
+            document.getElementById('slideImageUrl').value = slide.imagen_url || '';
+            document.getElementById('slideEnlace').value = slide.enlace || '';
+            let bText = slide.boton_texto || 'Ver Más';
+            let bColor = '#c58d58';
+            let tColor = '#ffffff';
+            if(bText.includes('||')) {
+                const parts = bText.split('||');
+                bText = parts[0];
+                bColor = parts[1];
+                if(parts.length > 2) tColor = parts[2];
+            }
+            document.getElementById('slideBotonTexto').value = bText;
+            document.getElementById('slideBotonColor').value = bColor;
+            document.getElementById('slideTextColor').value = tColor;
+            document.getElementById('slideOrden').value = slide.orden || '0';
+            
+            if(slide.imagen_url) {
+                document.getElementById('slideImagePreview').src = slide.imagen_url;
+                document.getElementById('slideImagePreview').style.display = 'block';
+            } else {
+                document.getElementById('slideImagePreview').style.display = 'none';
+            }
+            
+            document.getElementById('slideModal').style.display = 'flex';
+        }
+
+        // Preview image URL on input blur
+        document.getElementById('slideImageUrl').addEventListener('blur', function() {
+            if(this.value) {
+                document.getElementById('slideImagePreview').src = this.value;
+                document.getElementById('slideImagePreview').style.display = 'block';
+            } else {
+                document.getElementById('slideImagePreview').style.display = 'none';
+            }
+        });
+
+        async function saveSlide() {
+            const id = document.getElementById('slideId').value;
+            const titulo = document.getElementById('slideTitulo').value.trim();
+            const subtitulo = document.getElementById('slideSubtitulo').value.trim();
+            const imagen_url = document.getElementById('slideImageUrl').value.trim();
+            const enlace = document.getElementById('slideEnlace').value.trim();
+            const boton_texto_raw = document.getElementById('slideBotonTexto').value.trim() || 'Ver Más';
+            const boton_color = document.getElementById('slideBotonColor').value;
+            const text_color = document.getElementById('slideTextColor').value;
+            const boton_texto = boton_texto_raw + '||' + boton_color + '||' + text_color;
+            const orden = parseInt(document.getElementById('slideOrden').value.trim()) || 0;
+            
+            if(!imagen_url) {
+                alert('La imagen es obligatoria');
+                return;
+            }
+            
+            const btn = document.getElementById('saveSlideBtn');
+            btn.innerText = 'Guardando...';
+            btn.disabled = true;
+            
+            const payload = { titulo, subtitulo, imagen_url, enlace, orden, boton_texto };
+            
+            try {
+                let url = SUPABASE_URL + '/rest/v1/carrusel';
+                let method = 'POST';
+                if(id) {
+                    url += '?id=eq.' + id;
+                    method = 'PATCH';
+                }
+                
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if(!res.ok) {
+                    const errBody = await res.text();
+                    throw new Error(errBody);
+                }
+                
+                closeSlideModal();
+                fetchCarousel();
+            } catch(e) {
+                alert('Error al guardar: ' + e.message);
+            } finally {
+                btn.innerText = 'Guardar';
+                btn.disabled = false;
+            }
+        }
+
+        async function deleteSlide(id) {
+            if(!confirm('¿Estás seguro de que deseas eliminar esta diapositiva?')) return;
+            try {
+                const res = await fetch(SUPABASE_URL + '/rest/v1/carrusel?id=eq.' + id, {
+                    method: 'DELETE',
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                });
+                if(!res.ok) throw new Error('No se pudo eliminar');
+                fetchCarousel();
+            } catch(e) {
+                alert('Error al eliminar: ' + e.message);
+            }
+        }
+
+        // --- LÓGICA DE PRODUCTOS FAVORITOS ---
+        const FAVORITOS_CONFIG_ENLACE = '__FAVORITOS_CONFIG__';
+        let favoritosConfigRecord = null; // Registro en tabla carrusel
+        let favoritosSelectedMap = new Map(); // id -> { id, orden }
+        let favoritosCatalogProducts = [];
+
+        async function fetchFavoritosConfig() {
+            const tbody = document.getElementById('favoritos-tbody');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:#666;">Cargando catálogo y favoritos...</td></tr>';
+            
+            try {
+                // 1. Obtener catálogo completo de productos
+                if (!allSupabaseProducts || allSupabaseProducts.length === 0) {
+                    const resProd = await fetch(SUPABASE_URL + "/rest/v1/productos?order=categoria,nombre", {
+                        headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY }
+                    });
+                    allSupabaseProducts = await resProd.json();
+                }
+                favoritosCatalogProducts = allSupabaseProducts.filter(p => p.activo !== false);
+
+                // 2. Obtener configuración guardada de favoritos desde Supabase
+                const resFav = await fetch(SUPABASE_URL + '/rest/v1/carrusel?enlace=eq.' + encodeURIComponent(FAVORITOS_CONFIG_ENLACE), {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                });
+                const favData = await resFav.json();
+                favoritosSelectedMap.clear();
+
+                if (favData && favData.length > 0) {
+                    favoritosConfigRecord = favData[0];
+                    try {
+                        const parsed = JSON.parse(favoritosConfigRecord.subtitulo || '{}');
+                        const productIds = parsed.products || [];
+                        const carruselActivo = parsed.carrusel !== false;
+                        const perView = parsed.slidesPerView || 4;
+                        const autoplayDelay = parsed.autoplayDelay !== undefined ? parsed.autoplayDelay : 5000;
+
+                        document.getElementById('fav-carrusel-activo').checked = carruselActivo;
+                        document.getElementById('fav-slides-per-view').value = perView;
+                        document.getElementById('fav-autoplay-delay').value = autoplayDelay;
+
+                        productIds.forEach((item, idx) => {
+                            if (typeof item === 'object') {
+                                favoritosSelectedMap.set(String(item.id), { id: String(item.id), orden: item.orden || (idx + 1) });
+                            } else {
+                                favoritosSelectedMap.set(String(item), { id: String(item), orden: idx + 1 });
+                            }
+                        });
+                    } catch(err) {
+                        console.error('Error parsing favoritos config:', err);
+                    }
+                } else {
+                    favoritosConfigRecord = null;
+                    // Por default, marcar los 4 productos que actualmente aparecen en el home
+                    // id: 1737, 1749, 1735, 1741 o los primeros 4 si coinciden
+                    const defaultSlugs = ['kit-libreta-navidad', 'kit-alhajero-navidad', 'kit-botella-navidad', 'kit-organigastos-navidad'];
+                    let defIdx = 1;
+                    favoritosCatalogProducts.forEach(p => {
+                        if (defaultSlugs.includes(p.slug) || (p.nombre && (p.nombre.includes('Kit Agenda') || p.nombre.includes('Kit Alhajero') || p.nombre.includes('Kit Botella') || p.nombre.includes('Kit Organigastos')))) {
+                            favoritosSelectedMap.set(String(p.id), { id: String(p.id), orden: defIdx++ });
+                        }
+                    });
+                }
+
+                // 3. Poblar dropdown de categorías
+                populateFavoritosCategoryFilter();
+
+                // 4. Renderizar tabla de selección
+                renderFavoritosTable();
+                updateFavoritosCounter();
+
+            } catch(e) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:red;">Error al cargar: ${e.message}</td></tr>`;
+            }
+        }
+
+        function populateFavoritosCategoryFilter() {
+            const select = document.getElementById('fav-cat-filter');
+            if (!select) return;
+            const current = select.value;
+            const cats = new Set();
+            favoritosCatalogProducts.forEach(p => {
+                if (p.categoria) cats.add(p.categoria.trim());
+            });
+            const sortedCats = Array.from(cats).sort((a,b) => a.localeCompare(b, 'es'));
+            select.innerHTML = '<option value="todos">Todas las categorías</option>' +
+                sortedCats.map(c => `<option value="${c}" ${c === current ? 'selected' : ''}>${c}</option>`).join('');
+        }
+
+        function filterFavoritosSelectionList() {
+            renderFavoritosTable();
+        }
+
+        function renderFavoritosTable() {
+            const tbody = document.getElementById('favoritos-tbody');
+            const search = (document.getElementById('fav-search-input')?.value || '').toLowerCase().trim();
+            const cat = document.getElementById('fav-cat-filter')?.value || 'todos';
+
+            let list = favoritosCatalogProducts.slice();
+
+            // Filtrar por categoría
+            if (cat !== 'todos') {
+                const normCat = normalizeCat(cat);
+                list = list.filter(p => normalizeCat(p.categoria) === normCat);
+            }
+
+            // Filtrar por búsqueda
+            if (search) {
+                list = list.filter(p => (p.nombre || '').toLowerCase().includes(search));
+            }
+
+            // Ordenar: primero los que están seleccionados como favoritos
+            list.sort((a, b) => {
+                const aFav = favoritosSelectedMap.has(String(a.id));
+                const bFav = favoritosSelectedMap.has(String(b.id));
+                if (aFav && !bFav) return -1;
+                if (!aFav && bFav) return 1;
+                if (aFav && bFav) {
+                    const ordA = favoritosSelectedMap.get(String(a.id)).orden || 999;
+                    const ordB = favoritosSelectedMap.get(String(b.id)).orden || 999;
+                    return ordA - ordB;
+                }
+                return (a.nombre || '').localeCompare(b.nombre || '');
+            });
+
+            if (list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px; color:#888;">No se encontraron productos que coincidan.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = list.map(p => {
+                const isFav = favoritosSelectedMap.has(String(p.id));
+                const favInfo = isFav ? favoritosSelectedMap.get(String(p.id)) : { orden: '' };
+                const imgUrl = p.imagen_url || '/wp-content/uploads/2024/09/placeholder.png';
+
+                return `
+                    <tr style="${isFav ? 'background:#fffbf5;' : ''}">
+                        <td style="text-align:center;">
+                            <input type="checkbox" 
+                                style="width:18px; height:18px; cursor:pointer;" 
+                                ${isFav ? 'checked' : ''} 
+                                onchange="toggleFavoritoProduct('${p.id}', this.checked)">
+                        </td>
+                        <td>
+                            <img src="${imgUrl}" style="width:44px; height:44px; object-fit:cover; border-radius:6px; border:1px solid #e2e8f0; display:block;">
+                        </td>
+                        <td>
+                            <strong style="color:var(--dark);">${p.nombre}</strong>
+                            ${isFav ? '<span style="background:#fff3cd; color:#856404; font-size:11px; padding:2px 6px; border-radius:10px; margin-left:6px; font-weight:600;">⭐ Favorito</span>' : ''}
+                        </td>
+                        <td><span style="color:#718096; font-size:0.85rem;">${p.categoria || 'Sin categoría'}</span></td>
+                        <td><strong style="color:var(--primary);">${p.precio || '-'}</strong></td>
+                        <td style="text-align:center;">
+                            <input type="number" 
+                                min="1" 
+                                value="${favInfo.orden || ''}" 
+                                placeholder="-" 
+                                style="width:60px; text-align:center; padding:4px; border:1px solid #cbd5e1; border-radius:4px;"
+                                ${!isFav ? 'disabled' : ''} 
+                                onchange="updateFavoritoOrden('${p.id}', this.value)">
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.toggleFavoritoProduct = function(productId, isChecked) {
+            const strId = String(productId);
+            if (isChecked) {
+                const currentMax = Array.from(favoritosSelectedMap.values()).reduce((max, item) => Math.max(max, parseInt(item.orden) || 0), 0);
+                favoritosSelectedMap.set(strId, { id: strId, orden: currentMax + 1 });
+            } else {
+                favoritosSelectedMap.delete(strId);
+            }
+            updateFavoritosCounter();
+            renderFavoritosTable();
+        };
+
+        window.updateFavoritoOrden = function(productId, ordenVal) {
+            const strId = String(productId);
+            if (favoritosSelectedMap.has(strId)) {
+                favoritosSelectedMap.get(strId).orden = parseInt(ordenVal) || 1;
+            }
+        };
+
+        function updateFavoritosCounter() {
+            const count = favoritosSelectedMap.size;
+            const counterEl = document.getElementById('fav-selected-counter');
+            if (counterEl) counterEl.textContent = count;
+            updateFavoritosPreviewHint();
+        }
+
+        function updateFavoritosPreviewHint() {
+            const count = favoritosSelectedMap.size;
+            const isCarrusel = document.getElementById('fav-carrusel-activo')?.checked;
+            const hint = document.getElementById('fav-preview-box');
+            if (!hint) return;
+
+            if (count === 0) {
+                hint.innerHTML = '⚠️ No has seleccionado ningún producto favorito. Se mostrará el bloque predeterminado de la tienda.';
+                hint.style.borderLeftColor = '#ffc107';
+            } else if (isCarrusel && count >= 3) {
+                hint.innerHTML = `🎉 <strong>¡Modo Carrusel Activado!</strong> Hay <strong>${count}</strong> productos favoritos configurados. Se mostrarán con navegación interactiva deslizante tipo carrusel en la página de inicio.`;
+                hint.style.borderLeftColor = '#28a745';
+            } else {
+                hint.innerHTML = `ℹ️ Hay <strong>${count}</strong> productos favoritos seleccionados. Se mostrarán en cuadrícula destacada en la página de inicio.`;
+                hint.style.borderLeftColor = 'var(--primary)';
+            }
+        }
+
+        async function saveFavoritosConfig() {
+            const btn = document.getElementById('btn-save-favoritos');
+            btn.textContent = 'Guardando...';
+            btn.disabled = true;
+
+            const isCarrusel = document.getElementById('fav-carrusel-activo').checked;
+            const perView = parseInt(document.getElementById('fav-slides-per-view').value) || 4;
+            const autoplayDelay = parseInt(document.getElementById('fav-autoplay-delay').value);
+
+            // Convertir mapa de favoritos ordenados
+            const productsList = Array.from(favoritosSelectedMap.values()).map(item => ({
+                id: item.id,
+                orden: parseInt(item.orden) || 1
+            })).sort((a,b) => a.orden - b.orden);
+
+            const configPayload = {
+                titulo: 'SEIN_PRODUCTOS_FAVORITOS',
+                subtitulo: JSON.stringify({
+                    carrusel: isCarrusel,
+                    slidesPerView: perView,
+                    autoplayDelay: autoplayDelay,
+                    products: productsList
+                }),
+                imagen_url: 'https://hyibazrenjtnswtebybb.supabase.co/storage/v1/object/public/productos/placeholder.png',
+                enlace: FAVORITOS_CONFIG_ENLACE,
+                orden: 9999,
+                boton_texto: 'CONFIG_FAVORITOS'
+            };
+
+            try {
+                let url = SUPABASE_URL + '/rest/v1/carrusel';
+                let method = 'POST';
+
+                if (favoritosConfigRecord && favoritosConfigRecord.id) {
+                    url += '?id=eq.' + favoritosConfigRecord.id;
+                    method = 'PATCH';
+                }
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(configPayload)
+                });
+
+                if (!res.ok) {
+                    const errText = await res.text();
+                    throw new Error(errText);
+                }
+
+                const savedData = await res.json();
+                if (savedData && savedData.length > 0) {
+                    favoritosConfigRecord = savedData[0];
+                }
+
+                alert(`✅ ¡Configuración de Productos Favoritos guardada exitosamente!\n\nSe configuraron ${productsList.length} productos destacados.${isCarrusel ? ' Modo carrusel interactivo activado.' : ''}`);
+            } catch(e) {
+                alert('Error al guardar configuración: ' + e.message);
+            } finally {
+                btn.textContent = '💾 Guardar Favoritos';
+                btn.disabled = false;
+            }
+        }
+
+        // ==========================================
+        // GESTIÓN DE VENTANA EMERGENTE (POP-UP)
+        // ==========================================
+        const POPUP_CONFIG_ENLACE = '__POPUP_CONFIG__';
+        let popupConfigRecord = null;
+
+        async function fetchPopupConfig() {
+            try {
+                const res = await fetch(SUPABASE_URL + '/rest/v1/carrusel?enlace=eq.' + encodeURIComponent(POPUP_CONFIG_ENLACE), {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                });
+                const data = await res.json();
+
+                if (data && data.length > 0) {
+                    popupConfigRecord = data[0];
+                    try {
+                        const parsed = JSON.parse(popupConfigRecord.subtitulo || '{}');
+                        const activo = parsed.activo !== false;
+                        const delay = parsed.delay || 1000;
+                        const btnColor = parsed.btnColor || '#920000';
+                        const txtColor = parsed.txtColor || '#ffffff';
+
+                        document.getElementById('popup-activo').checked = activo;
+                        document.getElementById('popup-imagen-url').value = popupConfigRecord.imagen_url || '/assets/images/banner_navidad.jpg';
+                        document.getElementById('popup-boton-texto').value = popupConfigRecord.boton_texto || 'Ver Kits de Ocasiones Especiales';
+                        document.getElementById('popup-enlace-url').value = parsed.enlace || '/categoria-producto/kits-para-ocasiones-especiales/';
+                        document.getElementById('popup-delay').value = delay;
+
+                        document.getElementById('popup-boton-color').value = btnColor;
+                        document.getElementById('popup-boton-color-hex').value = btnColor;
+                        document.getElementById('popup-texto-color').value = txtColor;
+                        document.getElementById('popup-texto-color-hex').value = txtColor;
+
+                    } catch(err) {
+                        console.error('Error parsing popup config:', err);
+                    }
+                } else {
+                    popupConfigRecord = null;
+                }
+
+                updatePopupLivePreview();
+            } catch(e) {
+                console.error('Error fetching popup config:', e);
+            }
+        }
+
+        function updatePopupLivePreview() {
+            const activo = document.getElementById('popup-activo').checked;
+            const imgUrl = document.getElementById('popup-imagen-url').value.trim() || '/assets/images/banner_navidad.jpg';
+            const btnText = document.getElementById('popup-boton-texto').value.trim() || 'Ver Kits de Ocasiones Especiales';
+            const btnColor = document.getElementById('popup-boton-color').value;
+            const txtColor = document.getElementById('popup-texto-color').value;
+
+            // Actualizar status text y badge
+            const statusText = document.getElementById('popup-status-text');
+            const previewBadge = document.getElementById('popup-preview-badge');
+            if (activo) {
+                if (statusText) statusText.innerHTML = '✅ Activo y visible para los visitantes';
+                if (statusText) statusText.style.color = '#28a745';
+                if (previewBadge) {
+                    previewBadge.textContent = 'POPUP ACTIVO';
+                    previewBadge.style.background = '#28a745';
+                }
+            } else {
+                if (statusText) statusText.innerHTML = '⏸️ Desactivado (No se mostrará a los visitantes)';
+                if (statusText) statusText.style.color = '#e53e3e';
+                if (previewBadge) {
+                    previewBadge.textContent = 'POPUP PAUSADO';
+                    previewBadge.style.background = '#e53e3e';
+                }
+            }
+
+            // Actualizar vista previa
+            const previewImg = document.getElementById('popup-preview-img');
+            const previewCta = document.getElementById('popup-preview-cta');
+            if (previewImg) previewImg.src = imgUrl;
+            if (previewCta) {
+                previewCta.textContent = btnText;
+                previewCta.style.backgroundColor = btnColor;
+                previewCta.style.color = txtColor;
+                previewCta.style.display = btnText ? 'inline-block' : 'none';
+            }
+        }
+
+        async function savePopupConfig() {
+            const btn = document.getElementById('btn-save-popup');
+            btn.textContent = 'Guardando...';
+            btn.disabled = true;
+
+            const activo = document.getElementById('popup-activo').checked;
+            const imgUrl = document.getElementById('popup-imagen-url').value.trim();
+            const btnText = document.getElementById('popup-boton-texto').value.trim();
+            const enlaceUrl = document.getElementById('popup-enlace-url').value.trim();
+            const delay = parseInt(document.getElementById('popup-delay').value) || 1000;
+            const btnColor = document.getElementById('popup-boton-color').value;
+            const txtColor = document.getElementById('popup-texto-color').value;
+
+            if (!imgUrl) {
+                alert('Por favor especifica o sube una imagen para el banner del pop-up.');
+                btn.textContent = '💾 Guardar Cambios Pop-up';
+                btn.disabled = false;
+                return;
+            }
+
+            const configPayload = {
+                titulo: 'SEIN_POPUP_PROMO',
+                subtitulo: JSON.stringify({
+                    activo: activo,
+                    delay: delay,
+                    enlace: enlaceUrl,
+                    btnColor: btnColor,
+                    txtColor: txtColor
+                }),
+                imagen_url: imgUrl,
+                enlace: POPUP_CONFIG_ENLACE,
+                orden: 9998,
+                boton_texto: btnText
+            };
+
+            try {
+                let url = SUPABASE_URL + '/rest/v1/carrusel';
+                let method = 'POST';
+
+                if (popupConfigRecord && popupConfigRecord.id) {
+                    url += '?id=eq.' + popupConfigRecord.id;
+                    method = 'PATCH';
+                }
+
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(configPayload)
+                });
+
+                if (!res.ok) {
+                    const errText = await res.text();
+                    throw new Error(errText);
+                }
+
+                const savedData = await res.json();
+                if (savedData && savedData.length > 0) {
+                    popupConfigRecord = savedData[0];
+                }
+
+                alert(`✅ ¡Configuración del Pop-up guardada con éxito!\n\nEstado: ${activo ? 'ACTIVADO' : 'DESACTIVADO'}\nEnlace: ${enlaceUrl}`);
+            } catch(e) {
+                alert('Error al guardar configuración del pop-up: ' + e.message);
+            } finally {
+                btn.textContent = '💾 Guardar Cambios Pop-up';
+                btn.disabled = false;
+            }
+        }
+    </script>
+
+</body>
+</html>
+ + Number(c.precio || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 }) + ' MXN';
+
+                    // Mensaje personalizado de WhatsApp para recuperar
+                    let waMsg = "Hola " + clientName + ", ¿cómo estás? Te escribimos de SEIN Candle Co. 🕯️✨\n\n";
+                    waMsg += "Notamos que dejaste en tu carrito:\n";
+                    waMsg += "📦 *" + itemsList + "* (" + totalFormatted + ")\n\n";
+                    waMsg += "¿Tuviste alguna duda con el envío o el método de pago? Con gusto te apoyamos para concluir tu pedido y prepararte tus piezas de inmediato.";
+
+                    const waUrl = intlPhone ? ("https://wa.me/" + intlPhone + "?text=" + encodeURIComponent(waMsg)) : '#';
+
+                    const dateFormatted = data.date ? new Date(data.date).toLocaleString('es-MX') : new Date(c.created_at).toLocaleString('es-MX');
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${clientName}</strong></td>
+                        <td>
+                            <div>${data.email || 'Sin correo'}</div>
+                            <div style="font-size:0.82rem; color:#718096; margin-top:2px;">${data.phone ? '📱 ' + data.phone : 'Sin teléfono'}</div>
+                        </td>
+                        <td style="max-width: 280px; font-size: 0.88rem;">${itemsList}</td>
+                        <td style="font-weight: 700; color: #a3875e;">${totalFormatted}</td>
+                        <td style="font-size: 0.85rem; color: #718096;">${dateFormatted}</td>
+                        <td>
+                            <div style="display: flex; gap: 8px;">
+                                ${intlPhone ? `
+                                    <a href="${waUrl}" target="_blank" class="btn-primary" style="background: #25d366; text-decoration: none; padding: 8px 14px; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px;">
+                                        💬 WhatsApp
+                                    </a>
+                                ` : '<span style="font-size: 0.8rem; color: #999;">Sin WhatsApp</span>'}
+                                <button onclick="deleteAbandonedCart('${c.id}')" style="background: none; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 10px; cursor: pointer; color: #e53e3e;" title="Descartar carrito">
+                                    🗑️
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch(e) {
+                console.error(e);
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red; padding: 20px;">Error al consultar carritos en la nube.</td></tr>';
+            }
+        }
+
+        async function deleteAbandonedCart(id) {
+            if (!confirm('¿Deseas descartar este carrito de la lista?')) return;
+            try {
+                await fetch(SUPABASE_URL + '/rest/v1/productos?id=eq.' + id, {
+                    method: 'DELETE',
+                    headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY }
+                });
+                fetchAbandonedCarts();
+            } catch(e) {
+                alert('Error al descartar el registro');
+            }
+        }
+
         function switchSection(secId, elem) {
             document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -1272,6 +3333,7 @@
                 favoritos: "Configuración de Productos Favoritos",
                 popup: "Ventana Pop-up Promocional",
                 customers: "Directorio de Clientes",
+                abandoned: "Recuperación de Carritos Abandonados",
                 payments: "Métodos de Pago",
                 reports: "Reportes Financieros de Ventas",
                 users: "Gestión de Usuarios del Panel"

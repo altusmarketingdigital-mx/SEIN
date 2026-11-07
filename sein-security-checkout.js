@@ -20,15 +20,15 @@
     }
 
 
+    
     // =========================================================================
-    // SISTEMA DE RECUPERACIÓN DE CARRITO ABANDONADO (SEIN RECOVERY ENGINE)
+    // MOTOR DE RECUPERACIÓN Y REGISTRO EN LA NUBE DE CARRITOS ABANDONADOS (SEIN)
     // =========================================================================
-    let abandonedCartTimer = null;
+    let abandonedCartSyncTimer = null;
 
-    function scheduleAbandonedCartNotification() {
+    async function syncAbandonedCartToCloud() {
         if (!Array.isArray(cart) || cart.length === 0) return;
 
-        // Intentar obtener usuario logueado
         let client = null;
         try {
             client = JSON.parse(localStorage.getItem('sein_cliente') || 'null');
@@ -36,68 +36,72 @@
 
         if (!client || !client.correo) return;
 
-        // Verificar si ya se envió notificación en las últimas 24 horas para este carrito
-        const lastNotifKey = 'sein_last_abandoned_notif_' + client.correo;
-        const lastSent = localStorage.getItem(lastNotifKey);
-        const now = Date.now();
-        if (lastSent && (now - parseInt(lastSent, 10)) < (24 * 60 * 60 * 1000)) {
-            // Ya se le envió recordatorio reciente
-            return;
-        }
-
-        // Cancelar timer previo si el usuario sigue agregando piezas
-        if (abandonedCartTimer) clearTimeout(abandonedCartTimer);
-
-        // Programar el recordatorio para 2.5 minutos de inactividad
-        abandonedCartTimer = setTimeout(() => {
-            triggerAbandonedCartEmail(client);
-        }, 150000); // 2.5 minutos
-    }
-
-    async function triggerAbandonedCartEmail(client) {
-        // Verificar si el carrito aún tiene productos y no se ha completado compra
-        if (!Array.isArray(cart) || cart.length === 0) return;
-
         const totalItemsCount = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
         let totalCartAmount = 0;
-        const itemsListStr = cart.map(i => {
-            const price = parsePrice(i.price);
-            totalCartAmount += price * (i.qty || 1);
-            return i.qty + 'x ' + i.title + ' (' + formatCurrency(price) + ')';
-        }).join('\n');
+        cart.forEach(i => {
+            totalCartAmount += parsePrice(i.price) * (i.qty || 1);
+        });
 
-        const clientName = client.nombre || 'Apreciable Cliente';
+        const clientName = client.nombre || 'Cliente';
         const clientEmail = client.correo;
-        const clientPhone = client.telefono || 'No proporcionado';
+        const clientPhone = client.telefono || '';
+        const cartKey = 'cart_' + clientEmail.replace(/[^a-zA-Z0-9]/g, '_');
 
-        console.log('⚡ Enviando recordatorio de carrito abandonado a:', clientEmail);
+        const payloadData = {
+            email: clientEmail,
+            phone: clientPhone,
+            items: cart,
+            total: totalCartAmount,
+            count: totalItemsCount,
+            date: new Date().toISOString()
+        };
 
         try {
-            await fetch('https://formsubmit.co/ajax/seincandleco@gmail.com', {
+            // Guardar/Actualizar en Supabase para el panel de administración
+            const SUPABASE_URL = "https://hyibazrenjtnswtebybb.supabase.co";
+            const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5aWJhenJlbmp0bnN3dGVieWJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTg3OTUsImV4cCI6MjEwNDUzNDc5NX0.67FOsA738ej6oQvmb-qxSX3aGWw2UTFpREoY1jCu_xo";
+
+            // Eliminar registro previo de este cliente para no duplicar
+            await fetch(SUPABASE_URL + "/rest/v1/productos?categoria=eq.__system_abandoned_cart__&slug=eq." + encodeURIComponent(cartKey), {
+                method: 'DELETE',
+                headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY }
+            });
+
+            // Insertar estado actual del carrito
+            await fetch(SUPABASE_URL + "/rest/v1/productos", {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": "Bearer " + SUPABASE_KEY,
+                    "Content-Type": "application/json",
+                    "Prefer": "return=minimal"
+                },
                 body: JSON.stringify({
-                    _subject: '🕯️ ¡Tus aromas favoritos te esperan en tu carrito! - SEIN Candle Co.',
-                    _replyto: clientEmail,
-                    _cc: clientEmail,
-                    _template: 'table',
-                    'Mensaje': 'Hola ' + clientName + ', notamos que dejaste piezas aromáticas seleccionadas en tu carrito. Tu pedido está reservado y listo para que lo finalices cuando desees.',
-                    'Cliente': clientName,
-                    'Correo del Cliente': clientEmail,
-                    'Teléfono / WhatsApp': clientPhone,
-                    'Artículos en Carrito (' + totalItemsCount + ')': itemsListStr,
-                    'Total Estimado': formatCurrency(totalCartAmount),
-                    'Enlace para Continuar': 'https://www.seincandleco.com/finalizar-compra/',
-                    'Atención al Cliente': 'WhatsApp: +52 33 3463 6538 | seincandleco@gmail.com'
+                    categoria: '__system_abandoned_cart__',
+                    nombre: clientName,
+                    descripcion: JSON.stringify(payloadData),
+                    slug: cartKey,
+                    precio: totalCartAmount,
+                    activo: true
                 })
             });
 
-            // Guardar registro de envío para no saturar al cliente
-            localStorage.setItem('sein_last_abandoned_notif_' + clientEmail, String(Date.now()));
-            console.log('✓ Notificación de carrito abandonado enviada a cliente y tienda.');
+            console.log('✓ Carrito guardado en la nube para recuperación:', clientEmail);
         } catch(err) {
-            console.warn('Error al enviar recordatorio de carrito abandonado:', err);
+            console.warn('Error al sincronizar carrito en la nube:', err);
         }
+    }
+
+    function scheduleAbandonedCartNotification() {
+        if (!Array.isArray(cart) || cart.length === 0) return;
+
+        // Cancelar timer previo si sigue interactuando
+        if (abandonedCartSyncTimer) clearTimeout(abandonedCartSyncTimer);
+
+        // Guardar de inmediato en la nube a los 5 segundos de inactividad
+        abandonedCartSyncTimer = setTimeout(() => {
+            syncAbandonedCartToCloud();
+        }, 5000);
     }
 
     function saveCart() {
