@@ -69,5 +69,11 @@
       "source": "/producto/(.*)",
       "destination": "/producto_template.html"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron-abandoned-carts",
+      "schedule": "0 * * * *"
+    }
   ]
 }
