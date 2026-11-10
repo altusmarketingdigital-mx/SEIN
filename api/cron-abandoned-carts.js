@@ -70,7 +70,7 @@ function buildRecoveryHtml(customerName, items, total, recoverUrl) {
                                     Notamos que guardaste algunas piezas aromáticas exclusivas en tu carrito pero no lograste completar tu orden.
                                 </p>
                                 <p style="margin: 0 0 24px; font-size: 14px; line-height: 1.6; color: #666; background-color: #fcfbf9; padding: 14px 18px; border-left: 3px solid #d36440; border-radius: 4px;">
-                                    🌿 <em>Nuestras velas y difusores son elaborados artesanalmente en lotes limitados con cera de soya 100% natural. Tus piezas siguen reservadas temporalmente para ti.</em>
+                                    🌿 <em>Nuestras velas aromáticas son elaboradas artesanalmente en lotes limitados con cera de soya 100% natural. Tus piezas siguen reservadas temporalmente para ti.</em>
                                 </p>
 
                                 <!-- Resumen de Productos -->
@@ -121,7 +121,7 @@ function buildRecoveryHtml(customerName, items, total, recoverUrl) {
                         <tr>
                             <td align="center" style="padding: 24px 20px; background-color: #2b2b2b; color: #a0a0a0; font-size: 11.5px; line-height: 1.6;">
                                 <div style="color: #fff; font-weight: 600; margin-bottom: 4px;">SEIN Candle Co.</div>
-                                Guadalajara, Jalisco, México · Envíos locales y nacionales seguros.<br>
+                                Zapopan, Jalisco, México · Envíos locales y nacionales seguros.<br>
                                 © 2026 Todos los derechos reservados.
                             </td>
                         </tr>
