@@ -1848,8 +1848,48 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // Restaurar carrito desde la nube si viene de enlace de recuperación (?recover_cart=cart_...)
+        async function checkRecoverCartUrl() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const recoverKey = params.get('recover_cart');
+                if (!recoverKey) return;
+
+                const res = await fetch(SUPABASE_URL + '/rest/v1/productos?categoria=eq.__system_abandoned_cart__&slug=eq.' + encodeURIComponent(recoverKey), {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                });
+
+                if (res.ok) {
+                    const rows = await res.json();
+                    if (rows && rows.length > 0) {
+                        const payload = typeof rows[0].descripcion === 'string' ? JSON.parse(rows[0].descripcion) : rows[0].descripcion;
+                        if (payload && Array.isArray(payload.items) && payload.items.length > 0) {
+                            cart = payload.items;
+                            localStorage.setItem('sein_cart', JSON.stringify(cart));
+
+                            if (payload.email) {
+                                let client = JSON.parse(localStorage.getItem('sein_cliente') || '{}');
+                                client.correo = payload.email;
+                                if (payload.phone) client.telefono = payload.phone;
+                                if (rows[0].nombre) client.nombre = rows[0].nombre;
+                                localStorage.setItem('sein_cliente', JSON.stringify(client));
+                            }
+
+                            document.getElementById('empty-cart-screen').style.display = 'none';
+                            document.getElementById('main-checkout-screen').style.display = 'block';
+                            loadLoggedCustomer();
+                            renderOrderSummary();
+                        }
+                    }
+                }
+            } catch(err) {
+                console.warn('Error al recuperar carrito desde la nube:', err);
+            }
+        }
+
         // Inicialización
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkRecoverCartUrl();
             const hasItems = loadCartData();
             if (hasItems) {
                 loadLoggedCustomer();

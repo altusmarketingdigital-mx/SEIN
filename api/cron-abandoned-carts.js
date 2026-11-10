@@ -184,8 +184,8 @@ module.exports = async function handler(req, res) {
                 continue;
             }
 
-            // Armar URL para finalizar compra directamente
-            const recoverUrl = `https://www.seincandleco.com/finalizar-compra/`;
+            // Armar URL con token de recuperación para restaurar el carrito en cualquier navegador o celular
+            const recoverUrl = `https://www.seincandleco.com/finalizar-compra/?recover_cart=` + encodeURIComponent(item.slug);
 
             // Enviar email vía Resend API
             const emailHtml = buildRecoveryHtml(item.nombre || 'Cliente', data.items, data.total || item.precio || 0, recoverUrl);
