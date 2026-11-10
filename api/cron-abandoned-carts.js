@@ -173,13 +173,13 @@ module.exports = async function handler(req, res) {
                 continue;
             }
 
-            // Calcular antigüedad del carrito (mínimo 30 minutos de inactividad para considerarlo abandonado)
+            // Calcular antigüedad del carrito (mínimo 15 minutos de inactividad para considerarlo abandonado)
             const cartDate = new Date(data.date || item.created_at || now).getTime();
             const minutesElapsed = (now - cartDate) / (1000 * 60);
 
-            // Requerir al menos 30 min (o si se envía parámetro 'force=true' en testing)
+            // Requerir al menos 15 min (o si se envía parámetro 'force=true' en testing)
             const isForced = req.query && (req.query.force === 'true' || req.query.force === '1');
-            if (minutesElapsed < 30 && !isForced) {
+            if (minutesElapsed < 15 && !isForced) {
                 results.push({ email: data.email, status: 'skipped_too_recent', minutesElapsed: Math.round(minutesElapsed) });
                 continue;
             }
