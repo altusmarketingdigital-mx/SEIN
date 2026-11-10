@@ -1291,38 +1291,7 @@
         // =========================================================================
         // GESTIÓN DE CARRITOS ABANDONADOS EN EL PANEL
         // =========================================================================
-        async function fetchAbandonedCarts() {
-            const tbody = document.getElementById('abandoned-carts-tbody');
-            if (!tbody) return;
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 25px;">Consultando carritos en la nube...</td></tr>';
 
-            try {
-                const res = await fetch(SUPABASE_URL + '/rest/v1/productos?categoria=eq.__system_abandoned_cart__&order=created_at.desc', {
-                    headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY }
-                });
-                const carts = await res.json();
-
-                if (!Array.isArray(carts) || carts.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 35px; color: #718096;">✨ ¡Excelente! No hay carritos abandonados pendientes en este momento.</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = '';
-                carts.forEach(c => {
-                    let data = {};
-                    try { data = JSON.parse(c.descripcion || '{}'); } catch(e) {}
-
-                    const itemsList = Array.isArray(data.items) 
-                        ? data.items.map(it => (it.qty || 1) + 'x ' + (it.title || 'Producto')).join(', ')
-                        : 'Piezas seleccionadas';
-
-                    const cleanPhone = String(data.phone || '').replace(/[^0-9]/g, '');
-                    let intlPhone = cleanPhone;
-                    if (cleanPhone.length === 10) intlPhone = '521' + cleanPhone;
-                    else if (cleanPhone.length === 12 && cleanPhone.startsWith('52')) intlPhone = '521' + cleanPhone.slice(2);
-
-                    const clientName = c.nombre || 'Cliente';
-                    const totalFormatted = '
             document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             
@@ -5212,47 +5181,100 @@ window.saveNewProduct = async function() {
                 enlace: POPUP_CONFIG_ENLACE,
                 orden: 9998,
                 boton_texto: btnText
-            };
+            }
+
+        // =========================================================================
+        // MÓDULO OFICIAL DE RECUPERACIÓN DE CARRITOS ABANDONADOS (SEIN CANDLE CO.)
+        // =========================================================================
+        async function fetchAbandonedCarts() {
+            const tbody = document.getElementById('abandoned-carts-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 25px;">Consultando carritos en la nube...</td></tr>';
 
             try {
-                let url = SUPABASE_URL + '/rest/v1/carrusel';
-                let method = 'POST';
-
-                if (popupConfigRecord && popupConfigRecord.id) {
-                    url += '?id=eq.' + popupConfigRecord.id;
-                    method = 'PATCH';
-                }
-
-                const res = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_KEY,
-                        'Content-Type': 'application/json',
-                        'Prefer': 'return=representation'
-                    },
-                    body: JSON.stringify(configPayload)
+                const res = await fetch(SUPABASE_URL + '/rest/v1/productos?categoria=eq.__system_abandoned_cart__&order=created_at.desc', {
+                    headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY }
                 });
+                const carts = await res.json();
 
-                if (!res.ok) {
-                    const errText = await res.text();
-                    throw new Error(errText);
+                if (!Array.isArray(carts) || carts.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 35px; color: #718096;">✨ ¡Excelente! No hay carritos abandonados pendientes en este momento.</td></tr>';
+                    return;
                 }
 
-                const savedData = await res.json();
-                if (savedData && savedData.length > 0) {
-                    popupConfigRecord = savedData[0];
-                }
+                tbody.innerHTML = '';
+                carts.forEach(c => {
+                    let data = {};
+                    try { data = typeof c.descripcion === 'string' ? JSON.parse(c.descripcion) : c.descripcion; } catch(e) {}
 
-                alert(`✅ ¡Configuración del Pop-up guardada con éxito!\n\nEstado: ${activo ? 'ACTIVADO' : 'DESACTIVADO'}\nEnlace: ${enlaceUrl}`);
+                    const itemsList = Array.isArray(data.items) 
+                        ? data.items.map(it => (it.qty || 1) + 'x ' + (it.title || 'Producto')).join(', ')
+                        : 'Piezas seleccionadas';
+
+                    const cleanPhone = String(data.phone || '').replace(/[^0-9]/g, '');
+                    let intlPhone = cleanPhone;
+                    if (cleanPhone.length === 10) intlPhone = '521' + cleanPhone;
+                    else if (cleanPhone.length === 12 && cleanPhone.startsWith('52')) intlPhone = '521' + cleanPhone.slice(2);
+
+                    const clientName = c.nombre || 'Cliente';
+                    const totalFormatted = '$' + Number(c.precio || 0).toLocaleString('es-MX', { minimumFractionDigits: 2 }) + ' MXN';
+
+                    const recoverUrl = 'https://www.seincandleco.com/finalizar-compra/?recover_cart=' + encodeURIComponent(c.slug || '');
+
+                    // Mensaje personalizado de WhatsApp para recuperar con enlace inteligente
+                    let waMsg = "Hola " + clientName + ", ¿cómo estás? Te escribimos de SEIN Candle Co. 🕯️✨\n\n";
+                    waMsg += "Notamos que guardaste en tu carrito:\n";
+                    waMsg += "📦 *" + itemsList + "* (" + totalFormatted + ")\n\n";
+                    waMsg += "Tus piezas siguen reservadas temporalmente para ti. Puedes retomar tu orden directamente aquí:\n" + recoverUrl + "\n\n";
+                    waMsg += "¿Tuviste alguna duda con el envío o el método de pago? Con gusto te apoyamos por aquí.";
+
+                    const waUrl = intlPhone ? ("https://wa.me/" + intlPhone + "?text=" + encodeURIComponent(waMsg)) : '#';
+
+                    const dateFormatted = data.date ? new Date(data.date).toLocaleString('es-MX') : new Date(c.created_at).toLocaleString('es-MX');
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${clientName}</strong></td>
+                        <td>
+                            <div>${data.email || 'Sin correo'}</div>
+                            <div style="font-size:0.82rem; color:#718096; margin-top:2px;">${data.phone ? '📱 ' + data.phone : 'Sin teléfono'}</div>
+                        </td>
+                        <td style="max-width: 280px; font-size: 0.88rem;">${itemsList}</td>
+                        <td style="font-weight: 700; color: #a3875e;">${totalFormatted}</td>
+                        <td style="font-size: 0.85rem; color: #718096;">${dateFormatted}</td>
+                        <td>
+                            <div style="display: flex; gap: 8px;">
+                                ${intlPhone ? `
+                                    <a href="${waUrl}" target="_blank" class="btn-primary" style="background: #25d366; text-decoration: none; padding: 8px 14px; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 6px; border-radius: 6px;">
+                                        💬 WhatsApp
+                                    </a>
+                                ` : '<span style="font-size: 0.8rem; color: #999;">Sin WhatsApp</span>'}
+                                <button onclick="deleteAbandonedCart('${c.id}')" style="background: none; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 10px; cursor: pointer; color: #e53e3e;" title="Descartar carrito">
+                                    🗑️
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
             } catch(e) {
-                alert('Error al guardar configuración del pop-up: ' + e.message);
-            } finally {
-                btn.textContent = '💾 Guardar Cambios Pop-up';
-                btn.disabled = false;
+                console.error(e);
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red; padding: 20px;">Error al consultar carritos en la nube.</td></tr>';
+            }
+        }
+
+        async function deleteAbandonedCart(id) {
+            if (!confirm('¿Deseas descartar este carrito de la lista?')) return;
+            try {
+                await fetch(SUPABASE_URL + '/rest/v1/productos?id=eq.' + id, {
+                    method: 'DELETE',
+                    headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY }
+                });
+                fetchAbandonedCarts();
+            } catch(e) {
+                alert('Error al descartar el registro');
             }
         }
     </script>
-
 </body>
 </html>
