@@ -1548,6 +1548,14 @@
                 clientMsg += "¡Muchas gracias por tu compra! Tus piezas aromáticas ya están en preparación.";
                 window.lastOrderClientWa = "https://wa.me/" + rawPhone + "?text=" + encodeURIComponent(clientMsg);
 
+                // 1. Notificación Oficial 100% Automática vía Resend API (Tienda + Cliente)
+                fetch("/api/notify-order", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(order)
+                }).catch(function(e) {});
+
+                // 2. Respaldo secundario
                 fetch("https://formsubmit.co/ajax/seincandleco@gmail.com", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "Accept": "application/json" },
