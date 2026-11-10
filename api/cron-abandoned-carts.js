@@ -50,9 +50,10 @@ function buildRecoveryHtml(customerName, items, total, recoverUrl) {
                         
                         <!-- Header / Logo -->
                         <tr>
-                            <td align="center" style="padding: 32px 20px 20px; background-color: #ffffff; border-bottom: 1px solid #f4ede4;">
-                                <h1 style="margin: 0; font-size: 26px; letter-spacing: 4px; font-weight: 700; color: #2b2b2b; text-transform: uppercase;">SEIN</h1>
-                                <div style="font-size: 10px; letter-spacing: 2.5px; color: #d36440; margin-top: 4px; text-transform: uppercase;">Candle Co. · Guadalajara</div>
+                            <td align="center" style="padding: 28px 20px 22px; background-color: #ffffff; border-bottom: 1px solid #f4ede4;">
+                                <a href="https://www.seincandleco.com" target="_blank" style="text-decoration: none; display: inline-block;">
+                                    <img src="https://www.seincandleco.com/wp-content/uploads/2024/09/Sin-titulo-1_Mesa-de-trabajo-1-2048x354-1-1024x177.png" alt="SEIN Candle Co." width="220" style="width: 220px; max-width: 80%; height: auto; display: block; margin: 0 auto; border: 0;" />
+                                </a>
                             </td>
                         </tr>
 
