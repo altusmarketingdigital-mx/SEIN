@@ -1502,22 +1502,22 @@
                 const billIco = String.fromCodePoint(0x1F4B5);
                 const moneyBagIco = String.fromCodePoint(0x1F4B0);
 
-                let waMsg = candleIco + " *¡NUEVO PEDIDO EN SEIN CANDLE CO.!*\n";
+                let waMsg = "*¡NUEVO PEDIDO EN SEIN CANDLE CO.!* ✨\n";
                 waMsg += "=================================\n";
-                waMsg += boxIco + " *Orden:* #" + order.id + "\n";
-                waMsg += calIco + " *Fecha:* " + order.date + "\n\n";
-                waMsg += personIco + " *DATOS DEL CLIENTE:*\n";
+                waMsg += "• *Orden:* #" + order.id + "\n";
+                waMsg += "• *Fecha:* " + order.date + "\n\n";
+                waMsg += "*DATOS DEL CLIENTE:*\n";
                 waMsg += "• Nombre: " + order.customer + "\n";
                 waMsg += "• Correo: " + order.email + "\n";
                 waMsg += "• Teléfono: " + order.phone + "\n";
                 waMsg += "• Dirección: " + order.address + "\n\n";
-                waMsg += bagIco + " *PRODUCTOS:* " + order.items + "\n";
-                waMsg += truckIco + " *PAQUETERÍA:* " + (order.shipping_method || "Estándar") + "\n";
-                waMsg += cardIco + " *PAGO:* " + order.payment_method + "\n";
+                waMsg += "• *PRODUCTOS:* " + order.items + "\n";
+                waMsg += "• *PAQUETERÍA:* " + (order.shipping_method || "Estándar") + "\n";
+                waMsg += "• *PAGO:* " + order.payment_method + "\n";
                 waMsg += "---------------------------------\n";
-                waMsg += billIco + " *Subtotal:* " + formatCurrency(order.subtotal) + "\n";
-                waMsg += boxIco + " *Envío:* " + (order.shipping === 0 ? "GRATIS" : formatCurrency(order.shipping)) + "\n";
-                waMsg += moneyBagIco + " *TOTAL:* " + formatCurrency(order.total) + "\n";
+                waMsg += "• *Subtotal:* " + formatCurrency(order.subtotal) + "\n";
+                waMsg += "• *Envío:* " + (order.shipping === 0 ? "GRATIS" : formatCurrency(order.shipping)) + "\n";
+                waMsg += "• *TOTAL:* " + formatCurrency(order.total) + "\n";
                 waMsg += "=================================";
 
                 const waBtn = document.getElementById("notif-wa-action");
