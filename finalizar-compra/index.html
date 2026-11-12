@@ -1492,32 +1492,33 @@
 
         function notifyStoreAndCustomer(order) {
             try {
-                const candleIco = String.fromCodePoint(0x1F56F, 0xFE0F);
-                const boxIco = String.fromCodePoint(0x1F4E6);
-                const calIco = String.fromCodePoint(0x1F4C5);
-                const personIco = String.fromCodePoint(0x1F464);
-                const bagIco = String.fromCodePoint(0x1F6CD, 0xFE0F);
-                const truckIco = String.fromCodePoint(0x1F69A);
-                const cardIco = String.fromCodePoint(0x1F4B3);
-                const billIco = String.fromCodePoint(0x1F4B5);
-                const moneyBagIco = String.fromCodePoint(0x1F4B0);
+                // Emojis limpios de 1 solo punto de código (100% compatibles sin rombos ni signos de interrogación)
+                const candle = "\u{1F56F}";
+                const box = "\u{1F4E6}";
+                const cal = "\u{1F4C5}";
+                const person = "\u{1F464}";
+                const bag = "\u{1F6CD}";
+                const truck = "\u{1F69A}";
+                const card = "\u{1F4B3}";
+                const bill = "\u{1F4B5}";
+                const moneyBag = "\u{1F4B0}";
 
-                let waMsg = "*¡NUEVO PEDIDO EN SEIN CANDLE CO.!* ✨\n";
+                let waMsg = candle + " *¡NUEVO PEDIDO EN SEIN CANDLE CO.!*\n";
                 waMsg += "=================================\n";
-                waMsg += "• *Orden:* #" + order.id + "\n";
-                waMsg += "• *Fecha:* " + order.date + "\n\n";
-                waMsg += "*DATOS DEL CLIENTE:*\n";
+                waMsg += box + " *Orden:* #" + order.id + "\n";
+                waMsg += cal + " *Fecha:* " + order.date + "\n\n";
+                waMsg += person + " *DATOS DEL CLIENTE:*\n";
                 waMsg += "• Nombre: " + order.customer + "\n";
                 waMsg += "• Correo: " + order.email + "\n";
                 waMsg += "• Teléfono: " + order.phone + "\n";
                 waMsg += "• Dirección: " + order.address + "\n\n";
-                waMsg += "• *PRODUCTOS:* " + order.items + "\n";
-                waMsg += "• *PAQUETERÍA:* " + (order.shipping_method || "Estándar") + "\n";
-                waMsg += "• *PAGO:* " + order.payment_method + "\n";
+                waMsg += bag + " *PRODUCTOS:* " + order.items + "\n";
+                waMsg += truck + " *PAQUETERÍA:* " + (order.shipping_method || "Estándar") + "\n";
+                waMsg += card + " *PAGO:* " + order.payment_method + "\n";
                 waMsg += "---------------------------------\n";
-                waMsg += "• *Subtotal:* " + formatCurrency(order.subtotal) + "\n";
-                waMsg += "• *Envío:* " + (order.shipping === 0 ? "GRATIS" : formatCurrency(order.shipping)) + "\n";
-                waMsg += "• *TOTAL:* " + formatCurrency(order.total) + "\n";
+                waMsg += bill + " *Subtotal:* " + formatCurrency(order.subtotal) + "\n";
+                waMsg += box + " *Envío:* " + (order.shipping === 0 ? "GRATIS" : formatCurrency(order.shipping)) + "\n";
+                waMsg += moneyBag + " *TOTAL:* " + formatCurrency(order.total) + "\n";
                 waMsg += "=================================";
 
                 const waBtn = document.getElementById("notif-wa-action");
@@ -1526,7 +1527,7 @@
                 }
 
                 // Enlace especial para enviar comprobante de pago por WhatsApp
-                let receiptMsg = "Hola SEIN Candle Co. 🕯️✨\n\n";
+                let receiptMsg = "Hola SEIN Candle Co. " + candle + " ✨\n\n";
                 receiptMsg += "Adjunto mi comprobante de pago para mi pedido:\n";
                 receiptMsg += "📋 *Folio de Orden:* #" + order.id + "\n";
                 receiptMsg += "👤 *Cliente:* " + order.customer + "\n";
@@ -1542,12 +1543,12 @@
                 if (rawPhone.length === 10) rawPhone = '521' + rawPhone;
                 else if (rawPhone.length === 12 && rawPhone.startsWith('52')) rawPhone = '521' + rawPhone.slice(2);
                 
-                let clientMsg = "🕯️ *¡Confirmación de Pedido en SEIN Candle Co.!*\n";
+                let clientMsg = candle + " *¡Confirmación de Pedido en SEIN Candle Co.!*\n";
                 clientMsg += "Hola *" + order.customer + "*, tu pedido *#" + order.id + "* ha sido registrado con éxito.\n\n";
-                clientMsg += "📦 *Productos:* " + order.items + "\n";
-                clientMsg += "💰 *Total:* " + formatCurrency(order.total) + "\n";
-                clientMsg += "🚚 *Envío:* " + (order.shipping_method || "Envío") + "\n";
-                clientMsg += "💳 *Método de Pago:* " + order.payment_method + "\n\n";
+                clientMsg += box + " *Productos:* " + order.items + "\n";
+                clientMsg += moneyBag + " *Total:* " + formatCurrency(order.total) + "\n";
+                clientMsg += truck + " *Envío:* " + (order.shipping_method || "Envío") + "\n";
+                clientMsg += card + " *Método de Pago:* " + order.payment_method + "\n\n";
                 if (order.payment_method.includes('SPEI')) {
                     clientMsg += "🏦 *Datos Santander SPEI:*\n";
                     clientMsg += "• Banco: Banco Santander\n";
