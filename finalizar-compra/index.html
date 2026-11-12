@@ -1492,42 +1492,35 @@
 
         function notifyStoreAndCustomer(order) {
             try {
-                // Emojis limpios de 1 solo punto de código (100% compatibles sin rombos ni signos de interrogación)
-                const candle = "\u{1F56F}";
-                const box = "\u{1F4E6}";
-                const cal = "\u{1F4C5}";
-                const person = "\u{1F464}";
-                const bag = "\u{1F6CD}";
-                const truck = "\u{1F69A}";
-                const card = "\u{1F4B3}";
-                const bill = "\u{1F4B5}";
-                const moneyBag = "\u{1F4B0}";
-
-                let waMsg = candle + " *¡NUEVO PEDIDO EN SEIN CANDLE CO.!*\n";
+                // Emojis compatibles al 100% con Google Chrome en Windows y móviles
+                let waMsg = "✨ *¡NUEVO PEDIDO EN SEIN CANDLE CO.!*\n";
                 waMsg += "=================================\n";
-                waMsg += box + " *Orden:* #" + order.id + "\n";
-                waMsg += cal + " *Fecha:* " + order.date + "\n\n";
-                waMsg += person + " *DATOS DEL CLIENTE:*\n";
+                waMsg += "📦 *Orden:* #" + order.id + "\n";
+                waMsg += "📅 *Fecha:* " + order.date + "\n\n";
+                waMsg += "👤 *DATOS DEL CLIENTE:*\n";
                 waMsg += "• Nombre: " + order.customer + "\n";
                 waMsg += "• Correo: " + order.email + "\n";
                 waMsg += "• Teléfono: " + order.phone + "\n";
                 waMsg += "• Dirección: " + order.address + "\n\n";
-                waMsg += bag + " *PRODUCTOS:* " + order.items + "\n";
-                waMsg += truck + " *PAQUETERÍA:* " + (order.shipping_method || "Estándar") + "\n";
-                waMsg += card + " *PAGO:* " + order.payment_method + "\n";
+                waMsg += "🎁 *PRODUCTOS:* " + order.items + "\n";
+                waMsg += "🚚 *PAQUETERÍA:* " + (order.shipping_method || "Estándar") + "\n";
+                waMsg += "💳 *PAGO:* " + order.payment_method + "\n";
                 waMsg += "---------------------------------\n";
-                waMsg += bill + " *Subtotal:* " + formatCurrency(order.subtotal) + "\n";
-                waMsg += box + " *Envío:* " + (order.shipping === 0 ? "GRATIS" : formatCurrency(order.shipping)) + "\n";
-                waMsg += moneyBag + " *TOTAL:* " + formatCurrency(order.total) + "\n";
+                waMsg += "💵 *Subtotal:* " + formatCurrency(order.subtotal) + "\n";
+                waMsg += "📦 *Envío:* " + (order.shipping === 0 ? "GRATIS" : formatCurrency(order.shipping)) + "\n";
+                waMsg += "💰 *TOTAL:* " + formatCurrency(order.total) + "\n";
                 waMsg += "=================================";
+
+                // Usamos el endpoint oficial universal api.whatsapp.com/send
+                const waBaseUrl = "https://api.whatsapp.com/send?phone=5213334636538&text=" + encodeURIComponent(waMsg);
 
                 const waBtn = document.getElementById("notif-wa-action");
                 if (waBtn) {
-                    waBtn.href = "https://wa.me/5213334636538?text=" + encodeURIComponent(waMsg);
+                    waBtn.href = waBaseUrl;
                 }
 
-                // Enlace especial para enviar comprobante de pago por WhatsApp
-                let receiptMsg = "Hola SEIN Candle Co. " + candle + " ✨\n\n";
+                // Enlace especial para comprobante
+                let receiptMsg = "Hola SEIN Candle Co. ✨\n\n";
                 receiptMsg += "Adjunto mi comprobante de pago para mi pedido:\n";
                 receiptMsg += "📋 *Folio de Orden:* #" + order.id + "\n";
                 receiptMsg += "👤 *Cliente:* " + order.customer + "\n";
@@ -1535,20 +1528,19 @@
                 receiptMsg += "💳 *Método:* " + order.payment_method + "\n\n";
                 receiptMsg += "Quedo en espera de su confirmación para comenzar con la preparación de mi pedido. ¡Gracias!";
 
-                window.lastOrderReceiptWa = "https://wa.me/5213334636538?text=" + encodeURIComponent(receiptMsg);
+                window.lastOrderReceiptWa = "https://api.whatsapp.com/send?phone=5213334636538&text=" + encodeURIComponent(receiptMsg);
                 window.lastOrderAdminWa = window.lastOrderReceiptWa;
 
-                // Enlace de notificación directa para enviar al WhatsApp del cliente
                 let rawPhone = String(order.phone || '').replace(/[^0-9]/g, '');
                 if (rawPhone.length === 10) rawPhone = '521' + rawPhone;
                 else if (rawPhone.length === 12 && rawPhone.startsWith('52')) rawPhone = '521' + rawPhone.slice(2);
                 
-                let clientMsg = candle + " *¡Confirmación de Pedido en SEIN Candle Co.!*\n";
+                let clientMsg = "✨ *¡Confirmación de Pedido en SEIN Candle Co.!*\n";
                 clientMsg += "Hola *" + order.customer + "*, tu pedido *#" + order.id + "* ha sido registrado con éxito.\n\n";
-                clientMsg += box + " *Productos:* " + order.items + "\n";
-                clientMsg += moneyBag + " *Total:* " + formatCurrency(order.total) + "\n";
-                clientMsg += truck + " *Envío:* " + (order.shipping_method || "Envío") + "\n";
-                clientMsg += card + " *Método de Pago:* " + order.payment_method + "\n\n";
+                clientMsg += "📦 *Productos:* " + order.items + "\n";
+                clientMsg += "💰 *Total:* " + formatCurrency(order.total) + "\n";
+                clientMsg += "🚚 *Envío:* " + (order.shipping_method || "Envío") + "\n";
+                clientMsg += "💳 *Método de Pago:* " + order.payment_method + "\n\n";
                 if (order.payment_method.includes('SPEI')) {
                     clientMsg += "🏦 *Datos Santander SPEI:*\n";
                     clientMsg += "• Banco: Banco Santander\n";
@@ -1557,7 +1549,7 @@
                     clientMsg += "• Concepto: " + order.id + "\n\n";
                 }
                 clientMsg += "¡Muchas gracias por tu compra! Tus piezas aromáticas ya están en preparación.";
-                window.lastOrderClientWa = "https://wa.me/" + rawPhone + "?text=" + encodeURIComponent(clientMsg);
+                window.lastOrderClientWa = "https://api.whatsapp.com/send?phone=" + rawPhone + "&text=" + encodeURIComponent(clientMsg);
 
                 // 1. Notificación Oficial 100% Automática vía Resend API (Tienda + Cliente)
                 fetch("/api/notify-order", {
